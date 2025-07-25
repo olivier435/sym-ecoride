@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
+use App\Service\AvatarService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -17,7 +18,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
         return ['user'];
     }
 
-    public function __construct(protected UserPasswordHasherInterface $passwordHasher) {}
+    public function __construct(protected UserPasswordHasherInterface $passwordHasher, protected AvatarService $avatarService) {}
 
     public function load(ObjectManager $manager): void
     {
@@ -43,6 +44,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
             ->setPassword($hash);
 
         $manager->persist($admin);
+        $this->avatarService->createAndAssignAvatar($admin);
 
         $users = [];
         for ($u = 0; $u < 5; $u++) {
@@ -64,6 +66,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
                 ->setPassword($hash);
 
             $manager->persist($user);
+            $this->avatarService->createAndAssignAvatar($user);
             $users[] = $user;
         }
 

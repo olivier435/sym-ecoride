@@ -53,6 +53,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[AssertPhoneNumber(defaultRegion: 'FR')]
     private ?PhoneNumber $phone = null;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Avatar $avatar = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -191,6 +194,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhone(?PhoneNumber $phone): static
     {
         $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?Avatar
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(Avatar $avatar): static
+    {
+        // set the owning side of the relation if necessary
+        if ($avatar->getUser() !== $this) {
+            $avatar->setUser($this);
+        }
+
+        $this->avatar = $avatar;
 
         return $this;
     }
