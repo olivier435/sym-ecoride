@@ -26,3 +26,6 @@ services:
     App\Service\SendMailService:
         arguments:
             $defaultFrom: "%env(MAILER_DEFAULT_FROM)%"
+
+    auth_mailer:
+        class: App\Service\SendEmail2faService
