@@ -6,7 +6,6 @@ use App\Form\ResetPasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
 use App\Repository\UserRepository;
 use App\Service\PasswordResetService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -67,7 +66,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/forgot-password/{token}', name: 'app_reset_pw')]
-    public function resetPw($token, Request $request, UserRepository $userRepository, EntityManagerInterface $em, UserPasswordHasherInterface $hasher, PasswordResetService $passwordResetService): Response
+    public function resetPw($token, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $hasher, PasswordResetService $passwordResetService): Response
     {
         // On vérifie si on a ce token dans la bdd
         $user = $passwordResetService->getUserByResetToken($token, $userRepository);

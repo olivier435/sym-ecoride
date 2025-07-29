@@ -307,6 +307,9 @@
             "./templates/base.html.twig"
         ]
     },
+    "symfony/ux-toggle-password": {
+        "version": "v2.28.1"
+    },
     "symfony/ux-turbo": {
         "version": "2.27",
         "recipe": {

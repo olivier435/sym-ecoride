@@ -20,6 +20,10 @@ return [
         'path' => './assets/js/register.js',
         'entrypoint' => true,
     ],
+    'resetpw' => [
+        'path' => './assets/js/resetpw.js',
+        'entrypoint' => true,
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],

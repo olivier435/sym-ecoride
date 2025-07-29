@@ -43,9 +43,9 @@ class RegistrationFormType extends AbstractType
             ->add('plainPassword', PasswordType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
-                // 'toggle' => true,
-                // 'hidden_label' => 'Masquer',
-                // 'visible_label' => 'Afficher',
+                'toggle' => true,
+                'hidden_label' => 'Masquer',
+                'visible_label' => 'Afficher',
                 'label' => 'Votre mot de passe :',
                 'label_attr' => [
                     'class' => 'lh-label fw-medium'
