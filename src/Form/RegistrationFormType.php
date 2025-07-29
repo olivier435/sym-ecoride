@@ -65,10 +65,10 @@ class RegistrationFormType extends AbstractType
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
-                    // new PasswordStrength(
-                    //     minScore: PasswordStrength::STRENGTH_STRONG,
-                    //     message: 'Le mot de passe est trop faible. Veuillez utiliser un mot de passe plus fort.'
-                    // )
+                    new PasswordStrength(
+                        minScore: PasswordStrength::STRENGTH_STRONG,
+                        message: 'Le mot de passe est trop faible. Veuillez utiliser un mot de passe plus fort.'
+                    )
                 ],
             ])
             ->add('firstname', TextType::class, [

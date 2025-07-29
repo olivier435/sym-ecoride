@@ -32,6 +32,9 @@ security:
                 trusted_parameter_name: _trusted  # Name of the parameter for the trusted device option
                 remember_me_sets_trusted: true # If remember-me option should also set the trusted device cookie
 
+            # configure the form authentication as the entry point for unauthenticated users
+            entry_point: form_login
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 

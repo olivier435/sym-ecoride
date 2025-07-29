@@ -35,18 +35,22 @@
 
 						<input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
-						<div class="checkbox mb-3">
-							<input type="checkbox" name="_remember_me" id="_remember_me">
-							<label for="_remember_me">Remember me</label>
-						</div>
-
-
 						<button class="btn btn-md btn-dark" type="submit">
 							<span>Se connecter</span>
 						</button>
+						{# <div class="row mt-3">
+							<div class="checkbox col-md-6 text-start">
+								<label>
+									<input type="checkbox" name="_remember_me">
+									Se souvenir de moi
+								</label>
+							</div>
+						</div> #}
 					</form>
 					<div class="d-flex flex-column text-center mt-4">
-
+						<span class="text-muted">Pas encore inscrit(e) ?
+							<a href="{{ path('app_registration') }}">M'inscrire</a>
+						</span>
 						<span class="text-muted">
 							Vous avez oublié votre mot de passe&nbsp;?
 							<u>
