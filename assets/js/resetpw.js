@@ -2,6 +2,44 @@ let pass = false;
 
 document.querySelector("#reset_password_form_plainPassword_first").addEventListener("input", checkPass);
 
+document.addEventListener("DOMContentLoaded", () => {
+    // Génération du mot de passe fort en lieu et place de la suggestion Google
+    const generateBtn = document.querySelector("#generate-password");
+    const passwordInput = document.querySelector("#reset_password_form_plainPassword_first");
+
+    if (generateBtn && passwordInput) {
+        generateBtn.addEventListener("click", () => {
+            const icon = generateBtn.querySelector("i");
+            const label = generateBtn.querySelector("span");
+
+            icon.classList.remove("bi-shuffle");
+            icon.classList.add("bi-arrow-repeat", "spin");
+
+            const newPassword = generateStrongPassword(24);
+            passwordInput.value = newPassword;
+            passwordInput.dispatchEvent(new Event('input'));
+
+            navigator.clipboard.writeText(newPassword).then(() => {
+                icon.className = "bi bi-clipboard-check text-success";
+                label.textContent = "Copié !";
+
+                setTimeout(() => {
+                    label.textContent = "Générer";
+                    icon.className = "bi bi-shuffle";
+                }, 2000);
+            }).catch(() => {
+                icon.className = "bi bi-exclamation-triangle text-danger";
+                label.textContent = "Erreur";
+
+                setTimeout(() => {
+                    label.textContent = "Générer";
+                    icon.className = "bi bi-shuffle";
+                }, 2000);
+            });
+        });
+    }
+});
+
 function checkAll(){
     document.querySelector("#submit-reset-pw").setAttribute("disabled", "disabled");    
     if(pass){
@@ -116,4 +154,25 @@ function evaluatePasswordStrength(password) {
     if (entropy >= 80) return PasswordStrength.STRENGTH_MEDIUM;
     if (entropy >= 60) return PasswordStrength.STRENGTH_WEAK;
     return PasswordStrength.STRENGTH_VERY_WEAK;
+}
+
+// Génération du mot de passe sécurisé
+function generateStrongPassword(length = 24) {
+    const lowercase = "abcdefghijklmnopqrstuvwxyz";
+    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numbers = "0123456789";
+    const symbols = "!@#$%^&*()_+{}[]<>?=-";
+    const all = lowercase + uppercase + numbers + symbols;
+
+    let password = "";
+    password += lowercase[Math.floor(Math.random() * lowercase.length)];
+    password += uppercase[Math.floor(Math.random() * uppercase.length)];
+    password += numbers[Math.floor(Math.random() * numbers.length)];
+    password += symbols[Math.floor(Math.random() * symbols.length)];
+
+    for (let i = 4; i < length; i++) {
+        password += all[Math.floor(Math.random() * all.length)];
+    }
+
+    return password.split('').sort(() => Math.random() - 0.5).join('');
 }

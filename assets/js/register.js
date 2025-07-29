@@ -13,41 +13,41 @@ let pass = false;
 function initializeValidation() {
     // Liste des champs et des fonctions de validation
     const fields = [{
-            id: "#registration_form_firstname",
-            handler: checkFirstname
-        },
-        {
-            id: "#registration_form_lastname",
-            handler: checkLastname
-        },
-        {
-            id: "#registration_form_email",
-            handler: checkEmail
-        },
-        {
-            id: "#registration_form_adress",
-            handler: checkAdress
-        },
-        {
-            id: "#registration_form_postalCode",
-            handler: checkPostalCode
-        },
-        {
-            id: "#registration_form_phone",
-            handler: checkPhone
-        },
-        {
-            id: "#registration_form_city",
-            handler: checkCity
-        },
-        {
-            id: "#registration_form_agreeTerms",
-            handler: checkRgpd
-        },
-        {
-            id: "#registration_form_plainPassword",
-            handler: checkPass
-        },
+        id: "#registration_form_firstname",
+        handler: checkFirstname
+    },
+    {
+        id: "#registration_form_lastname",
+        handler: checkLastname
+    },
+    {
+        id: "#registration_form_email",
+        handler: checkEmail
+    },
+    {
+        id: "#registration_form_adress",
+        handler: checkAdress
+    },
+    {
+        id: "#registration_form_postalCode",
+        handler: checkPostalCode
+    },
+    {
+        id: "#registration_form_phone",
+        handler: checkPhone
+    },
+    {
+        id: "#registration_form_city",
+        handler: checkCity
+    },
+    {
+        id: "#registration_form_agreeTerms",
+        handler: checkRgpd
+    },
+    {
+        id: "#registration_form_plainPassword",
+        handler: checkPass
+    },
     ];
 
     fields.forEach(field => {
@@ -71,24 +71,60 @@ function initializeValidation() {
 document.addEventListener("DOMContentLoaded", () => {
     initializeValidation(); // Initialisation lors du chargement de la page
 
-    const observer = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
-            if (mutation.type === "childList") {
-                // Si le formulaire est ajouté ou mis à jour
-                const form = document.querySelector("#registration_form");
-                if (form && mutation.target.contains(form)) {
-                    initializeValidation();
-                }
-            }
-        });
-    });
+    // Génération du mot de passe fort en lieu et place de la suggestion Google
+    const generateBtn = document.querySelector("#generate-password");
+    const passwordInput = document.querySelector("#registration_form_plainPassword");
 
-    // Observer les modifications du DOM
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true, // Observe tous les noeuds enfants
-    })
-});
+    if (generateBtn && passwordInput) {
+        generateBtn.addEventListener("click", () => {
+            const icon = generateBtn.querySelector("i");
+            const label = generateBtn.querySelector("span");
+
+            icon.classList.remove("bi-shuffle");
+            icon.classList.add("bi-arrow-repeat", "spin");
+
+            const newPassword = generateStrongPassword(24);
+            passwordInput.value = newPassword;
+            passwordInput.dispatchEvent(new Event('input'));
+
+            navigator.clipboard.writeText(newPassword).then(() => {
+                icon.className = "bi bi-clipboard-check text-success";
+                label.textContent = "Copié !";
+
+                setTimeout(() => {
+                    label.textContent = "Générer";
+                    icon.className = "bi bi-shuffle";
+                }, 2000);
+            }).catch(() => {
+                icon.className = "bi bi-exclamation-triangle text-danger";
+                label.textContent = "Erreur";
+
+                setTimeout(() => {
+                    label.textContent = "Générer";
+                    icon.className = "bi bi-shuffle";
+                }, 2000);
+            });
+        });
+    }
+
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                if (mutation.type === "childList") {
+                    // Si le formulaire est ajouté ou mis à jour
+                    const form = document.querySelector("#registration_form");
+                    if (form && mutation.target.contains(form)) {
+                        initializeValidation();
+                    }
+                }
+            });
+        });
+
+        // Observer les modifications du DOM
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true, // Observe tous les noeuds enfants
+        })
+    });
 
 function checkFirstname() {
     firstname = this.value.length > 2;
@@ -256,4 +292,25 @@ function evaluatePasswordStrength(password) {
     if (entropy >= 80) return PasswordStrength.STRENGTH_MEDIUM;
     if (entropy >= 60) return PasswordStrength.STRENGTH_WEAK;
     return PasswordStrength.STRENGTH_VERY_WEAK;
+}
+
+// Génération du mot de passe sécurisé
+function generateStrongPassword(length = 24) {
+    const lowercase = "abcdefghijklmnopqrstuvwxyz";
+    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numbers = "0123456789";
+    const symbols = "!@#$%^&*()_+{}[]<>?=-";
+    const all = lowercase + uppercase + numbers + symbols;
+
+    let password = "";
+    password += lowercase[Math.floor(Math.random() * lowercase.length)];
+    password += uppercase[Math.floor(Math.random() * uppercase.length)];
+    password += numbers[Math.floor(Math.random() * numbers.length)];
+    password += symbols[Math.floor(Math.random() * symbols.length)];
+
+    for (let i = 4; i < length; i++) {
+        password += all[Math.floor(Math.random() * all.length)];
+    }
+
+    return password.split('').sort(() => Math.random() - 0.5).join('');
 }
