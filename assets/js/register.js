@@ -1,4 +1,5 @@
 // Variables booléennes
+let pseudo = false;
 let firstname = false;
 let lastname = false;
 let email = false;
@@ -19,6 +20,10 @@ function initializeValidation() {
     {
         id: "#registration_form_lastname",
         handler: checkLastname
+    },
+    {
+        id: "#registration_form_pseudo",
+        handler: checkPseudo
     },
     {
         id: "#registration_form_email",
@@ -126,6 +131,11 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     });
 
+function checkPseudo() {
+    pseudo = this.value.length > 1;
+    checkAll();
+}
+
 function checkFirstname() {
     firstname = this.value.length > 2;
     checkAll();
@@ -175,7 +185,7 @@ function checkRgpd() {
 function checkAll() {
     const submitBtn = document.querySelector("#submit-button");
     submitBtn.setAttribute("disabled", "disabled");
-    if (email && firstname && lastname && adress && postalCode && city && phone && pass && rgpd) {
+    if (email && pseudo && firstname && lastname && adress && postalCode && city && phone && pass && rgpd) {
         submitBtn.removeAttribute("disabled");
     }
 }

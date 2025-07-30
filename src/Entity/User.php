@@ -16,6 +16,7 @@ use ZipCodeValidator\Constraints\ZipCode;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'Il existe un compte avec cet email')]
+#[UniqueEntity(fields: ['pseudo'], message: 'Il existe un compte avec ce pseudo')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
     #[ORM\Id]
@@ -91,6 +92,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $createdTokenAt = null;
+
+    #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(
+        message: 'Merci d\'indiquer votre pseudo'
+    )]
+    private ?string $pseudo = null;
 
     public function getId(): ?int
     {
@@ -302,5 +309,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public function setEmailAuthCode(string $authCode): void
     {
         $this->authCode = $authCode;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): static
+    {
+        $this->pseudo = $pseudo;
+
+        return $this;
     }
 }

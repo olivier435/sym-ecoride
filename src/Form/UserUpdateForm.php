@@ -26,6 +26,15 @@ class UserUpdateForm extends AbstractType
                     'placeholder' => 'Merci de saisir votre adresse email'
                 ],
             ])
+            ->add('pseudo', TextType::class, [
+                'label' => 'Votre pseudo :',
+                'label_attr' => [
+                    'class' => 'lh-label fw-medium'
+                ],
+                'attr' => [
+                    'placeholder' => 'Merci de saisir votre pseudo'
+                ],
+            ])
             ->add('firstname', TextType::class, [
                 'label' => 'Votre prénom :',
                 'label_attr' => [

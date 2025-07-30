@@ -17,6 +17,12 @@ security:
             lazy: true
             provider: app_user_provider
 
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800 # 1 week in seconds
+                token_provider:
+                    doctrine: true
+                path: /
             # configure the maximum login attempts
             login_throttling:
                 max_attempts: 3 # per minute ...
