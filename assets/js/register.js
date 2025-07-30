@@ -176,9 +176,7 @@ function checkPass() {
     // On évalue la force du mot de passe
     let entropy = evaluatePasswordStrength(mdp);
 
-    updateEntropy(entropyElement, entropy, pass);
+    pass = updateEntropy(entropyElement, entropy);
 
     checkAll();
 }
-
-evaluatePasswordStrength(pass);
