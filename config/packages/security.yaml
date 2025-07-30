@@ -16,6 +16,10 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+
+            # configure the maximum login attempts
+            login_throttling:
+                max_attempts: 3 # per minute ...
             form_login:
                 login_path: app_login
                 check_path: app_login

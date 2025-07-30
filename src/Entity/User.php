@@ -239,10 +239,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this->avatar;
     }
 
-    public function setAvatar(Avatar $avatar): static
+    public function setAvatar(?Avatar $avatar): static
     {
+        // unset the owning side of the relation if necessary
+        if ($avatar === null && $this->avatar !== null) {
+            $this->avatar->setUser(null);
+        }
+
         // set the owning side of the relation if necessary
-        if ($avatar->getUser() !== $this) {
+        if ($avatar !== null && $avatar->getUser() !== $this) {
             $avatar->setUser($this);
         }
 

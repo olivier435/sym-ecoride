@@ -24,6 +24,14 @@ return [
         'path' => './assets/js/resetpw.js',
         'entrypoint' => true,
     ],
+    'updatepw' => [
+        'path' => './assets/js/updatepw.js',
+        'entrypoint' => true,
+    ],
+    'deleteAccount' => [
+        'path' => './assets/js/deleteAccount.js',
+        'entrypoint' => true,
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],
