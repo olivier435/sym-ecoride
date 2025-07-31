@@ -19,9 +19,30 @@ final class CarController extends AbstractController
     {
         $user = $this->getUser();
         $car = new Car();
+        $car->setUser($user);
         $form = $this->createForm(CarForm::class, $car);
         $form->handleRequest($request);
-        
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Formatage de la couleur (ex: gris métallisé => Gris Métallisé)
+            $color = $form->get('color')->getData();
+            $formattedColor = ucwords(mb_strtolower(trim($color)));
+            $car->setColor($formattedColor);
+            // Normalisation de l'immatriculation (AA123AA -> AA-123-AA)
+            $registration = strtoupper($form->get('registration')->getData());
+            $registration = preg_replace('/[^A-Z0-9]/', '', $registration); // Supprime tout sauf lettres/chiffres
+            if (preg_match('/^([A-Z]{2})(\d{3})([A-Z]{2})$/', $registration, $matches)) {
+                $formattedRegistration = sprintf('%s-%s-%s', $matches[1], $matches[2], $matches[3]);
+                $car->setRegistration($formattedRegistration);
+            }
+
+            $em->persist($car);
+            $em->flush();
+
+            $this->addFlash('success', 'Votre véhicule a été enregistré avec succès !');
+            return $this->redirectToRoute('app_home');
+        }
+
         return $this->render('car/index.html.twig', [
             'form' => $form,
         ]);

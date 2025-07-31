@@ -13,26 +13,33 @@
                     {{ form_errors(form) }}
                     {{ form_start(form, { attr: { 'data-controller': 'model-loader' } }) }}
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-md-6">
                             {{ form_row(form.energy, { attr: {'class': 'my-custom-class'} }) }}
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6">
                             {{ form_row(form.color, { attr: {'class': 'my-custom-class'} }) }}
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-6">
-                            {{ form_row(form.brand, { attr: { 'data-model-loader-target': 'brand' }}) }}
+                        <div class="col-md-6">
+                            {{ form_row(form.brand, { attr: {'data-model-loader-target': 'brand'} }) }}
                         </div>
-                        <div class="col-6">
-                            {{ form_row(form.model, { attr: { 'data-model-loader-target': 'model' }}) }}
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="model-select" class="form-label">Modèle</label>
+                                <select id="model-select" class="form-select" data-model-loader-target="modelSelect">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            {{ form_widget(form.model, { attr: {'data-model-loader-target': 'modelInput'} }) }}
+                            {{ form_errors(form.model) }}
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-md-6">
                             {{ form_row(form.registration, { attr: {'class': 'my-custom-class'} }) }}
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6">
                             {{ form_row(form.firstregistrationAt, { attr: {'class': 'my-custom-class'} }) }}
                         </div>
                     </div>

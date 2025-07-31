@@ -1,13 +1,16 @@
 import { Controller } from '@hotwired/stimulus'
 
 export default class extends Controller {
-    static targets = ['brand', 'model']
+    static targets = ['brand', 'modelSelect', 'modelInput']
 
     connect() {
         console.log('Stimulus model-loader connecté')
 
-        if (this.hasBrandTarget) {
+        if (this.hasBrandTarget && this.hasModelSelectTarget) {
             this.brandTarget.addEventListener('change', () => this.loadModels())
+            this.modelSelectTarget.addEventListener('change', () => {
+                this.modelInputTarget.value = this.modelSelectTarget.value
+            })
         }
 
         this.toggleModelField()
@@ -16,12 +19,13 @@ export default class extends Controller {
     loadModels() {
         const brandId = this.brandTarget.value
 
-        // Remet à zéro le champ modèle, même s'il n'y a pas de marque sélectionnée
-        this.modelTarget.innerHTML = ''
+        // Réinitialise les champs
+        this.modelSelectTarget.innerHTML = ''
         const placeholderOption = document.createElement('option')
         placeholderOption.value = ''
         placeholderOption.textContent = 'Sélectionner un modèle'
-        this.modelTarget.appendChild(placeholderOption)
+        this.modelSelectTarget.appendChild(placeholderOption)
+        this.modelInputTarget.value = ''
 
         if (!brandId) {
             this.toggleModelField()
@@ -35,13 +39,13 @@ export default class extends Controller {
                     const option = document.createElement('option')
                     option.value = model.id
                     option.textContent = model.name
-                    this.modelTarget.appendChild(option)
+                    this.modelSelectTarget.appendChild(option)
                 })
                 this.toggleModelField()
             })
     }
 
     toggleModelField() {
-        this.modelTarget.disabled = this.brandTarget.value === ''
+        this.modelSelectTarget.disabled = this.brandTarget.value === ''
     }
 }
