@@ -22,8 +22,36 @@ const closeAlertMessage = () => {
     }
 }
 
+// Fonction permettant de sélectionner les éléments du DOM
+const select = (el, all = false) => {
+    el = el.trim()
+    if (all) {
+        return [...document.querySelectorAll(el)]
+    } else {
+        return document.querySelector(el)
+    }
+}
+
+// Easy on scroll event listener
+const onscroll = (el, listener) => {
+    el.addEventListener('scroll', listener)
+}
+
+// Back to top button
+const backToTop = () => {
+    const backtotop = select('.back-to-top');
+    if (backtotop) {
+        const toggleBacktotop = () => {
+            backtotop.classList.toggle('active', window.scrollY > 100);
+        }
+        window.addEventListener('load', toggleBacktotop);
+        onscroll(document, toggleBacktotop);
+    }
+}
+
 const initPage = () => {
     closeAlertMessage();
+    backToTop();
 }
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
 document.addEventListener('load', initPage);

@@ -4,8 +4,9 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container pt-5">
-		<h1>Ca marche</h1>
+	<div class="d-flex flex-column flex-grow-1">
+		{% include "partials/_presentation.html.twig" %}
+		{% include "partials/_articles.html.twig" %}
 	</div>
 	{% include "shared/_footer_second.html.twig" %}
 {% endblock %}
