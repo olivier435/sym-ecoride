@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Car;
+use App\Form\CarForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,8 +19,11 @@ final class CarController extends AbstractController
     {
         $user = $this->getUser();
         $car = new Car();
+        $form = $this->createForm(CarForm::class, $car);
+        $form->handleRequest($request);
+        
         return $this->render('car/index.html.twig', [
-            'controller_name' => 'CarController',
+            'form' => $form,
         ]);
     }
 }

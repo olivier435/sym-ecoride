@@ -1,5 +1,8 @@
 import { startStimulusApp } from '@symfony/stimulus-bundle';
+import ModelLoaderController from './controllers/model_loader_controller.js';
+import RegistrationFormatterController from './controllers/registration_formatter_controller.js';
 
 const app = startStimulusApp();
 // register any custom, 3rd party controllers here
-// app.register('some_controller_name', SomeImportedController);
+app.register('model-loader', ModelLoaderController);
+app.register('registration-formatter', RegistrationFormatterController);

@@ -49,6 +49,10 @@ class Car
         max: 10,
         maxMessage: 'L\'immatriculation ne peut pas dépasser {{ limit }} caractères.'
     )]
+    #[Assert\Regex(
+        pattern: '/^[A-Z]{2}-\d{3}-[A-Z]{2}$/',
+        message: 'L\'immatriculation doit être au format AA-123-AA.'
+    )]
     private ?string $registration = null;
 
     #[ORM\Column(length: 255)]
