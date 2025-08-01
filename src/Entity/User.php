@@ -10,10 +10,10 @@ use libphonenumber\PhoneNumber;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use ZipCodeValidator\Constraints\ZipCode;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use ZipCodeValidator\Constraints\ZipCode;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -107,9 +107,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\OneToMany(targetEntity: Car::class, mappedBy: 'user')]
     private Collection $cars;
 
+    /**
+     * @var Collection<int, Trip>
+     */
+    #[ORM\OneToMany(targetEntity: Trip::class, mappedBy: 'driver')]
+    private Collection $tripsAsDriver;
+
+    /**
+     * @var Collection<int, Trip>
+     */
+    #[ORM\ManyToMany(targetEntity: Trip::class, mappedBy: 'passengers')]
+    private Collection $tripsAsPassenger;
+
     public function __construct()
     {
         $this->cars = new ArrayCollection();
+        $this->tripsAsDriver = new ArrayCollection();
+        $this->tripsAsPassenger = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -176,10 +190,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this;
     }
 
-    #[\Deprecated]
+    /**
+     * @see UserInterface
+     */
     public function eraseCredentials(): void
     {
-        // @deprecated, to be removed when upgrading to Symfony 8
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     public function getFirstname(): ?string
@@ -361,6 +378,65 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
             if ($car->getUser() === $this) {
                 $car->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Trip>
+     */
+    public function getTripsAsDriver(): Collection
+    {
+        return $this->tripsAsDriver;
+    }
+
+    public function addTripsAsDriver(Trip $tripsAsDriver): static
+    {
+        if (!$this->tripsAsDriver->contains($tripsAsDriver)) {
+            $this->tripsAsDriver->add($tripsAsDriver);
+            $tripsAsDriver->setDriver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTripsAsDriver(Trip $tripsAsDriver): static
+    {
+        if ($this->tripsAsDriver->removeElement($tripsAsDriver)) {
+            // set the owning side to null (unless already changed)
+            if ($tripsAsDriver->getDriver() === $this) {
+                $tripsAsDriver->setDriver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Trip>
+     */
+    public function getTripsAsPassenger(): Collection
+    {
+        return $this->tripsAsPassenger;
+    }
+
+    public function addTripsAsPassenger(Trip $trip): static
+    {
+        if (!$this->tripsAsPassenger->contains($trip)) {
+            $this->tripsAsPassenger->add($trip);
+            if (!$trip->getPassengers()->contains($this)) {
+                $trip->addPassenger($this);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeTripsAsPassenger(Trip $tripsAsPassenger): static
+    {
+        if ($this->tripsAsPassenger->removeElement($tripsAsPassenger)) {
+            $tripsAsPassenger->removePassenger($this);
         }
 
         return $this;

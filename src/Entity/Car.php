@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CarRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -82,6 +84,17 @@ class Car
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: 'Le modèle est obligatoire.')]
     private ?Model $model = null;
+
+    /**
+     * @var Collection<int, Trip>
+     */
+    #[ORM\OneToMany(targetEntity: Trip::class, mappedBy: 'car')]
+    private Collection $trips;
+
+    public function __construct()
+    {
+        $this->trips = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -187,5 +200,35 @@ class Car
         }
 
         return sprintf('%s %s', $brandName, $modelName);
+    }
+
+    /**
+     * @return Collection<int, Trip>
+     */
+    public function getTrips(): Collection
+    {
+        return $this->trips;
+    }
+
+    public function addTrip(Trip $trip): static
+    {
+        if (!$this->trips->contains($trip)) {
+            $this->trips->add($trip);
+            $trip->setCar($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTrip(Trip $trip): static
+    {
+        if ($this->trips->removeElement($trip)) {
+            // set the owning side to null (unless already changed)
+            if ($trip->getCar() === $this) {
+                $trip->setCar(null);
+            }
+        }
+
+        return $this;
     }
 }
