@@ -8,16 +8,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/trip/create/price', name: 'app_trip_wizard_price')]
 #[IsGranted('ROLE_USER')]
 final class PriceController extends AbstractController
 {
-    public function __invoke(Request $request, TripCreationStorage $storage): Response
+    use WizardRedirectTrait;
+
+    public function __invoke(Request $request, TripCreationStorage $storage, UrlGeneratorInterface $urlGenerator): Response
     {
         $data = $storage->getData();
-
         $form = $this->createForm(TripPriceFormType::class, [
             'pricePerPerson' => $data['pricePerPerson'] ?? 1000, // par défaut : 10 €
         ]);
@@ -28,7 +30,7 @@ final class PriceController extends AbstractController
 
             $storage->saveStepData(['pricePerPerson' => $formData['pricePerPerson']]);
 
-            return $this->redirectToRoute('app_trip_wizard_vehicle');
+            return $this->redirectAfterStep('app_trip_wizard_vehicle', $request, $urlGenerator);
         }
 
         return $this->render('trip_wizard/price.html.twig', [

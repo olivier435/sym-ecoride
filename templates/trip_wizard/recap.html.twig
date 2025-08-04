@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Récapitulatif du trajet
+{% endblock %}
+
+{% block body %}
+	<div class="container py-5">
+		<h1 class="mb-4">Récapitulatif de votre trajet</h1>
+
+		<table class="table table-bordered">
+			<tbody>
+				<tr>
+					<th scope="row">Adresse de départ</th>
+					<td>{{ data.departureAddress }}</td>
+					<td class="text-end">
+						<a href="{{ path('app_trip_wizard_departure', { fromRecap: 1 }) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Adresse d'arrivée</th>
+					<td>{{ data.arrivalAddress }}</td>
+					<td class="text-end">
+						<a href="{{ path('app_trip_wizard_arrival', { fromRecap: 1 }) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Date de départ</th>
+					<td>{{ data.departureDate|date('d/m/Y') }}</td>
+					<td class="text-end">
+						<a href="{{ path('app_trip_wizard_departure_date', { fromRecap: 1 }) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Heure de départ</th>
+					<td>{{ data.departureTime|date('H:i') }}</td>
+					<td class="text-end">
+						<a href="{{ path('app_trip_wizard_departure_time', { fromRecap: 1 }) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Date d'arrivée</th>
+					<td>{{ data.arrivalDate|date('d/m/Y') }}</td>
+					<td class="text-end">
+						<a href="{{ path('app_trip_wizard_arrival_date', { fromRecap: 1 }) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Heure d'arrivée</th>
+					<td>{{ data.arrivalTime|date('H:i') }}</td>
+					<td class="text-end">
+						<a href="{{ path('app_trip_wizard_arrival_date', { fromRecap: 1 }) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Places disponibles</th>
+					<td>{{ data.seatsAvailable }}</td>
+					<td class="text-end">
+						<a href="{{ path('app_trip_wizard_seats', { fromRecap: 1 }) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Prix par personne</th>
+					<td>{{ data.pricePerPerson | amount }}</td>
+					<td class="text-end">
+						<a href="{{ path('app_trip_wizard_price', { fromRecap: 1 }) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Véhicule</th>
+					<td>
+						{% if car %}
+							{{ car.brand.name }}
+							{{ car.model.name }}
+							({{ car.color }})
+						{% else %}
+							Non précisé
+						{% endif %}
+					</td>
+					<td class="text-end">
+						<a href="{{ path('app_trip_wizard_vehicle', { fromRecap: 1 }) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="mt-4 text-end">
+			<a href="{{ path('app_trip_finalize') }}" class="btn btn-success">Publier le trajet</a>
+		</div>
+	</div>
+{% endblock %}

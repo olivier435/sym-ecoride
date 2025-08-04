@@ -4,6 +4,7 @@ namespace App\Controller\TripWizard;
 
 use App\Entity\User;
 use App\Form\Trip\TripVehiculeFormType;
+use App\Repository\CarRepository;
 use App\Service\TripCreationStorage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,12 +12,15 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class TripVehicleController extends AbstractController
 {
+    use WizardRedirectTrait;
+
     #[Route('/trip/create/vehicle', name: 'app_trip_wizard_vehicle')]
     #[IsGranted('ROLE_USER')]
-    public function __invoke(Request $request, TripCreationStorage $storage): Response
+    public function __invoke(Request $request, TripCreationStorage $storage, CarRepository $carRepository, UrlGeneratorInterface $urlGenerator): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -30,7 +34,14 @@ final class TripVehicleController extends AbstractController
         }
 
         // Sinon, affichage du formulaire de choix du véhicule
-        $form = $this->createForm(TripVehiculeFormType::class, null, [
+        $data = $storage->getData();
+        $carSelected = null;
+        if (isset($data['carId'])) {
+            $carSelected = $carRepository->find($data['carId']);
+        }
+        $form = $this->createForm(TripVehiculeFormType::class, [
+            'car' => $carSelected // $carSelected = récupérer Car depuis $data['carId']
+        ], [
             'user' => $user,
         ]);
         $form->handleRequest($request);
@@ -44,7 +55,7 @@ final class TripVehicleController extends AbstractController
             }
 
             $storage->saveStepData(['carId' => $car->getId()]);
-            return $this->redirectToRoute('app_trip_wizard_arrival_date');
+            return $this->redirectAfterStep('app_trip_wizard_arrival_date', $request, $urlGenerator);
         }
 
         return $this->render('trip_wizard/vehicle.html.twig', [
