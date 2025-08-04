@@ -5,22 +5,34 @@ export default class extends Controller {
 
     connect() {
         if (this.hasInputTarget) {
-            // Format lors du blur (perte de focus)
             this.inputTarget.addEventListener('blur', () => this.formatAddress())
-
-            // Format même si l'utilisateur clique directement sur "Continuer"
             this.element.closest('form')?.addEventListener('submit', () => this.formatAddress())
         }
     }
 
     formatAddress() {
         let value = this.inputTarget.value.trim()
-
         if (value === '') return
 
-        const parts = value.split(',')
-        const street = parts[0] ? this.capitalizeWords(parts[0].trim()) : ''
-        const postalAndCity = parts[1] ? parts[1].trim().toUpperCase() : ''
+        // Si l'utilisateur a déjà saisi une virgule, on split sur la première
+        let street = ''
+        let postalAndCity = ''
+
+        if (value.includes(',')) {
+            const parts = value.split(',')
+            street = this.capitalizeWords(parts[0].trim())
+            postalAndCity = parts[1]?.trim().toUpperCase() ?? ''
+        } else {
+            // Sinon on tente de séparer à partir du code postal
+            const match = value.match(/(.*?)(\d{5}\s+[A-Za-zÀ-ÿ -]+)$/u)
+            if (match) {
+                street = this.capitalizeWords(match[1].trim())
+                postalAndCity = match[2].trim().toUpperCase()
+            } else {
+                // Fallback si format inconnu
+                street = this.capitalizeWords(value)
+            }
+        }
 
         const finalValue = [street, postalAndCity].filter(Boolean).join(', ')
         this.inputTarget.value = finalValue
@@ -29,6 +41,6 @@ export default class extends Controller {
     capitalizeWords(str) {
         return str
             .toLowerCase()
-            .replace(/\b\w/g, c => c.toUpperCase()) // première lettre de chaque mot
+            .replace(/\b\w/g, c => c.toUpperCase())
     }
 }

@@ -17,7 +17,9 @@ class ValidAddressValidator extends ConstraintValidator
             return;
         }
 
-        if (!is_string($value) || !preg_match('/^.+,\s*\d{5}\s+[A-Za-zÀ-ÿ -]+$/u', $value)) {
+        // Format attendu : [quelque chose], [code postal] [ville]
+        // Exemple valide : "Chemin des Vignes, 34000 Montpellier"
+        if (!is_string($value) || !preg_match('/^.+,\s*\d{5}\s+[A-Za-zÀ-ÿ\'"éèàç\s-]+$/u', $value)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ string }}', (string) $value)
                 ->addViolation();
