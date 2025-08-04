@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Combien de places proposez-vous ?
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5" data-controller="seats-counter">
+        <div class="vr4s70">
+            <h1 class="h06k9w">
+                <span class="pq759c">Combien de places proposez-vous ?</span>
+            </h1>
+            {{ form_start(form) }}
+            <div class="form-group">
+                {{ form_errors(form) }}
+            </div>
+            <div class="row">
+                <div class="col">
+                    {{ form_widget(form.seatsAvailable) }}
+                    <div class="d-flex align-items-center justify-content-between gap-3">
+                        <button type="button" class="btn btn-outline-secondary" data-action="click->seats-counter#decrement">
+                            <i class="bi bi-dash-lg"></i>
+                        </button>
+                        <div data-seats-counter-target="display" class="fs-1 fw-bold">1</div>
+                        <button type="button" class="btn btn-outline-secondary" data-action="click->seats-counter#increment">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="xyo4ps">
+                <hr class="h24ub2">
+            </div>
+            <div class="ts6dy9">
+                <button type="submit" class="btn btn-primary mt-3">Continuer</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

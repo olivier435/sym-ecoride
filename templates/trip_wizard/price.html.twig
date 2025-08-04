@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Prix par personne
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="vr4s70">
+            <h1 class="h06k9w">
+                <span class="pq759c">Quel est le prix par personne ?</span>
+            </h1>
+            {{ form_start(form, { attr: { 'data-controller': 'price' } }) }}
+            <div class="form-group">
+                {{ form_errors(form) }}
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex align-items-center justify-content-between gap-3">
+                        <button type="button" class="btn btn-outline-secondary" data-action="price#decrement">
+                            <i class="bi bi-dash-lg"></i>
+                        </button>
+                        {{ form_widget(form.pricePerPerson) }}
+                        <button type="button" class="btn btn-outline-secondary" data-action="price#increment">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="xyo4ps">
+                <hr class="h24ub2">
+            </div>
+            <div class="ts6dy9">
+                <button type="submit" class="btn btn-primary mt-3">Continuer</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

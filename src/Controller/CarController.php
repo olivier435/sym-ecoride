@@ -40,6 +40,11 @@ final class CarController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Votre véhicule a été enregistré avec succès !');
+            // Redirection vers le wizard si flag fromWizard
+            if ($request->query->getBoolean('fromWizard')) {
+                return $this->redirectToRoute('app_trip_wizard_vehicle');
+            }
+
             return $this->redirectToRoute('app_home');
         }
 

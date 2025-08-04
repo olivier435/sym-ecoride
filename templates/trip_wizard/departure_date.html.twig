@@ -1,24 +1,5 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Quand partez-vous ?
-{% endblock %}
-
-{% block body %}
-    <div class="container py-5">
-        <h1 class="mb-4">Quand partez-vous ?</h1>
-
-        {{ form_start(form) }}
-        <div class="form-group text-danger">
-            {{ form_errors(form) }}
-        </div>
-        <div class="row">
-            <div class="col">
-                {{ form_row(form.departureDate) }}
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">
-            Continuer
-        </button>
-        {{ form_end(form) }}
-    </div>
-{% endblock %}
+{% include 'trip_wizard/_form_step.html.twig' with {
+    title: "Quand partez-vous ?",
+    form: form,
+    useAddressFormatter: false
+} %}

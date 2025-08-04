@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sélection du véhicule
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="vr4s70">
+            <h1 class="h06k9w">
+                <span class="pq759c">Quel véhicule souhaitez-vous utiliser ?</span>
+            </h1>
+            {{ form_start(form) }}
+            <div class="form-group">
+                {{ form_errors(form) }}
+            </div>
+            <div class="row">
+                <div class="col">
+                    {{ form_row(form.car) }}
+                    <div class="mt-3">
+                        <a href="{{ path('app_car_create', { fromWizard: 1 }) }}" class="btn btn-outline-primary">
+                            <i class="bi bi-plus-circle"></i>
+                            Ajouter un nouveau véhicule
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="xyo4ps">
+                <hr class="h24ub2">
+            </div>
+            <div class="ts6dy9">
+                <button type="submit" class="btn btn-primary mt-3">Continuer</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

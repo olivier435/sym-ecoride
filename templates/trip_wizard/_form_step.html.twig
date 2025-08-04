@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="vr4s70">
+            <h1 class="h06k9w">
+                <span class="pq759c">{{ title }}</span>
+            </h1>
+            {{ form_start(form, { attr: useAddressFormatter ? { 'data-controller': 'address-formatter' } : {} }) }}
+            <div class="form-group">
+                {{ form_errors(form) }}
+            </div>
+            <div class="row">
+                <div class="col">
+                    {% for field in form %}
+                        {{ form_row(field) }}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="xyo4ps">
+                <hr class="h24ub2">
+            </div>
+            <div class="ts6dy9">
+                <button type="submit" class="btn btn-primary mt-3">Continuer</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

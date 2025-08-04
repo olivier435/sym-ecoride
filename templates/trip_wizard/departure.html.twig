@@ -1,18 +1,5 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Publier un trajet - Étape 1
-{% endblock %}
-
-{% block body %}
-	<div class="container mt-5">
-		<h1>D'où partez-vous ?</h1>
-
-		{{ form_start(form, { attr: { 'data-controller': 'address-formatter' }}) }}
-		<div class="form-group text-danger">
-			{{ form_errors(form) }}
-		</div>
-		{{ form_row(form.departureAddress) }}
-		<button class="btn btn-primary mt-3">Continuer</button>
-		{{ form_end(form) }}
-	</div>
-{% endblock %}
+{% include "trip_wizard/_form_step.html.twig" with {
+    title: "D'où partez-vous ?",
+    form: form,
+    useAddressFormatter: true
+}%}
