@@ -2,6 +2,7 @@
 
 namespace App\Form\Trip;
 
+use App\Validator\ValidAddress;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,6 +22,7 @@ class TripDepartureFormType extends AbstractType
                 ],
                 'constraints' => [
                     new NotBlank(['message' => 'Veuillez saisir une adresse de départ']),
+                    new ValidAddress(),
                 ]
             ]);
     }

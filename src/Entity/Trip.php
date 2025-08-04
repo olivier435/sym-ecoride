@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator as CustomAssert;
 
 #[ORM\Entity(repositoryClass: TripRepository::class)]
 class Trip
@@ -28,7 +29,7 @@ class Trip
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    #[Assert\GreaterThanOrEqual('today')]
+    #[Assert\GreaterThanOrEqual('today', message: 'La date de départ ne peut pas être dans le passé.')]
     private ?\DateTimeImmutable $departureDate = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
@@ -41,11 +42,11 @@ class Trip
     private ?\DateTimeInterface $arrivalTime = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank()]
+    #[CustomAssert\ValidAddress()]
     private ?string $departureAddress = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank()]
+    #[CustomAssert\ValidAddress()]
     private ?string $arrivalAddress = null;
 
     #[ORM\Column(length: 255)]
