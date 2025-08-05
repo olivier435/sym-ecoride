@@ -77,6 +77,12 @@ class Trip
     #[ORM\JoinTable(name: 'trip_passengers')]
     private Collection $passengers;
 
+    #[ORM\Column(length: 100)]
+    private ?string $departureCity = null;
+
+    #[ORM\Column(length: 100)]
+    private ?string $arrivalCity = null;
+
     public function __construct()
     {
         $this->passengers = new ArrayCollection();
@@ -273,5 +279,29 @@ class Trip
             );
 
         return $arrivalDateTime > $now;
+    }
+
+    public function getDepartureCity(): ?string
+    {
+        return $this->departureCity;
+    }
+
+    public function setDepartureCity(string $departureCity): static
+    {
+        $this->departureCity = $departureCity;
+
+        return $this;
+    }
+
+    public function getArrivalCity(): ?string
+    {
+        return $this->arrivalCity;
+    }
+
+    public function setArrivalCity(string $arrivalCity): static
+    {
+        $this->arrivalCity = $arrivalCity;
+
+        return $this;
     }
 }

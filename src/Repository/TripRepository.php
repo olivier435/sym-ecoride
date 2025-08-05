@@ -28,6 +28,46 @@ class TripRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findMatchingTrips(string $departureCity, string $arrivalCity, \DateTimeInterface $date): array
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->addSelect('car', 'driver', 'avatar')
+            ->join('t.car', 'car')
+            ->join('t.driver', 'driver')
+            ->leftJoin('driver.avatar', 'avatar')
+            ->andWhere('t.seatsAvailable > 0')
+            ->andWhere('LOWER(t.departureCity) = :departureCity')
+            ->andWhere('LOWER(t.arrivalCity) = :arrivalCity')
+            ->andWhere('t.departureDate = :date')
+            ->setParameter('departureCity', mb_strtolower($departureCity))
+            ->setParameter('arrivalCity', mb_strtolower($arrivalCity))
+            ->setParameter('date', $date instanceof \DateTimeImmutable ? $date : \DateTimeImmutable::createFromMutable($date))
+            ->orderBy('t.departureTime', 'ASC');
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function findNextAvailableDate(string $departureCity, string $arrivalCity, \DateTimeInterface $after): ?\DateTimeInterface
+    {
+        $result = $this->createQueryBuilder('t')
+            ->select('t.departureDate')
+            ->andWhere('t.seatsAvailable > 0')
+            ->andWhere('LOWER(t.departureCity) = :departureCity')
+            ->andWhere('LOWER(t.arrivalCity) = :arrivalCity')
+            ->andWhere('t.departureDate > :after')
+            ->orderBy('t.departureDate', 'ASC')
+            ->setParameter('departureCity', mb_strtolower($departureCity))
+            ->setParameter('arrivalCity', mb_strtolower($arrivalCity))
+            ->setParameter('after', $after)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        // ✅ On accède au champ du tableau retourné
+        return $result['departureDate'] ?? null;
+    }
+
     //    /**
     //     * @return Trip[] Returns an array of Trip objects
     //     */

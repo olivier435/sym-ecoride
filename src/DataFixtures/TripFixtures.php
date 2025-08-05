@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Trip;
 use App\Entity\User;
+use App\Service\CityExtractor;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -11,6 +12,8 @@ use Faker\Factory;
 
 class TripFixtures extends Fixture implements FixtureGroupInterface
 {
+    public function __construct(private CityExtractor $cityExtractor) {}
+
     public static function getGroups(): array
     {
         return ['trip'];
@@ -53,8 +56,14 @@ class TripFixtures extends Fixture implements FixtureGroupInterface
                 $trip->setDepartureTime(\DateTimeImmutable::createFromMutable($departureTime))
                     ->setArrivalTime(\DateTimeImmutable::createFromMutable($arrivalTime));
 
-                $trip->setDepartureAddress($faker->streetAddress . ', ' . $faker->postcode . ' ' . $faker->city)
-                    ->setArrivalAddress($faker->streetAddress . ', ' . $faker->postcode . ' ' . $faker->city)
+                // Adresses
+                $departureAddress = $faker->streetAddress . ', ' . $faker->postcode . ' ' . $faker->city;
+                $arrivalAddress = $faker->streetAddress . ', ' . $faker->postcode . ' ' . $faker->city;
+
+                $trip->setDepartureAddress($departureAddress)
+                    ->setArrivalAddress($arrivalAddress)
+                    ->setDepartureCity($this->cityExtractor->extractFromAddress($departureAddress))
+                    ->setArrivalCity($this->cityExtractor->extractFromAddress($arrivalAddress))
                     ->setStatus($faker->randomElement(Trip::STATUSES))
                     ->setSeatsAvailable($faker->numberBetween(1, 4))
                     ->setPricePerPerson($faker->numberBetween(500, 4000));

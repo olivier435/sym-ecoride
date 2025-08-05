@@ -4,9 +4,10 @@ namespace App\Controller\TripWizard;
 
 use App\Entity\Trip;
 use App\Entity\User;
-use DateTimeImmutable;
 use App\Repository\CarRepository;
+use App\Service\CityExtractor;
 use App\Service\TripCreationStorage;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -16,7 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[IsGranted('ROLE_USER')]
 final class TripFinalizeController extends AbstractController
 {
-    public function __invoke(TripCreationStorage $storage, EntityManagerInterface $em, CarRepository $carRepository)
+    public function __invoke(TripCreationStorage $storage, EntityManagerInterface $em, CarRepository $carRepository, CityExtractor $cityExtractor)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -34,7 +35,6 @@ final class TripFinalizeController extends AbstractController
             'pricePerPerson',
             'carId',
         ];
-
         foreach ($requiredKeys as $key) {
             if (!isset($data[$key])) {
                 $this->addFlash('danger', 'Des informations manquent dans votre trajet.');
@@ -47,7 +47,6 @@ final class TripFinalizeController extends AbstractController
         if (!$car || $car->getUser() !== $user) {
             throw $this->createAccessDeniedException('Ce véhicule ne vous appartient pas.');
         }
-
 
         // Récupération et conversion sécurisée des dates/heures
         $departureDate = $data['departureDate'] instanceof DateTimeImmutable
@@ -78,7 +77,9 @@ final class TripFinalizeController extends AbstractController
             ->setSeatsAvailable($data['seatsAvailable'])
             ->setPricePerPerson($data['pricePerPerson'])
             ->setStatus(Trip::STATUS_UPCOMING)
-            ->setCar($car);
+            ->setCar($car)
+            ->setDepartureCity($cityExtractor->extractFromAddress($trip->getDepartureAddress()))
+            ->setArrivalCity($cityExtractor->extractFromAddress($trip->getArrivalAddress()));
 
         $em->persist($trip);
         $em->flush();
@@ -88,6 +89,6 @@ final class TripFinalizeController extends AbstractController
 
         $this->addFlash('success', 'Votre trajet a bien été publié !');
 
-        return $this->redirectToRoute('app_home'); // TODO REdirection vers la liste des covoiturages
+        return $this->redirectToRoute('app_trip_driver_list');
     }
 }

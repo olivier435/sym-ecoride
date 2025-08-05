@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Trip;
 use App\Entity\User;
 use App\Form\TripForm;
+use App\Service\CityExtractor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,7 +52,7 @@ final class TripController extends AbstractController
 
     #[Route('/edit/{id}', name: 'app_trip_edit')]
     #[IsGranted('ROLE_USER')]
-    public function edit(Trip $trip, Request $request, EntityManagerInterface $em): Response
+    public function edit(Trip $trip, Request $request, EntityManagerInterface $em, CityExtractor $cityExtractor): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -79,6 +80,8 @@ final class TripController extends AbstractController
                 return $this->redirectToRoute('app_trip_edit', ['id' => $trip->getId()]);
             }
 
+            $trip->setDepartureCity($cityExtractor->extractFromAddress($trip->getDepartureAddress()))
+                ->setArrivalCity($cityExtractor->extractFromAddress($trip->getArrivalAddress()));
             $em->flush();
 
             $this->addFlash('success', 'Le trajet a bien été mis à jour.');
