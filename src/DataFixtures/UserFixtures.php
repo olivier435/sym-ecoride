@@ -13,12 +13,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture implements FixtureGroupInterface
 {
+    public function __construct(protected UserPasswordHasherInterface $passwordHasher, protected AvatarService $avatarService) {}
+
     public static function getGroups(): array
     {
         return ['user'];
     }
-
-    public function __construct(protected UserPasswordHasherInterface $passwordHasher, protected AvatarService $avatarService) {}
 
     public function load(ObjectManager $manager): void
     {
@@ -38,6 +38,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
             ->setAdress($faker->streetAddress())
             ->setPostalCode($faker->postcode())
             ->setCity($faker->city())
+            ->setPseudo('admin')
             // ->setPhone($faker->phoneNumber())
             ->setPhone($adminPhoneNumberObject)
             ->setEmail("admin@gmail.com")
@@ -61,6 +62,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
                 ->setAdress($faker->streetAddress())
                 ->setPostalCode($faker->postcode())
                 ->setCity($faker->city())
+                ->setPseudo($faker->unique()->userName() . $u)
                 // ->setPhone($faker->phoneNumber())
                 ->setPhone($phoneNumberObject)
                 ->setPassword($hash);
