@@ -67,7 +67,7 @@ final class TripSearchController extends AbstractController
         }
 
         return $this->render('trip_search/search.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'trips' => $trips,
             'nextAvailableDate' => $nextAvailableDate,
             'isSubmitted' => $isSubmitted,
