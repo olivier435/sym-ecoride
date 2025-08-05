@@ -1,46 +1,55 @@
-import { Controller } from '@hotwired/stimulus'
+import {
+    Controller
+} from "@hotwired/stimulus";
 
 export default class extends Controller {
-    static targets = ['input']
+    static targets = ["input"];
 
     connect() {
         if (this.hasInputTarget) {
-            this.inputTarget.addEventListener('blur', () => this.formatAddress())
-            this.element.closest('form')?.addEventListener('submit', () => this.formatAddress())
+            this.inputTarget.addEventListener("blur", () => this.formatAddress());
+            this.element
+                .closest("form")
+                ?.addEventListener("submit", () => this.formatAddress());
         }
     }
 
     formatAddress() {
-        let value = this.inputTarget.value.trim()
-        if (value === '') return
+        let value = this.inputTarget.value.trim();
+        if (value === "") return;
 
-        // Si l'utilisateur a déjà saisi une virgule, on split sur la première
-        let street = ''
-        let postalAndCity = ''
+        let street = "";
+        let postalAndCity = "";
 
-        if (value.includes(',')) {
-            const parts = value.split(',')
-            street = this.capitalizeWords(parts[0].trim())
-            postalAndCity = parts[1]?.trim().toUpperCase() ?? ''
+        // Cas 1 : format avec code postal identifiable
+        const match = value.match(/^(.*?)(\d{5}\s+[A-Za-zÀ-ÿ \-']+)$/u);
+        if (match) {
+            street = this.cleanAndCapitalizeStreet(match[1]);
+            postalAndCity = match[2].trim().toUpperCase();
         } else {
-            // Sinon on tente de séparer à partir du code postal
-            const match = value.match(/(.*?)(\d{5}\s+[A-Za-zÀ-ÿ -]+)$/u)
-            if (match) {
-                street = this.capitalizeWords(match[1].trim())
-                postalAndCity = match[2].trim().toUpperCase()
+            // Cas 2 : au moins une virgule
+            const parts = value.split(",").map(p => p.trim()).filter(Boolean);
+            if (parts.length >= 2) {
+                postalAndCity = parts.pop().toUpperCase();
+                street = this.cleanAndCapitalizeStreet(parts.join(" "));
             } else {
-                // Fallback si format inconnu
-                street = this.capitalizeWords(value)
+                // Cas 3 : fallback
+                street = this.cleanAndCapitalizeStreet(value);
             }
         }
 
-        const finalValue = [street, postalAndCity].filter(Boolean).join(', ')
-        this.inputTarget.value = finalValue
+        const finalValue = [street, postalAndCity].filter(Boolean).join(", ");
+        this.inputTarget.value = finalValue;
     }
 
-    capitalizeWords(str) {
+    cleanAndCapitalizeStreet(str) {
         return str
-            .toLowerCase()
-            .replace(/\b\w/g, c => c.toUpperCase())
+            .replace(/,+/g, "") // retire toutes les virgules
+            .replace(/\s+/g, " ") // espace propre
+            .trim()
+            .toLocaleLowerCase("fr-FR")
+            .replace(/([\p{L}]+)/gu, (word) =>
+                word.charAt(0).toLocaleUpperCase("fr-FR") + word.slice(1)
+            );
     }
 }

@@ -4,6 +4,7 @@ import RegistrationFormatterController from './controllers/registration_formatte
 import AddressFormatterController from './controllers/address_formatter_controller.js';
 import SeatsCounterController from './controllers/seats_counter_controller.js';
 import PriceController from './controllers/price_controller.js';
+import TripDeleteController from './controllers/trip_delete_controller.js';
 
 const app = startStimulusApp();
 // register any custom, 3rd party controllers here
@@ -12,3 +13,4 @@ app.register('registration-formatter', RegistrationFormatterController);
 app.register('address-formatter', AddressFormatterController);
 app.register('seats-counter', SeatsCounterController);
 app.register('price', PriceController);
+app.register('trip-delete', TripDeleteController);

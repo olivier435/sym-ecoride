@@ -1,0 +1,58 @@
+<div class="q3rtro">
+	<a href="{{ path('app_trip_edit', { id: trip.id }) }}" class="w023w1">
+		<h2 class="his1ay">{{ trip.departureDate|format_datetime('full', 'none', locale: 'fr') }}</h2>
+		<span class="idzcua">
+			<span class="eapq5x">
+				<div class="tuz74s">
+					<div class="kd431k">
+						<div class="z3ew19 rp5p6k">
+							<p class="zvvcw9">
+								{{ trip.departureTime|date('H:i') }}
+							</p>
+							<div class="sg4oet">
+								<div class="ad9y9q">
+									<hr class="rzbszz">
+									<p class="c0nduo">{{ trip.departureTime|duration(trip.arrivalTime) }}</p>
+									<hr class="rzbszz">
+								</div>
+							</div>
+						</div>
+						<div class="ukp43u">
+							<div class="umbtue">
+								<hr class="x3od9x">
+							</div>
+						</div>
+						<div class="yguum2">
+							<p class="dzgwho augxu8">{{ trip.departureAddress|city }}</p>
+						</div>
+					</div>
+					<div class="kd431k">
+						<div class="b8q1qi">
+							<p class="zvvcw9">
+								{{ trip.arrivalTime|date('H:i') }}
+							</p>
+						</div>
+						<div class="ukp43u">
+							<div class="jjf7u2">
+								<hr class="x3od9x">
+							</div>
+						</div>
+						<div class="yguum2">
+							<p class="dzgwho">{{ trip.arrivalAddress|city }}</p>
+						</div>
+					</div>
+				</div>
+			</span>
+		</span>
+	</a>
+	{% if trip.isDeletable() %}
+		<form method="post" action="{{ path('app_trip_delete', {id: trip.id}) }}" data-controller="trip-delete" data-trip-delete-target="form" data-trip-id="{{ trip.id }}">
+			<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trip.id) }}">
+			<button type="submit" class="btn btn-outline-danger btn-sm ms-3" data-action="trip-delete#submit">
+				<i class="bi bi-trash"></i>
+				Supprimer
+			</button>
+		</form>
+	{% endif %}
+
+</div>

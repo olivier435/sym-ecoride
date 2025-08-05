@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes trajets
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="vr4s70">
+            <h1 class="mb-4 h06k9w">Vos trajets en tant que conducteur</h1>
+
+            {% for trip in trips %}
+                {% include 'partials/_trip_card.html.twig' with { trip: trip } %}
+            {% else %}
+                <p>Vous n'avez pas encore publié de trajet.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

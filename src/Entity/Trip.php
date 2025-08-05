@@ -255,4 +255,23 @@ class Trip
     {
         return sprintf('%s à %s (%s)', $this->departureAddress, $this->arrivalAddress, $this->departureDate?->format('d/m/Y'));
     }
+
+    public function isDeletable(): bool
+    {
+        $now = new \DateTimeImmutable();
+
+        // S'il n'y a aucun passager => toujours supprimable
+        if ($this->getPassengers()->isEmpty()) {
+            return true;
+        }
+
+        // Sinon, on vérifie si le trajet est encore en attente
+        $arrivalDateTime = $this->getArrivalDate()
+            ->setTime(
+                (int) $this->getArrivalTime()->format('H'),
+                (int) $this->getArrivalTime()->format('i')
+            );
+
+        return $arrivalDateTime > $now;
+    }
 }

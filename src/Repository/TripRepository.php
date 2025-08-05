@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Trip;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,6 +15,17 @@ class TripRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Trip::class);
+    }
+
+    public function findUpcomingByDriver(User $driver): array
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.driver = :driver')
+            ->setParameter('driver', $driver)
+            ->orderBy('t.departureDate', 'ASC')
+            ->addOrderBy('t.departureTime', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**
