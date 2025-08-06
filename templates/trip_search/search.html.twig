@@ -4,101 +4,45 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container py-5">
-        <h1 class="mb-4">Trouvez votre covoiturage</h1>
+	<div class="ygs0yx">
+		<h1 class="ywaehf">
+			<span class="pztveq">Trouvez votre covoiturage</span>
+		</h1>
+		<div class="a909r8">
+			<div data-controller="trip-search" class="vs3pdd">
+				{{ form_start(form, {
+                attr: {
+                    'data-trip-search-target': 'form'
+                }
+            }) }}
+				<div class="row g-3 align-items-center justify-content-center">
+					<div class="col-md-3">
+						{{ form_widget(form.departureCity, { 'attr': {
+                            'data-trip-search-target': 'departureCity',
+                            'id': 'trip_search_departureCity', 
+                            'autocomplete': 'off'
+                            }
+                        }) }}
+					</div>
+					<div class="col-md-3">
+						{{ form_widget(form.arrivalCity, { 'attr': {
+                            'data-trip-search-target': 'arrivalCity',
+                            'id': 'trip_search_arrivalCity',
+                            'autocomplete': 'off'
+                            }
+                        }) }}
+					</div>
+					<div class="col-md-3">
+						{{ form_widget(form.date, {'attr': {'data-trip-search-target': 'date'}}) }}
+					</div>
+					<div class="col-md-1 d-grid">
+						{{ form_widget(form.search) }}
+					</div>
+				</div>
+				{{ form_end(form) }}
 
-        {{ form_start(form) }}
-        <div class="row g-3">
-            <div class="col-md-4">
-                {{ form_row(form.departureCity) }}
-            </div>
-            <div class="col-md-4">
-                {{ form_row(form.arrivalCity) }}
-            </div>
-            <div class="col-md-3">
-                {{ form_row(form.date) }}
-            </div>
-            <div class="col-md-1 d-grid">
-                {{ form_row(form.search) }}
-            </div>
-        </div>
-        {{ form_end(form) }}
-
-        <hr class="my-5">
-
-        {% if trips is not empty %}
-            <h2>{{ trips|length }}
-                résultat{{ trips|length > 1 ? 's' : '' }}
-                trouvé{{ trips|length > 1 ? 's' : '' }}</h2>
-            <div class="row mt-4">
-                {% for trip in trips %}
-                    <div class="col-md-6 mb-4">
-                        <div class="card shadow-sm">
-                            <div class="card-body d-flex flex-column">
-                                <div class="d-flex align-items-center mb-3">
-                                    {% set avatarPath = vich_uploader_asset(trip.driver.avatar, 'imageFile') %}
-                                    <img src="{{ avatarPath }}" alt="Photo de profil" class="rounded-circle me-3" width="50" height="50">
-                                    <div>
-                                        <h5 class="mb-0">{{ trip.driver.pseudo }}</h5>
-                                        <small class="text-muted">Note : ⭐
-                                            {{ trip.driver.rating|default('5.0') }}/5</small>
-                                    </div>
-                                </div>
-                                <p>
-                                    <strong>Départ :</strong>
-                                    {{ trip.departureDate|date('d/m/Y') }}
-                                    à
-                                    {{ trip.departureTime|date('H:i') }}<br>
-                                    <strong>Arrivée :</strong>
-                                    {{ trip.arrivalDate|date('d/m/Y') }}
-                                    à
-                                    {{ trip.arrivalTime|date('H:i') }}
-                                </p>
-                                <p>
-                                    <strong>De :</strong>
-                                    {{ trip.departureAddress|city }}<br>
-                                    <strong>À :</strong>
-                                    {{ trip.arrivalAddress|city }}
-                                </p>
-                                <p>
-                                    🚗
-                                    <strong>{{ trip.seatsAvailable }}</strong>
-                                    place{{ trip.seatsAvailable > 1 ? 's' : '' }}
-                                    restante{{ trip.seatsAvailable > 1 ? 's' : '' }}<br>
-                                    💰
-                                    <strong>{{ (trip.pricePerPerson)|amount }}
-                                        €</strong>
-                                    par personne<br>
-                                    {% if trip.car.energy == 'Electrique' %}
-                                        🌱
-                                        <span class="text-success fw-bold">Voyage écologique</span>
-                                    {% else %}
-                                        🚘
-                                        <span class="text-muted">Classique</span>
-                                    {% endif %}
-                                </p>
-
-                                <a href="#" class="btn btn-outline-primary mt-auto">Détail</a>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% elseif nextAvailableDate %}
-            <div class="alert alert-info mt-4">
-                Aucun trajet trouvé pour cette date, mais un trajet est disponible le
-                <strong>{{ nextAvailableDate|date('d/m/Y') }}</strong>.
-                <form method="get" action="{{ path('app_trip_search') }}">
-                    <input type="hidden" name="departureCity" value="{{ form.vars.data.departureCity }}">
-                    <input type="hidden" name="arrivalCity" value="{{ form.vars.data.arrivalCity }}">
-                    <input type="hidden" name="date" value="{{ nextAvailableDate|date('Y-m-d') }}">
-                    <button type="submit" class="btn btn-sm btn-primary mt-2">Voir ce jour</button>
-                </form>
-            </div>
-        {% elseif isSubmitted %}
-            <div class="alert alert-warning mt-4">
-                Aucun covoiturage ne correspond à votre recherche.
-            </div>
-        {% endif %}
-    </div>
+				<div data-trip-search-target="results"></div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

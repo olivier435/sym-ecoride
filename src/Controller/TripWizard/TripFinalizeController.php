@@ -5,7 +5,7 @@ namespace App\Controller\TripWizard;
 use App\Entity\Trip;
 use App\Entity\User;
 use App\Repository\CarRepository;
-use App\Service\CityExtractor;
+use App\Service\CityManager;
 use App\Service\TripCreationStorage;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,7 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[IsGranted('ROLE_USER')]
 final class TripFinalizeController extends AbstractController
 {
-    public function __invoke(TripCreationStorage $storage, EntityManagerInterface $em, CarRepository $carRepository, CityExtractor $cityExtractor)
+    public function __invoke(TripCreationStorage $storage, EntityManagerInterface $em, CarRepository $carRepository, CityManager $cityManager)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -78,11 +78,12 @@ final class TripFinalizeController extends AbstractController
             ->setPricePerPerson($data['pricePerPerson'])
             ->setStatus(Trip::STATUS_UPCOMING)
             ->setCar($car)
-            ->setDepartureCity($cityExtractor->extractFromAddress($trip->getDepartureAddress()))
-            ->setArrivalCity($cityExtractor->extractFromAddress($trip->getArrivalAddress()));
+            ->setDepartureCity($cityManager->getOrCreateCity($data['departureAddress']))
+            ->setArrivalCity($cityManager->getOrCreateCity($data['arrivalAddress']));
 
         $em->persist($trip);
         $em->flush();
+        $cityManager->purgeOrphanCities();
 
         // Nettoyage du storage
         $storage->clear();

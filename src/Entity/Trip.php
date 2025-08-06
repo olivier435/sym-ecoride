@@ -77,11 +77,13 @@ class Trip
     #[ORM\JoinTable(name: 'trip_passengers')]
     private Collection $passengers;
 
-    #[ORM\Column(length: 100)]
-    private ?string $departureCity = null;
+    #[ORM\ManyToOne(inversedBy: 'departureTrips')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?City $departureCity = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $arrivalCity = null;
+    #[ORM\ManyToOne(inversedBy: 'arrivalTrips')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?City $arrivalCity = null;
 
     public function __construct()
     {
@@ -281,24 +283,24 @@ class Trip
         return $arrivalDateTime > $now;
     }
 
-    public function getDepartureCity(): ?string
+    public function getDepartureCity(): ?City
     {
         return $this->departureCity;
     }
 
-    public function setDepartureCity(string $departureCity): static
+    public function setDepartureCity(?City $departureCity): static
     {
         $this->departureCity = $departureCity;
 
         return $this;
     }
 
-    public function getArrivalCity(): ?string
+    public function getArrivalCity(): ?City
     {
         return $this->arrivalCity;
     }
 
-    public function setArrivalCity(string $arrivalCity): static
+    public function setArrivalCity(?City $arrivalCity): static
     {
         $this->arrivalCity = $arrivalCity;
 

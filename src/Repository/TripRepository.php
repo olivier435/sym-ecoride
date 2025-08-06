@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\City;
 use App\Entity\Trip;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -28,7 +29,7 @@ class TripRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findMatchingTrips(string $departureCity, string $arrivalCity, \DateTimeInterface $date): array
+    public function findMatchingTrips(City $departureCity, City $arrivalCity, \DateTimeInterface $date): array
     {
         $qb = $this->createQueryBuilder('t')
             ->addSelect('car', 'driver', 'avatar')
@@ -36,35 +37,34 @@ class TripRepository extends ServiceEntityRepository
             ->join('t.driver', 'driver')
             ->leftJoin('driver.avatar', 'avatar')
             ->andWhere('t.seatsAvailable > 0')
-            ->andWhere('LOWER(t.departureCity) = :departureCity')
-            ->andWhere('LOWER(t.arrivalCity) = :arrivalCity')
+            ->andWhere('t.departureCity = :departureCity')
+            ->andWhere('t.arrivalCity = :arrivalCity')
             ->andWhere('t.departureDate = :date')
-            ->setParameter('departureCity', mb_strtolower($departureCity))
-            ->setParameter('arrivalCity', mb_strtolower($arrivalCity))
-            ->setParameter('date', $date instanceof \DateTimeImmutable ? $date : \DateTimeImmutable::createFromMutable($date))
+            ->setParameter('departureCity', $departureCity)
+            ->setParameter('arrivalCity', $arrivalCity)
+            ->setParameter('date', $date)
             ->orderBy('t.departureTime', 'ASC');
 
         return $qb->getQuery()
             ->getResult();
     }
 
-    public function findNextAvailableDate(string $departureCity, string $arrivalCity, \DateTimeInterface $after): ?\DateTimeInterface
+    public function findNextAvailableDate(City $departureCity, City $arrivalCity, \DateTimeInterface $after): ?\DateTimeInterface
     {
         $result = $this->createQueryBuilder('t')
             ->select('t.departureDate')
             ->andWhere('t.seatsAvailable > 0')
-            ->andWhere('LOWER(t.departureCity) = :departureCity')
-            ->andWhere('LOWER(t.arrivalCity) = :arrivalCity')
+            ->andWhere('t.departureCity = :departureCity')
+            ->andWhere('t.arrivalCity = :arrivalCity')
             ->andWhere('t.departureDate > :after')
-            ->orderBy('t.departureDate', 'ASC')
-            ->setParameter('departureCity', mb_strtolower($departureCity))
-            ->setParameter('arrivalCity', mb_strtolower($arrivalCity))
+            ->setParameter('departureCity', $departureCity)
+            ->setParameter('arrivalCity', $arrivalCity)
             ->setParameter('after', $after)
+            ->orderBy('t.departureDate', 'ASC')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
 
-        // ✅ On accède au champ du tableau retourné
         return $result['departureDate'] ?? null;
     }
 

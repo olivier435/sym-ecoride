@@ -4,7 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Trip;
 use App\Entity\User;
-use App\Service\CityExtractor;
+use App\Service\CityManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -12,7 +12,7 @@ use Faker\Factory;
 
 class TripFixtures extends Fixture implements FixtureGroupInterface
 {
-    public function __construct(private CityExtractor $cityExtractor) {}
+    public function __construct(private CityManager $cityManager) {}
 
     public static function getGroups(): array
     {
@@ -28,6 +28,9 @@ class TripFixtures extends Fixture implements FixtureGroupInterface
         if (empty($users)) {
             throw new \RuntimeException('Aucun utilisateur trouvé. Charge les UserFixtures d\'abord.');
         }
+
+        // Cache des villes déjà créées (pour éviter les doublons et limiter les requêtes)
+        $cityCache = [];
 
         foreach ($users as $user) {
             // On ne crée des trajets que si l'utilisateur a au moins un véhicule
@@ -56,14 +59,18 @@ class TripFixtures extends Fixture implements FixtureGroupInterface
                 $trip->setDepartureTime(\DateTimeImmutable::createFromMutable($departureTime))
                     ->setArrivalTime(\DateTimeImmutable::createFromMutable($arrivalTime));
 
-                // Adresses
-                $departureAddress = $faker->streetAddress . ', ' . $faker->postcode . ' ' . $faker->city;
-                $arrivalAddress = $faker->streetAddress . ', ' . $faker->postcode . ' ' . $faker->city;
+                // Génère les adresses
+                $departureAddress = $faker->streetAddress . ', ' . $faker->postcode . ' ' . mb_strtoupper($faker->city);
+                $arrivalAddress = $faker->streetAddress . ', ' . $faker->postcode . ' ' . mb_strtoupper($faker->city);
+
+                // Récupération/création des entités City
+                $departureCity = $this->cityManager->getOrCreateCity($departureAddress);
+                $arrivalCity   = $this->cityManager->getOrCreateCity($arrivalAddress);
 
                 $trip->setDepartureAddress($departureAddress)
                     ->setArrivalAddress($arrivalAddress)
-                    ->setDepartureCity($this->cityExtractor->extractFromAddress($departureAddress))
-                    ->setArrivalCity($this->cityExtractor->extractFromAddress($arrivalAddress))
+                    ->setDepartureCity($departureCity)
+                    ->setArrivalCity($arrivalCity)
                     ->setStatus($faker->randomElement(Trip::STATUSES))
                     ->setSeatsAvailable($faker->numberBetween(1, 4))
                     ->setPricePerPerson($faker->numberBetween(500, 4000));

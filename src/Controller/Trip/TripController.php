@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Trip;
 
 use App\Entity\Trip;
 use App\Entity\User;
 use App\Form\TripForm;
-use App\Service\CityExtractor;
+use App\Service\CityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,49 +17,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 #[Route('/trip')]
 final class TripController extends AbstractController
 {
-    #[Route('/create', name: 'app_trip_create')]
-    #[IsGranted('ROLE_USER')]
-    public function create(Request $request, EntityManagerInterface $em): Response
-    {
-        /** @var User */
-        $user = $this->getUser();
-
-        $trip = new Trip();
-        $trip->setDriver($user); // on assigne directement le conducteur
-
-        $form = $this->createForm(TripForm::class, $trip);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Sécurité : empêcher qu'un user choisisse une voiture qu'il ne possède pas
-            if ($trip->getCar()->getUser() !== $user) {
-                $this->addFlash('danger', 'Vous ne pouvez sélectionner que vos propres véhicules.');
-                return $this->redirectToRoute('app_trip_create');
-            }
-
-            $em->persist($trip);
-            $em->flush();
-
-            $this->addFlash('success', 'Le trajet a bien été enregistré !');
-
-            return $this->redirectToRoute('app_home');
-        }
-
-        return $this->render('trip/create.html.twig', [
-            'form' => $form,
-        ]);
-    }
-
     #[Route('/edit/{id}', name: 'app_trip_edit')]
     #[IsGranted('ROLE_USER')]
-    public function edit(Trip $trip, Request $request, EntityManagerInterface $em, CityExtractor $cityExtractor): Response
+    public function edit(Trip $trip, Request $request, EntityManagerInterface $em, CityManager $cityManager): Response
     {
         /** @var User $user */
         $user = $this->getUser();
 
         // Vérifie que l'utilisateur est bien le conducteur
         if ($trip->getDriver() !== $user) {
-            throw $this->createAccessDeniedException('Vous n\êtes pas autorisé à modifier ce trajet.');
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à modifier ce trajet.');
         }
 
         // Vérifie que la date de départ est dans le futur
@@ -80,9 +47,10 @@ final class TripController extends AbstractController
                 return $this->redirectToRoute('app_trip_edit', ['id' => $trip->getId()]);
             }
 
-            $trip->setDepartureCity($cityExtractor->extractFromAddress($trip->getDepartureAddress()))
-                ->setArrivalCity($cityExtractor->extractFromAddress($trip->getArrivalAddress()));
+            $trip->setDepartureCity($cityManager->getOrCreateCity($trip->getDepartureAddress()))
+                ->setArrivalCity($cityManager->getOrCreateCity($trip->getArrivalAddress()));
             $em->flush();
+            $cityManager->purgeOrphanCities();
 
             $this->addFlash('success', 'Le trajet a bien été mis à jour.');
             return $this->redirectToRoute('app_trip_driver_list');
@@ -96,7 +64,7 @@ final class TripController extends AbstractController
 
     #[Route('/delete/{id}', name: 'app_trip_delete', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function delete(Request $request, Trip $trip, EntityManagerInterface $em): JsonResponse
+    public function delete(Request $request, Trip $trip, EntityManagerInterface $em, CityManager $cityManager): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -112,6 +80,7 @@ final class TripController extends AbstractController
         if ($this->isCsrfTokenValid('delete' . $trip->getId(), $request->request->get('_token'))) {
             $em->remove($trip);
             $em->flush();
+            $cityManager->purgeOrphanCities();
             return new JsonResponse(['success' => true]);
         }
 
