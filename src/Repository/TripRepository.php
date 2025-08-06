@@ -80,13 +80,17 @@ class TripRepository extends ServiceEntityRepository
             ->join('t.driver', 'driver')
             ->leftJoin('driver.avatar', 'avatar')
             ->leftJoin('driver.travelPreference', 'tp')
-            ->andWhere('t.seatsAvailable > 0')
+            ->leftJoin('t.passengers', 'p')
             ->andWhere('t.departureCity = :departureCity')
             ->andWhere('t.arrivalCity = :arrivalCity')
             ->andWhere('t.departureDate = :date')
             ->setParameter('departureCity', $search->departureCity)
             ->setParameter('arrivalCity', $search->arrivalCity)
-            ->setParameter('date', $search->date);
+            ->setParameter('date', $search->date)
+            ->groupBy('t.id');
+
+        // Véritable nombre de places restantes = seatsAvailable - COUNT(p)
+        // $qb->having('t.seatsAvailable > COUNT(p.id)');
 
         if ($search->priceMax !== null) {
             $qb->andWhere('t.pricePerPerson <= :priceMax')

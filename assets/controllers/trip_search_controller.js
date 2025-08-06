@@ -65,14 +65,19 @@ export default class extends Controller {
                 <div class="row mt-4">
                 ${data.trips.map(trip => `
                     <div class="col-md-6 mb-4">
-                        <div class="card shadow-sm">
+                        <div class="card shadow-sm fgfump ${trip.isFull ? 'opacity-50 pointer-events-none' : ''}">
                             <div class="card-body d-flex flex-column">
-                                <div class="d-flex align-items-center mb-3">
-                                    <img src="${trip.driver.avatar || '/images/avatars/default.png'}" alt="Photo de profil" class="rounded-circle me-3" width="50" height="50">
-                                    <div>
-                                        <h5 class="mb-0">${trip.driver.pseudo}</h5>
-                                        <small class="text-muted">Note : ⭐</small>
-                                    </div>
+                                <div class="d-flex flex-row justify-content-between align-items-start flex-nowrap mb-3 w-100 sjlkpn">
+                                    <span class="nhzxx0">
+                                        <div class="lb096f">                                    
+                                            <img src="${trip.driver.avatar || '/images/avatars/default.png'}" alt="Photo de profil" class="rounded-circle me-3" width="50" height="50">
+                                            <div>
+                                                <h5 class="mb-0">${trip.driver.pseudo}</h5>
+                                                <small class="text-muted">Note : ⭐</small>
+                                            </div>
+                                        </div>                                    
+                                    </span>
+                                        ${trip.isFull ? `<span class="ht20ro"><p class="k2086f mb-0">Complet</p></span>` : ''}
                                 </div>
                                 <p>
                                     <strong>Départ :</strong> ${trip.departureDate} à ${trip.departureTime}<br>
@@ -87,7 +92,10 @@ export default class extends Controller {
                                     💰 <strong>${trip.pricePerPerson} €</strong> par personne<br>
                                     ${trip.isEco ? `<span class="text-success fw-bold">🌱 Voyage écologique</span>` : `<span class="text-muted">🚘 Classique</span>`}
                                 </p>
-                                <a href="#" class="btn btn-outline-primary mt-auto">Détail</a>
+                                ${trip.isFull
+                                    ? ''
+                                    : `<a href="#" class="btn btn-outline-primary mt-auto">Détail</a>`
+                                }
                             </div>
                         </div>
                     </div>

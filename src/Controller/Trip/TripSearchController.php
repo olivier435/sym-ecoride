@@ -111,6 +111,8 @@ final class TripSearchController extends AbstractController
                     $duration = ($interval->h * 60) + $interval->i;
                 }
 
+                $placesLeft = $trip->getSeatsAvailable() - $trip->getPassengers()->count();
+
                 return [
                     'id' => $trip->getId(),
                     'driver' => [
@@ -123,10 +125,11 @@ final class TripSearchController extends AbstractController
                     'arrivalTime' => $trip->getArrivalTime()?->format('H:i'),
                     'departureAddress' => $trip->getDepartureAddress() ?? '',
                     'arrivalAddress' => $trip->getArrivalAddress() ?? '',
-                    'seatsAvailable' => $trip->getSeatsAvailable(),
+                    'seatsAvailable' => max(0, $placesLeft),
                     'pricePerPerson' => number_format($trip->getPricePerPerson() / 100, 2, ',', ' '),
                     'isEco' => $trip->getCar()?->getEnergy() === Car::ENERGY_ELECTRIC,
                     'duration' => $duration,
+                    'isFull' => $placesLeft <= 0,
                 ];
             }, $trips);
 
