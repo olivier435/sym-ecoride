@@ -119,6 +119,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\ManyToMany(targetEntity: Trip::class, mappedBy: 'passengers')]
     private Collection $tripsAsPassenger;
 
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: TravelPreference::class, cascade: ['persist', 'remove'])]
+    private ?TravelPreference $travelPreference = null;
+
     public function __construct()
     {
         $this->cars = new ArrayCollection();
@@ -438,6 +441,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         if ($this->tripsAsPassenger->removeElement($tripsAsPassenger)) {
             $tripsAsPassenger->removePassenger($this);
         }
+
+        return $this;
+    }
+
+    public function getTravelPreference(): ?TravelPreference
+    {
+        return $this->travelPreference;
+    }
+
+    public function setTravelPreference(TravelPreference $travelPreference): static
+    {
+        // set the owning side of the relation if necessary
+        if ($travelPreference->getUser() !== $this) {
+            $travelPreference->setUser($this);
+        }
+
+        $this->travelPreference = $travelPreference;
 
         return $this;
     }

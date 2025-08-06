@@ -1,0 +1,67 @@
+<div class="xpshe4" data-controller="travel-preference" data-travel-preference-target="container">
+    <h1 class="jqy9ue186 jqy9ue19z jqy9ue1ae jqy9ue18v jqy9ue19a jqy9ue19f jqy9uen7 jqy9ue24y jqy9ue16x jqy9ue1mr jqy9ue1tk jqy9ue1p9 jqy9ue1r7 jqy9ue1uy jqy9ue22g jqy9ue1xg jqy9ue1zy jqy9ue1al jqy9ue1my jqy9ue1tm jqy9ue1pb jqy9ue1r9 jqy9ue7">
+        <span class="_2ywtvb0">Préférences de voyage</span>
+    </h1>
+    <ul class="uvu0wh">
+        <li>
+            <button type="button"
+                class="kirk-item kirk-item--clickable sc-1b60a10f-0 bThDHv"
+                data-action="click->travel-preference#edit"
+                data-url="{{ path('app_travel_preference_edit_discussion') }}">
+                <span class="kirk-item-leftWrapper">
+                    <span class="kirk-item-leftText">
+                        <span class="kirk-text _1ddnzzx0 kirk-item-title--withBody _1ddnzzx1 kirk-text-body">Discussion</span>
+                        <span class="kirk-text _1ddnzzx0 kirk-item-body _1ddnzzx6 _1ddnzzx5 kirk-text-titleStrong">
+                        {{ preference and preference.discussion ? preference.discussion.label : 'Merci de renseigner votre préférence' }}
+                        </span>
+                    </span>
+                </span>
+            </button>
+        </li>
+        <li>
+            <button type="button"
+                class="kirk-item kirk-item--clickable sc-1b60a10f-0 bThDHv"
+                data-action="click->travel-preference#edit"
+                data-url="{{ path('app_travel_preference_edit_music') }}">
+                <span class="kirk-item-leftWrapper">
+                    <span class="kirk-item-leftText">
+                        <span class="kirk-text _1ddnzzx0 kirk-item-title--withBody _1ddnzzx1 kirk-text-body">Musique</span>
+                        <span class="kirk-text _1ddnzzx0 kirk-item-body _1ddnzzx6 _1ddnzzx5 kirk-text-titleStrong">
+                        {{ preference and preference.music ? preference.music.label : 'Merci de renseigner votre préférence' }}
+                        </span>
+                    </span>
+                </span>
+            </button>
+        </li>
+        <li>
+            <button type="button"
+                class="kirk-item kirk-item--clickable sc-1b60a10f-0 bThDHv"
+                data-action="click->travel-preference#edit"
+                data-url="{{ path('app_travel_preference_edit_smoking') }}">
+                <span class="kirk-item-leftWrapper">
+                    <span class="kirk-item-leftText">
+                        <span class="kirk-text _1ddnzzx0 kirk-item-title--withBody _1ddnzzx1 kirk-text-body">Cigarette</span>
+                        <span class="kirk-text _1ddnzzx0 kirk-item-body _1ddnzzx6 _1ddnzzx5 kirk-text-titleStrong">
+                        {{ preference and preference.smoking ? preference.smoking.label : 'Merci de renseigner votre préférence' }}
+                        </span>
+                    </span>
+                </span>
+            </button>
+        </li>
+        <li>
+            <button type="button"
+                class="kirk-item kirk-item--clickable sc-1b60a10f-0 bThDHv"
+                data-action="click->travel-preference#edit"
+                data-url="{{ path('app_travel_preference_edit_pets') }}">
+                <span class="kirk-item-leftWrapper">
+                    <span class="kirk-item-leftText">
+                        <span class="kirk-text _1ddnzzx0 kirk-item-title--withBody _1ddnzzx1 kirk-text-body">Animaux</span>
+                        <span class="kirk-text _1ddnzzx0 kirk-item-body _1ddnzzx6 _1ddnzzx5 kirk-text-titleStrong">
+                        {{ preference and preference.pets ? preference.pets.label : 'Merci de renseigner votre préférence' }}
+                        </span>
+                    </span>
+                </span>
+            </button>
+        </li>
+    </ul>
+</div>

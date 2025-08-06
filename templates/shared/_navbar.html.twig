@@ -8,7 +8,8 @@
 			<ul class="navbar-nav me-auto">
 				<li class="nav-item">
 					<a title="Rechercher un trajet" class="nav-link pjdcjh" href="{{ path('app_trip_search') }}">
-					<i class="bi bi-search"></i> Rechercher
+						<i class="bi bi-search"></i>
+						Rechercher
 					</a>
 				</li>
 				<li class="nav-item">
@@ -48,6 +49,13 @@
 							<li class="py-2 px-2">
 								<a class="dropdown-item dropdown-user" href="#">
 									Mes trajets comme passager
+								</a>
+							</li>
+							<div class="space-between"></div>
+							<li class="py-2 px-2">
+								<a class="dropdown-item dropdown-user" href="{{ path('app_travel_preference_index') }}">
+									<i class="bi bi-sliders"></i>
+									Préférences de voyage
 								</a>
 							</li>
 							<div class="space-between"></div>
