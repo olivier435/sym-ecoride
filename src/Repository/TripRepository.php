@@ -2,9 +2,13 @@
 
 namespace App\Repository;
 
+use App\Data\SearchData;
+use App\Entity\Car;
 use App\Entity\City;
 use App\Entity\Trip;
 use App\Entity\User;
+use App\Enum\PetPreference;
+use App\Enum\SmokingPreference;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -66,6 +70,56 @@ class TripRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
 
         return $result['departureDate'] ?? null;
+    }
+
+    public function findFilteredTrips(SearchData $search): array
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->addSelect('car', 'driver', 'avatar')
+            ->join('t.car', 'car')
+            ->join('t.driver', 'driver')
+            ->leftJoin('driver.avatar', 'avatar')
+            ->leftJoin('driver.travelPreference', 'tp')
+            ->andWhere('t.seatsAvailable > 0')
+            ->andWhere('t.departureCity = :departureCity')
+            ->andWhere('t.arrivalCity = :arrivalCity')
+            ->andWhere('t.departureDate = :date')
+            ->setParameter('departureCity', $search->departureCity)
+            ->setParameter('arrivalCity', $search->arrivalCity)
+            ->setParameter('date', $search->date);
+
+        if ($search->priceMax !== null) {
+            $qb->andWhere('t.pricePerPerson <= :priceMax')
+                ->setParameter('priceMax', $search->priceMax);
+        }
+        if ($search->eco) {
+            $qb->andWhere('car.energy = :eco')
+                ->setParameter('eco', Car::ENERGY_ELECTRIC);
+        }
+        if ($search->smoking) {
+            $qb->andWhere('tp.smoking = :smoking')
+                ->setParameter('smoking', SmokingPreference::ALLOWED->value); // ou adapte selon ton enum
+        }
+        if ($search->pets) {
+            $qb->andWhere('tp.pets IN (:petsAllowed)')
+                ->setParameter('petsAllowed', [
+                    PetPreference::LOVES_PETS->value,
+                    PetPreference::SOME_PETS->value,
+                ]);
+        }
+
+        // Tri
+        if ($search->sort === 'price') {
+            $qb->orderBy('t.pricePerPerson', 'ASC');
+        } elseif ($search->sort === 'duration') {
+            $qb->addSelect(
+                '(TIMESTAMPDIFF(MINUTE, CONCAT(t.departureDate, \' \', t.departureTime), CONCAT(t.arrivalDate, \' \', t.arrivalTime))) AS HIDDEN tripDuration'
+            )->orderBy('tripDuration', 'ASC');
+        } else {
+            $qb->orderBy('t.departureTime', 'ASC');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     //    /**

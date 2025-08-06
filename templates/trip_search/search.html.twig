@@ -4,44 +4,129 @@
 {% endblock %}
 
 {% block body %}
-	<div class="ygs0yx">
-		<h1 class="ywaehf">
-			<span class="pztveq">Trouvez votre covoiturage</span>
-		</h1>
-		<div class="a909r8">
-			<div data-controller="trip-search" class="vs3pdd">
-				{{ form_start(form, {
-                attr: {
-                    'data-trip-search-target': 'form'
-                }
-            }) }}
-				<div class="row g-3 align-items-center justify-content-center">
-					<div class="col-md-3">
-						{{ form_widget(form.departureCity, { 'attr': {
-                            'data-trip-search-target': 'departureCity',
-                            'id': 'trip_search_departureCity', 
-                            'autocomplete': 'off'
-                            }
-                        }) }}
-					</div>
-					<div class="col-md-3">
-						{{ form_widget(form.arrivalCity, { 'attr': {
-                            'data-trip-search-target': 'arrivalCity',
-                            'id': 'trip_search_arrivalCity',
-                            'autocomplete': 'off'
-                            }
-                        }) }}
-					</div>
-					<div class="col-md-3">
-						{{ form_widget(form.date, {'attr': {'data-trip-search-target': 'date'}}) }}
-					</div>
-					<div class="col-md-1 d-grid">
-						{{ form_widget(form.search) }}
-					</div>
-				</div>
-				{{ form_end(form) }}
+	{# <div class="ygs0yx">
+								<h1 class="ywaehf">
+									<span class="pztveq">Trouvez votre covoiturage</span>
+								</h1>
+								<div class="a909r8">
+									<div data-controller="trip-search" class="vs3pdd">
+										{{ form_start(form, {
+						                attr: {
+						                    'data-trip-search-target': 'form'
+						                }
+						            }) }}
+										<div class="row g-3 align-items-center justify-content-center">
+											<div class="col-md-3">
+												{{ form_widget(form.departureCity, { 'attr': {
+						                            'data-trip-search-target': 'departureCity',
+						                            'id': 'trip_search_departureCity', 
+						                            'autocomplete': 'off'
+						                            }
+						                        }) }}
+											</div>
+											<div class="col-md-3">
+												{{ form_widget(form.arrivalCity, { 'attr': {
+						                            'data-trip-search-target': 'arrivalCity',
+						                            'id': 'trip_search_arrivalCity',
+						                            'autocomplete': 'off'
+						                            }
+						                        }) }}
+											</div>
+											<div class="col-md-3">
+												{{ form_widget(form.date, {'attr': {'data-trip-search-target': 'date'}}) }}
+											</div>
+											<div class="col-md-1 d-grid">
+												{{ form_widget(form.search) }}
+											</div>
+										</div>
+										{{ form_end(form) }}
+						
+										<div data-trip-search-target="results"></div>
+									</div>
+								</div>
+							</div> #}
+	<div class="container my-5" data-controller="trip-search">
+		<div class="ygs0yx">
+			<h1 class="ywaehf">
+				<span class="pztveq">Trouvez votre covoiturage</span>
+			</h1>
+			<div
+				class="row">
+				<!-- ASIDE : FILTRES -->
+				<aside class="col-md-3 mb-4" id="trip-filters">
+					<form id="filters-form" data-trip-search-target="filters" autocomplete="off">
+						<div class="card p-3 shadow-sm">
+							<div class="d-flex justify-content-between align-items-center mb-3">
+								<h2 class="h5 mb-0">Filtres</h2>
+								<button type="reset" class="btn btn-link p-0 text-decoration-none" id="filters-reset-btn">
+									Tout effacer
+								</button>
+							</div>
 
-				<div data-trip-search-target="results"></div>
+							<!-- Tri -->
+							<div class="mb-3">
+								<label class="form-label d-block mb-2">Trier par</label>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="sort" value="price" id="sort_price" data-trip-search-target="sort">
+									<label class="form-check-label" for="sort_price">Prix le plus bas</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="sort" value="duration" id="sort_duration" data-trip-search-target="sort">
+									<label class="form-check-label" for="sort_duration">Trajet le plus court</label>
+								</div>
+							</div>
+
+							<!-- Prix maximum -->
+							<div class="mb-3">
+								<label for="filter_price" class="form-label">Prix maximum (€)</label>
+								<input type="number" min="1" step="1" class="form-control" name="priceMax" id="filter_price" placeholder="Ex: 20" data-trip-search-target="priceMax">
+							</div>
+
+							<!-- Filtres booléens -->
+							<div class="mb-3">
+								<label class="form-label d-block mb-2">Options</label>
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" name="eco" id="filter_eco" data-trip-search-target="eco">
+									<label class="form-check-label" for="filter_eco">Trajet écologique (voiture électrique)</label>
+								</div>
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" name="smoking" id="filter_smoking" data-trip-search-target="smoking">
+									<label class="form-check-label" for="filter_smoking">Cigarette autorisée</label>
+								</div>
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" name="pets" id="filter_pets" data-trip-search-target="pets">
+									<label class="form-check-label" for="filter_pets">Animaux acceptés</label>
+								</div>
+							</div>
+						</div>
+					</form>
+				</aside>
+				<!-- MAIN : FORM & RESULTATS -->
+				<main class="col-md-9">
+					<div
+						class="vs3pdd">
+						{# Formulaire principal de recherche #}
+						{{ form_start(form, {attr: {'data-trip-search-target': 'form'}}) }}
+						<div class="row g-3 align-items-center justify-content-center mb-4">
+							<div class="col-md-4">
+								{{ form_widget(form.departureCity, {'attr': {'data-trip-search-target': 'departureCity', 'id': 'trip_search_departureCity', 'autocomplete': 'off'}}) }}
+							</div>
+							<div class="col-md-4">
+								{{ form_widget(form.arrivalCity, {'attr': {'data-trip-search-target': 'arrivalCity', 'id': 'trip_search_arrivalCity', 'autocomplete': 'off'}}) }}
+							</div>
+							<div class="col-md-3">
+								{{ form_widget(form.date, {'attr': {'data-trip-search-target': 'date'}}) }}
+							</div>
+							<div class="col-md-1 d-grid">
+								{{ form_widget(form.search) }}
+							</div>
+						</div>
+						{{ form_end(form) }}
+
+						{# Résultats AJAX #}
+						<div data-trip-search-target="results"></div>
+					</div>
+				</main>
 			</div>
 		</div>
 	</div>

@@ -1,33 +1,65 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    static targets = ["form", "results", "departureCity", "arrivalCity", "date"]
+    static targets = [
+        "form", "results", "departureCity", "arrivalCity", "date",
+        "filters", "sort", "priceMax", "eco", "smoking", "pets"
+    ]
 
     connect() {
-        this.formTarget.addEventListener("submit", this.submit.bind(this))
+        // Rafraîchir les résultats au submit principal
+        if (this.hasFormTarget) {
+            this.formTarget.addEventListener("submit", this.submit.bind(this))
+        }
+
+        // Rafraîchir au changement d'un filtre
+        if (this.hasFiltersTarget) {
+            this.filtersTarget.addEventListener("change", () => this.formTarget.requestSubmit())
+            this.filtersTarget.addEventListener("reset", this.onFilterReset.bind(this))
+        }
+
+        // Rafraîchir aussi au changement des selects principaux (ville, date)
+        if (this.hasDepartureCityTarget) this.departureCityTarget.addEventListener("change", () => this.formTarget.requestSubmit())
+        if (this.hasArrivalCityTarget) this.arrivalCityTarget.addEventListener("change", () => this.formTarget.requestSubmit())
+        if (this.hasDateTarget) this.dateTarget.addEventListener("change", () => this.formTarget.requestSubmit())
+
+        // Optionnel : déclenche une première recherche si des valeurs sont déjà remplies
+        // this.formTarget.requestSubmit();
     }
 
     submit(event) {
         event.preventDefault()
 
         const params = new URLSearchParams({
-            departureCity: this.departureCityTarget.value, // value = id de la City
+            departureCity: this.departureCityTarget.value,
             arrivalCity: this.arrivalCityTarget.value,
             date: this.dateTarget.value,
+            // Filtres
+            sort: this._getRadioValue(this.sortTargets),
+            priceMax: this.hasPriceMaxTarget ? this.priceMaxTarget.value : "",
+            eco: this.hasEcoTarget ? this.ecoTarget.checked : false,
+            smoking: this.hasSmokingTarget ? this.smokingTarget.checked : false,
+            pets: this.hasPetsTarget ? this.petsTarget.checked : false
         })
 
-        fetch(`/search/ajax?${params}`, {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            })
-            .then(res => res.json())
-            .then(data => this.renderResults(data))
-            .catch(err => this.renderError())
+        fetch(`/search/ajax?${params.toString()}`, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(res => res.json())
+        .then(data => this.renderResults(data))
+        .catch(err => this.renderError())
+    }
+
+    _getRadioValue(radioTargets) {
+        if (!radioTargets) return null;
+        const checked = radioTargets.find(input => input.checked);
+        return checked ? checked.value : null;
     }
 
     renderResults(data) {
-        if (data.trips.length > 0) {
+        if (data.trips && data.trips.length > 0) {
             this.resultsTarget.innerHTML = `
                 <h2>${data.trips.length} résultat${data.trips.length > 1 ? 's' : ''} trouvé${data.trips.length > 1 ? 's' : ''}</h2>
                 <div class="row mt-4">
@@ -36,7 +68,7 @@ export default class extends Controller {
                         <div class="card shadow-sm">
                             <div class="card-body d-flex flex-column">
                                 <div class="d-flex align-items-center mb-3">
-                                    <img src="${trip.driver.avatar}" alt="Photo de profil" class="rounded-circle me-3" width="50" height="50">
+                                    <img src="${trip.driver.avatar || '/images/avatars/default.png'}" alt="Photo de profil" class="rounded-circle me-3" width="50" height="50">
                                     <div>
                                         <h5 class="mb-0">${trip.driver.pseudo}</h5>
                                         <small class="text-muted">Note : ⭐</small>
@@ -91,5 +123,12 @@ export default class extends Controller {
     formatDateFr(isoDate) {
         const [year, month, day] = isoDate.split('-')
         return `${day}/${month}/${year}`
+    }
+
+    onFilterReset(event) {
+        // Laisse le navigateur réinitialiser les champs, puis relance la recherche (petit délai)
+        setTimeout(() => {
+            this.submit(new Event('submit'))
+        }, 10)
     }
 }

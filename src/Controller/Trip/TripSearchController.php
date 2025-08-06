@@ -2,6 +2,7 @@
 
 namespace App\Controller\Trip;
 
+use App\Data\SearchData;
 use App\Entity\Car;
 use App\Form\TripSearchType;
 use App\Repository\TripRepository;
@@ -29,17 +30,25 @@ final class TripSearchController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            /** @var City|null $departureCity */
+            /** @var \App\Entity\City|null $departureCity */
             $departureCity = $data['departureCity'] ?? null;
-            /** @var City|null $arrivalCity */
+            /** @var \App\Entity\City|null $arrivalCity */
             $arrivalCity = $data['arrivalCity'] ?? null;
             /** @var \DateTimeImmutable|null $date */
             $date = $data['date'] ?? null;
 
-            $isSubmitted = $departureCity && $arrivalCity && $date;
+            // Si jamais l'autocomplete retourne l'ID et pas l'entité (possible selon config UX)
+            if (is_numeric($departureCity)) {
+                $departureCity = $cityRepository->find($departureCity);
+            }
+            if (is_numeric($arrivalCity)) {
+                $arrivalCity = $cityRepository->find($arrivalCity);
+            }
+
+            $isSubmitted = $departureCity instanceof City && $arrivalCity instanceof City && $date;
 
             if ($isSubmitted) {
-                $trips = $tripRepository->findMatchingTrips($departureCity, $arrivalCity, $date);
+                $trips = $tripRepository->findFilteredTrips($departureCity, $arrivalCity, $date);
                 if (empty($trips)) {
                     $nextAvailableDate = $tripRepository->findNextAvailableDate($departureCity, $arrivalCity, $date);
                 }
@@ -58,11 +67,26 @@ final class TripSearchController extends AbstractController
     public function searchAjax(Request $request, TripRepository $tripRepository, CityRepository $cityRepository): JsonResponse
     {
         try {
-            $departureCityId = $request->query->get('departureCity');
-            $arrivalCityId = $request->query->get('arrivalCity');
+            $search = new SearchData();
+
+            $search->departureCity = $cityRepository->find($request->query->get('departureCity'));
+            $search->arrivalCity = $cityRepository->find($request->query->get('arrivalCity'));
             $dateString = $request->query->get('date');
+            $search->date = $dateString ? \DateTimeImmutable::createFromFormat('Y-m-d', $dateString)?->setTime(0, 0) : null;
 
-            if (!$departureCityId || !$arrivalCityId || !$dateString) {
+            // Gestion des filtres
+            $search->sort = $request->query->get('sort');
+            if ($search->sort === 'null' || $search->sort === '') {
+                $search->sort = null;
+            }
+            $priceMax = $request->query->get('priceMax');
+            $search->priceMax = $priceMax !== '' && $priceMax !== null ? intval(floatval($priceMax) * 100) : null;
+            $search->eco = filter_var($request->query->get('eco'), FILTER_VALIDATE_BOOLEAN);
+            $search->smoking = filter_var($request->query->get('smoking'), FILTER_VALIDATE_BOOLEAN);
+            $search->pets = filter_var($request->query->get('pets'), FILTER_VALIDATE_BOOLEAN);
+
+            // Validation
+            if (!$search->departureCity || !$search->arrivalCity || !$search->date) {
                 return $this->json([
                     'trips' => [],
                     'nextAvailableDate' => null,
@@ -70,27 +94,23 @@ final class TripSearchController extends AbstractController
                 ]);
             }
 
-            // On va chercher les entités City à partir des ID passés par le front
-            $departureCity = $cityRepository->find($departureCityId);
-            $arrivalCity = $cityRepository->find($arrivalCityId);
-
-            if (!$departureCity || !$arrivalCity) {
-                return $this->json([
-                    'trips' => [],
-                    'nextAvailableDate' => null,
-                    'isSubmitted' => false,
-                ]);
-            }
-
-            $dateObj = \DateTimeImmutable::createFromFormat('Y-m-d', $dateString)?->setTime(0, 0);
-
-            $trips = $tripRepository->findMatchingTrips($departureCity, $arrivalCity, $dateObj);
+            $trips = $tripRepository->findFilteredTrips($search);
 
             $tripsArray = array_map(function ($trip) {
                 $driver = $trip->getDriver();
                 $avatarEntity = $driver?->getAvatar();
                 $avatarName = $avatarEntity?->getImageName();
-                $avatarPath = '/images/avatars/' . $avatarName;
+                $avatarPath = $avatarName ? '/images/avatars/' . $avatarName : null;
+
+                // Calcul de la durée du trajet (en minutes)
+                $duration = null;
+                if ($trip->getDepartureDate() && $trip->getDepartureTime() && $trip->getArrivalDate() && $trip->getArrivalTime()) {
+                    $depart = new \DateTimeImmutable($trip->getDepartureDate()->format('Y-m-d') . ' ' . $trip->getDepartureTime()->format('H:i:s'));
+                    $arrivee = new \DateTimeImmutable($trip->getArrivalDate()->format('Y-m-d') . ' ' . $trip->getArrivalTime()->format('H:i:s'));
+                    $interval = $depart->diff($arrivee);
+                    $duration = ($interval->h * 60) + $interval->i;
+                }
+
                 return [
                     'id' => $trip->getId(),
                     'driver' => [
@@ -106,12 +126,13 @@ final class TripSearchController extends AbstractController
                     'seatsAvailable' => $trip->getSeatsAvailable(),
                     'pricePerPerson' => number_format($trip->getPricePerPerson() / 100, 2, ',', ' '),
                     'isEco' => $trip->getCar()?->getEnergy() === Car::ENERGY_ELECTRIC,
+                    'duration' => $duration,
                 ];
             }, $trips);
 
             $nextAvailableDate = null;
             if (empty($trips)) {
-                $next = $tripRepository->findNextAvailableDate($departureCity, $arrivalCity, $dateObj);
+                $next = $tripRepository->findNextAvailableDate($search->departureCity, $search->arrivalCity, $search->date);
                 $nextAvailableDate = $next?->format('Y-m-d');
             }
         } catch (\Throwable $e) {

@@ -6,6 +6,7 @@ use App\Entity\Trip;
 use App\Entity\User;
 use App\Repository\CarRepository;
 use App\Service\CityManager;
+use App\Service\TravelPreferenceManager;
 use App\Service\TripCreationStorage;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,7 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[IsGranted('ROLE_USER')]
 final class TripFinalizeController extends AbstractController
 {
-    public function __invoke(TripCreationStorage $storage, EntityManagerInterface $em, CarRepository $carRepository, CityManager $cityManager)
+    public function __invoke(TripCreationStorage $storage, EntityManagerInterface $em, CarRepository $carRepository, CityManager $cityManager, TravelPreferenceManager $travelPreferenceManager)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -46,6 +47,13 @@ final class TripFinalizeController extends AbstractController
         $car = $carRepository->find($data['carId']);
         if (!$car || $car->getUser() !== $user) {
             throw $this->createAccessDeniedException('Ce véhicule ne vous appartient pas.');
+        }
+
+        // GARANTIR TravelPreference pour le conducteur
+        $travelPreference = $travelPreferenceManager->getOrCreateForUser($user);
+        if ($travelPreference->getId() === null) {
+            $em->persist($travelPreference);
+            $user->setTravelPreference($travelPreference); // au cas où ce n'est pas déjà fait
         }
 
         // Récupération et conversion sécurisée des dates/heures
