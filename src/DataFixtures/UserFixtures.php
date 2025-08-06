@@ -2,7 +2,12 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\TravelPreference;
 use App\Entity\User;
+use App\Enum\DiscussionPreference;
+use App\Enum\MusicPreference;
+use App\Enum\PetPreference;
+use App\Enum\SmokingPreference;
 use App\Service\AvatarService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
@@ -47,6 +52,16 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
         $manager->persist($admin);
         $this->avatarService->createAndAssignAvatar($admin);
 
+        // TravelPreference pour admin
+        $adminPref = new TravelPreference();
+        $adminPref->setUser($admin)
+            ->setDiscussion(DiscussionPreference::default())
+            ->setMusic(MusicPreference::default())
+            ->setSmoking(SmokingPreference::default())
+            ->setPets(PetPreference::default());
+        $admin->setTravelPreference($adminPref);
+        $manager->persist($adminPref);
+
         $users = [];
         for ($u = 0; $u < 5; $u++) {
             $user = new User();
@@ -69,6 +84,17 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
 
             $manager->persist($user);
             $this->avatarService->createAndAssignAvatar($user);
+
+            // Nouvelle entité TravelPreference
+            $travelPreference = new TravelPreference();
+            $travelPreference->setUser($user)
+                ->setDiscussion(DiscussionPreference::default())
+                ->setMusic(MusicPreference::default())
+                ->setSmoking(SmokingPreference::default())
+                ->setPets(PetPreference::default());
+            $user->setTravelPreference($travelPreference);
+            $manager->persist($travelPreference);
+
             $users[] = $user;
         }
 
