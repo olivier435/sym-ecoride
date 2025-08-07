@@ -306,4 +306,14 @@ class Trip
 
         return $this;
     }
+
+    public function getSlugSource(): string
+    {
+        return sprintf(
+            '%s-%s-%s',
+            $this->getDepartureCity()?->getName() ?? '',
+            $this->getArrivalCity()?->getName() ?? '',
+            $this->getDepartureDate()?->format('d-m-Y') ?? ''
+        );
+    }
 }

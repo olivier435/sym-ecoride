@@ -13,10 +13,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/search')]
 final class TripSearchController extends AbstractController
 {
+    public function __construct(private SluggerInterface $slugger) {}
+
     #[Route('', name: 'app_trip_search')]
     public function search(Request $request, TripRepository $tripRepository, CityRepository $cityRepository): Response
     {
@@ -113,6 +116,9 @@ final class TripSearchController extends AbstractController
 
                 $placesLeft = $trip->getSeatsAvailable() - $trip->getPassengers()->count();
 
+                // Ajout du slug PHP pour la route de détail
+                $slug = $this->slugger->slug($trip->getSlugSource())->lower();
+
                 return [
                     'id' => $trip->getId(),
                     'driver' => [
@@ -130,6 +136,7 @@ final class TripSearchController extends AbstractController
                     'isEco' => $trip->getCar()?->getEnergy() === Car::ENERGY_ELECTRIC,
                     'duration' => $duration,
                     'isFull' => $placesLeft <= 0,
+                    'slug' => $slug,
                 ];
             }, $trips);
 

@@ -1,0 +1,446 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Détail du covoiturage -
+	{{ trip.departureCity.name }}
+	→
+	{{ trip.arrivalCity.name }}
+{% endblock %}
+
+{% block body %}
+	<div class="skhvxm">
+		<div class="ar1ori">
+			<div class="ae2oaa">
+				<h1 class="iu00iv">
+					<span class="zyartt">
+						{{ trip.departureDate|format_datetime('full', 'none', locale='fr')|capitalize }}
+					</span>
+				</h1>
+				<div class="q1z5ay">
+					<div class="is4zkd">
+						<div class="y97ikz">
+							<div class="pu34r5">
+								<div class="x3k04l">
+									<h2 class="zzm2xi">
+										<span class="mq2cgb">{{ trip.departureDate|format_datetime('full', 'none', locale='fr')|capitalize }}</span>
+									</h2>
+								</div>
+								<div class="gxzbqj">
+									<div class="tb47ia">
+										<div class="x6ga3t">
+											<div class="ip47ld">
+												<span class="ud3coz">{{ trip.departureTime|date('H:i') }}</span>
+												<div class="yb5877">
+													<div class="xd1mcq">
+														<span class="dyvbp9">{{ trip.departureTime|duration(trip.arrivalTime) }}</span>
+													</div>
+												</div>
+											</div>
+											<div class="f25tyc">
+												<div class="x2kdrg"></div>
+												<hr class="dkaodm">
+											</div>
+											<div class="p5eemy">
+												<span class="ixmjy9">
+													<span class="jsx0vn">
+														<span class="p3roln">
+															<span class="ezk5rw">{{ trip.departureCity.name }}</span>
+															<span class="y6s1ul">{{ trip.departureAddress|withoutCity }}</span>
+														</span>
+													</span>
+												</span>
+											</div>
+										</div>
+										<div class="x6ga3t">
+											<div class="ip47ld">
+												<span class="ud3coz">{{ trip.arrivalTime|date('H:i') }}</span>
+											</div>
+											<div class="f25tyc">
+												<hr class="bnkanz">
+												<div class="d0opxx"></div>
+											</div>
+											<div class="p5eemy">
+												<span class="ixmjy9">
+													<span class="jsx0vn">
+														<span class="p3roln">
+															<span class="ezk5rw">{{ trip.arrivalCity.name }}</span>
+															<span class="y6s1ul">{{ trip.arrivalAddress|withoutCity }}</span>
+														</span>
+													</span>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="xy5t4c">
+									<div class="upb47v">
+										<hr class="ksp4u4">
+									</div>
+									<div class="qtcrg4">
+										<div class="xtuesm">
+											<span class="efjwe8">
+												<span class="b249ms">
+													<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Covoiturage" class="my6jy4">
+														<g color="neutralTxtModerate">
+															<g color="currentColor">
+																<path fill="currentColor" fill-rule="evenodd" d="M13.544 7.54 17.35 11h1.05a3.6 3.6 0 0 1 3.6 3.6.9.9 0 0 1-.9.9h-1.704a2.751 2.751 0 0 1-5.292 0H8.896a2.751 2.751 0 0 1-5.292 0H3a1 1 0 0 1-1-1v-3.034a1.8 1.8 0 0 1 .227-.874l1.13-2.035A4 4 0 0 1 6.854 6.5h4a4 4 0 0 1 2.69 1.04m-1.009 1.11L15.12 11H9.5V8h1.354a2.5 2.5 0 0 1 1.681.65M8 11H3.716l.952-1.714A2.5 2.5 0 0 1 6.854 8H8zm-1.75 5a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5m10.5 0a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5" clip-rule="evenodd"></path>
+															</g>
+														</g>
+													</svg>
+												</span>
+												<span class="psjskb">
+													<img src="{{ vich_uploader_asset(trip.driver.avatar, 'imageFile') }}" alt="Photo de profil" class="nuyqab">
+												</span>
+												<div class="zd5c3q">
+													<span class="owrb0u">{{ trip.driver.firstname }}</span>
+													<span class="uq2lnp">
+														<div class="d-flex">
+															<div class="naospg">
+																<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="zxh2qo">
+																	<g color="neutralTxtModerate">
+																		<g color="currentColor">
+																			<path fill="currentColor" fill-rule="evenodd" d="M12 3a.75.75 0 0 1 .673.418l2.374 4.812 5.31.772a.75.75 0 0 1 .416 1.28l-3.842 3.745.907 5.289a.75.75 0 0 1-1.088.79L12 17.61l-4.75 2.497a.75.75 0 0 1-1.088-.79l.907-5.29-3.842-3.745a.75.75 0 0 1 .415-1.28l5.31-.77 2.376-4.813A.75.75 0 0 1 12 3" clip-rule="evenodd"></path>
+																		</g>
+																	</g>
+																</svg>
+															</div>
+															5
+														</div>
+													</span>
+												</div>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hqgo0e">
+							<div class="y97ikz">
+								<div class="rk9kk3">
+									<div class="c17cv1">
+										<span class="xzugfn">
+											<span
+												class="miolgn">
+												{# TODO : A prévoir le changement par variable #}
+												<span class="k9ws9h">1 passager</span>
+											</span>
+											<div class="psnvs3">
+												<div class="ss0nds">
+													<span class="goetij">
+														<span>{{ (trip.pricePerPerson)|amount }}</span>
+													</span>
+												</div>
+											</div>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						{% if isFull %}
+							<div class="hc0qtf">
+								<button class="tzqny6 btn btn-secondary w-100" disabled>
+									<span class="rqgt37">
+										<span class="alj578">
+											<span class="cipnsq">Trajet complet</span>
+										</span>
+									</span>
+								</button>
+							</div>
+						{% else %}
+							<div class="hc0qtf">
+								<a class="tzqny6" href="#">
+									<span class="rqgt37">
+										<span class="h6emz6">
+											<span class="h6emz6">
+												<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="otdyzd">
+													<g color="accentTxtInverted">
+														<g color="currentColor">
+															<path fill="currentColor" d="M8.5 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0M13 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0M8.5 16a1 1 0 1 1-2 0 1 1 0 0 1 2 0"></path>
+															<path fill="currentColor" fill-rule="evenodd" d="M21 11a.75.75 0 0 1-1.5 0V9.25h-15V17A2.5 2.5 0 0 0 7 19.5h4a.75.75 0 0 1 0 1.5H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4zm-4-6.5H7A2.5 2.5 0 0 0 4.5 7v.75h15V7A2.5 2.5 0 0 0 17 4.5" clip-rule="evenodd"></path>
+															<path fill="currentColor" fill-rule="evenodd" d="M16.5 19.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9" clip-rule="evenodd"></path>
+															<path fill="currentColor" fill-rule="evenodd" d="M16.5 14.25a.75.75 0 0 1 .75.75v1.19l.28.28a.75.75 0 1 1-1.06 1.06l-.5-.5a.75.75 0 0 1-.22-.53V15a.75.75 0 0 1 .75-.75" clip-rule="evenodd"></path>
+														</g>
+													</g>
+												</svg>
+											</span>
+										</span>
+										<span class="alj578">
+											<span class="cipnsq">Demande de réservation</span>
+										</span>
+									</span>
+								</a>
+							</div>
+						{% endif %}
+					</div>
+					<div class="j9by4c">
+						<div class="ugizlu">
+							<div class="r5yqe4">
+								<div class="v0hcls">
+									<div class="tb47ia">
+										<div class="x6ga3t">
+											<div class="ip47ld">
+												<span class="ud3coz">{{ trip.departureTime|date('H:i') }}</span>
+												<div class="yb5877">
+													<div class="xd1mcq">
+														<span class="dyvbp9">{{ trip.departureTime|duration(trip.arrivalTime) }}</span>
+													</div>
+												</div>
+											</div>
+											<div class="f25tyc">
+												<div class="x2kdrg"></div>
+												<hr class="dkaodm">
+											</div>
+											<div class="p5eemy">
+												<span class="ixmjy9">
+													<span class="jsx0vn">
+														<span class="p3roln">
+															<span class="ezk5rw">{{ trip.departureCity.name }}</span>
+															<span class="y6s1ul">{{ trip.departureAddress|withoutCity }}</span>
+														</span>
+													</span>
+												</span>
+											</div>
+										</div>
+										<div class="x6ga3t">
+											<div class="ip47ld">
+												<span class="ud3coz">{{ trip.arrivalTime|date('H:i') }}</span>
+											</div>
+											<div class="f25tyc">
+												<hr class="bnkanz">
+												<div class="d0opxx"></div>
+											</div>
+											<div class="p5eemy">
+												<span class="ixmjy9">
+													<span class="jsx0vn">
+														<span class="p3roln">
+															<span class="ezk5rw">{{ trip.arrivalCity.name }}</span>
+															<span class="y6s1ul">{{ trip.arrivalAddress|withoutCity }}</span>
+														</span>
+													</span>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="xjzyyr">
+							<div class="thfioi">
+								<a
+									class="y5p8i7" href="#">
+									<!-- LIEN VERS AVIS -->
+									<span class="n44lzi">
+										<span class="yfbpn5">
+											<span class="yj26uc">
+												<img class="nuyqab" src="{{ vich_uploader_asset(trip.driver.avatar, 'imageFile') }}" alt="Photo de profil">
+											</span>
+										</span>
+										<span class="igawxh">
+											<span class="lkmsa3 d-flex flex-row">
+												{% if trip.driver.pseudo is not empty %}
+													<span class="fw-bold">{{ trip.driver.pseudo }}
+														-</span>
+												{% endif %}
+												<span>
+													{{ trip.driver.firstname }}
+													{{ trip.driver.lastname }}
+												</span>
+											</span>
+											<span class="qfcicu">
+												<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="o6nbh9">
+													<g color="neutralTxtModerate">
+														<g color="currentColor">
+															<path fill="currentColor" fill-rule="evenodd" d="M12 3a.75.75 0 0 1 .673.418l2.374 4.812 5.31.772a.75.75 0 0 1 .416 1.28l-3.842 3.745.907 5.289a.75.75 0 0 1-1.088.79L12 17.61l-4.75 2.497a.75.75 0 0 1-1.088-.79l.907-5.29-3.842-3.745a.75.75 0 0 1 .415-1.28l5.31-.77 2.376-4.813A.75.75 0 0 1 12 3" clip-rule="evenodd"></path>
+														</g>
+													</g>
+												</svg>
+												<span class="qdhgn8">
+													<span>4,8/5 -  46 avis</span>
+												</span>
+											</span>
+										</span>
+										<span class="lvzl0u">
+											<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="nn9gyr">
+												<g color="neutralTxtModerate">
+													<g color="currentColor">
+														<path fill="currentColor" fill-rule="evenodd" d="M8.293 6.707a1 1 0 0 1 1.414-1.414l6 6a1 1 0 0 1 0 1.414l-6 6a1 1 0 0 1-1.414-1.414L13.586 12z" clip-rule="evenodd"></path>
+													</g>
+												</g>
+											</svg>
+										</span>
+									</span>
+								</a>
+								<div aria-hidden="true" class="eq3686">
+									<hr class="sjt8p3">
+								</div>
+								<ul class="uvu0wh p-0">
+									<li>
+										<div class="nmxuz9">
+											<span class="a1dcwc">
+												<span class="z9kgnn">
+													<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="nn9gyr">
+														<g color="neutralTxtModerate">
+															<g color="currentColor">
+																<path fill="currentColor" d="M8.5 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0M13 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0M8.5 16a1 1 0 1 1-2 0 1 1 0 0 1 2 0"></path>
+																<path fill="currentColor" fill-rule="evenodd" d="M21 11a.75.75 0 0 1-1.5 0V9.25h-15V17A2.5 2.5 0 0 0 7 19.5h4a.75.75 0 0 1 0 1.5H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4zm-4-6.5H7A2.5 2.5 0 0 0 4.5 7v.75h15V7A2.5 2.5 0 0 0 17 4.5" clip-rule="evenodd"></path>
+																<path fill="currentColor" fill-rule="evenodd" d="M16.5 19.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9" clip-rule="evenodd"></path>
+																<path fill="currentColor" fill-rule="evenodd" d="M16.5 14.25a.75.75 0 0 1 .75.75v1.19l.28.28a.75.75 0 1 1-1.06 1.06l-.5-.5a.75.75 0 0 1-.22-.53V15a.75.75 0 0 1 .75-.75" clip-rule="evenodd"></path>
+															</g>
+														</g>
+													</svg>
+												</span>
+												<span class="h7c3um">
+													<span class="i11bpo">Votre réservation sera confirmée lorsque le conducteur acceptera votre demande</span>
+												</span>
+											</span>
+										</div>
+									</li>
+									<li>
+										<div class="nmxuz9">
+											<span class="a1dcwc">
+												<span class="z9kgnn">
+													{{ travelPreference.discussion.icon }}
+												</span>
+												<span class="h7c3um">
+													<span class="i11bpo">{{ travelPreference.discussion.label }}</span>
+												</span>
+											</span>
+										</div>
+									</li>
+									<li>
+										<div class="nmxuz9">
+											<span class="a1dcwc">
+												<span class="z9kgnn">
+													{{ travelPreference.music.icon }}
+												</span>
+												<span class="h7c3um">
+													<span class="i11bpo">{{ travelPreference.music.label }}</span>
+												</span>
+											</span>
+										</div>
+									</li>
+									<li>
+										<div class="nmxuz9">
+											<span class="a1dcwc">
+												<span class="z9kgnn">
+													{{ travelPreference.smoking.icon }}
+												</span>
+												<span class="h7c3um">
+													<span class="i11bpo">{{ travelPreference.smoking.label }}</span>
+												</span>
+											</span>
+										</div>
+									</li>
+									<li>
+										<div class="nmxuz9">
+											<span class="a1dcwc">
+												<span class="z9kgnn">
+													{{ travelPreference.pets.icon }}
+												</span>
+												<span class="h7c3um">
+													<span class="i11bpo">{{ travelPreference.pets.label }}</span>
+												</span>
+											</span>
+										</div>
+									</li>
+									<li>
+										<div class="nmxuz9">
+											<span class="a1dcwc">
+												<span class="z9kgnn">
+													<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="nn9gyr">
+														<g color="neutralTxtModerate">
+															<g color="currentColor">
+																<path fill="currentColor" fill-rule="evenodd" d="M4.483 8.263A3.75 3.75 0 0 1 7.663 6.5H11.5a3.75 3.75 0 0 1 3 1.5l1.875 2.5H18a4 4 0 0 1 4 4v1a.5.5 0 0 1-.5.5h-1.55a2.5 2.5 0 0 1-4.9 0h-6.1a2.5 2.5 0 0 1-4.9 0H2v-3.5c0-.682.341-1.284.863-1.645zM13.3 8.9l1.2 1.6h-4V8h1a2.25 2.25 0 0 1 1.8.9M9 8v2.5H4.853l.902-1.443A2.25 2.25 0 0 1 7.663 8zm-5.5 4.5A.5.5 0 0 1 4 12h14a2.5 2.5 0 0 1 2.5 2.5h-.708a2.5 2.5 0 0 0-4.584 0H8.792a2.5 2.5 0 0 0-4.584 0H3.5zm3 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2m12-1a1 1 0 1 1-2 0 1 1 0 0 1 2 0" clip-rule="evenodd"></path>
+															</g>
+														</g>
+													</svg>
+												</span>
+												<span class="h7c3um">
+													<span class="i11bpo">{{ trip.car.brand.name|upper }}
+														{{ trip.car.model.name }}
+														-
+														{{ trip.car.color }}
+														{{ trip.car.energy }}</span>
+												</span>
+											</span>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+						{% if trip.passengers|length > 0 %}
+							<div class="xjzyyr">
+								<h2 class="vjd19l">
+									<span class="jy0s9x">Passagers</span>
+								</h2>
+								<ul class="sd42ao">
+									{% for passenger in trip.passengers %}
+										<li>
+											<div class="xrh3jz">
+												<span class="n44lzi">
+													<span class="yfbpn5">
+														<span class="yj26uc">
+															<img class="nuyqab" src="{{ vich_uploader_asset(passenger.avatar, 'imageFile') }}" alt="Photo de profil">
+														</span>
+													</span>
+													<span class="igawxh">
+														<span class="lkmsa3 d-flex flex-row">
+															{% if passenger.pseudo is not empty %}
+																<span class="fw-bold">{{ passenger.pseudo }}
+																	-</span>
+															{% endif %}
+															<span>{{ passenger.firstname }}
+																{{ passenger.lastname }}
+															</span>
+														</span>
+													</span>
+												</span>
+											</div>
+										</li>
+									{% endfor %}
+								</ul>
+							</div>
+						{% endif %}
+						{% if isFull %}
+							<div class="hakmd9">
+								<div class="cz9z4h">
+									<button class="tzqny6 btn btn-secondary w-100" disabled>
+										<span class="rqgt37">
+											<span class="alj578">
+												<span class="cipnsq">Trajet complet</span>
+											</span>
+										</span>
+									</button>
+								</div>
+							</div>
+						{% else %}
+							<div class="hakmd9">
+								<div class="cz9z4h">
+									<a class="tzqny6" href="#">
+										<span class="rqgt37">
+											<span class="h6emz6">
+												<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="otdyzd">
+													<g color="accentTxtInverted">
+														<g color="currentColor">
+															<path fill="currentColor" d="M8.5 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0M13 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0M8.5 16a1 1 0 1 1-2 0 1 1 0 0 1 2 0"></path>
+															<path fill="currentColor" fill-rule="evenodd" d="M21 11a.75.75 0 0 1-1.5 0V9.25h-15V17A2.5 2.5 0 0 0 7 19.5h4a.75.75 0 0 1 0 1.5H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4zm-4-6.5H7A2.5 2.5 0 0 0 4.5 7v.75h15V7A2.5 2.5 0 0 0 17 4.5" clip-rule="evenodd"></path>
+															<path fill="currentColor" fill-rule="evenodd" d="M16.5 19.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9" clip-rule="evenodd"></path>
+															<path fill="currentColor" fill-rule="evenodd" d="M16.5 14.25a.75.75 0 0 1 .75.75v1.19l.28.28a.75.75 0 1 1-1.06 1.06l-.5-.5a.75.75 0 0 1-.22-.53V15a.75.75 0 0 1 .75-.75" clip-rule="evenodd"></path>
+														</g>
+													</g>
+												</svg>
+											</span>
+											<span class="alj578">
+												<span class="cipnsq">Demande de réservation</span>
+											</span>
+										</span>
+									</a>
+								</div>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

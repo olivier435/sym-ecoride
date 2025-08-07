@@ -5,6 +5,9 @@ export default class extends Controller {
         "form", "results", "departureCity", "arrivalCity", "date",
         "filters", "sort", "priceMax", "eco", "smoking", "pets"
     ]
+    static values = {
+        detailUrl: String // <- récupère le pattern d'URL de détail depuis data-trip-search-detail-url-value
+    }
 
     connect() {
         // Rafraîchir les résultats au submit principal
@@ -58,12 +61,31 @@ export default class extends Controller {
         return checked ? checked.value : null;
     }
 
+    // --- SLUGIFY helper ---
+    slugify(str) {
+        return str
+            .toString()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // accents
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-') // non alphanum -> -
+            .replace(/(^-|-$)/g, '');   // trim - début/fin
+    }
+
     renderResults(data) {
         if (data.trips && data.trips.length > 0) {
             this.resultsTarget.innerHTML = `
                 <h2>${data.trips.length} résultat${data.trips.length > 1 ? 's' : ''} trouvé${data.trips.length > 1 ? 's' : ''}</h2>
                 <div class="row mt-4">
-                ${data.trips.map(trip => `
+                ${data.trips.map(trip => {
+                    // Utilise le slug envoyé par le back !
+                    let detailUrl = this.detailUrlValue;
+                    if (detailUrl) {
+                        detailUrl = detailUrl.replace("__ID__", trip.id).replace("__SLUG__", trip.slug);
+                    } else {
+                        detailUrl = `#${trip.id}`;
+                    }
+
+                    return `
                     <div class="col-md-6 mb-4">
                         <div class="card shadow-sm fgfump ${trip.isFull ? 'opacity-50 pointer-events-none' : ''}">
                             <div class="card-body d-flex flex-column">
@@ -77,7 +99,7 @@ export default class extends Controller {
                                             </div>
                                         </div>                                    
                                     </span>
-                                        ${trip.isFull ? `<span class="ht20ro"><p class="k2086f mb-0">Complet</p></span>` : ''}
+                                    ${trip.isFull ? `<span class="ht20ro"><p class="k2086f mb-0">Complet</p></span>` : ''}
                                 </div>
                                 <p>
                                     <strong>Départ :</strong> ${trip.departureDate} à ${trip.departureTime}<br>
@@ -94,12 +116,13 @@ export default class extends Controller {
                                 </p>
                                 ${trip.isFull
                                     ? ''
-                                    : `<a href="#" class="btn btn-outline-primary mt-auto">Détail</a>`
+                                    : `<a href="${detailUrl}" class="btn btn-outline-primary mt-auto" target="_blank">Détail</a>`
                                 }
                             </div>
                         </div>
                     </div>
-                `).join('')}
+                    `
+                }).join('')}
                 </div>
             `
         } else if (data.nextAvailableDate) {

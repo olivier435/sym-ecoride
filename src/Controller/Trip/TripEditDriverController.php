@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/trip')]
-final class TripController extends AbstractController
+final class TripEditDriverController extends AbstractController
 {
     #[Route('/edit/{id}', name: 'app_trip_edit')]
     #[IsGranted('ROLE_USER')]
