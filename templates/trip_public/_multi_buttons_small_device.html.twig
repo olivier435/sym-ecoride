@@ -1,0 +1,89 @@
+{% if not app.user %}
+	<div class="hakmd9">
+		<div class="cz9z4h">
+			<a class="tzqny6" href="{{ path('app_login') }}">
+				<span class="rqgt37">
+					<span class="alj578">
+						<span class="cipnsq">Se connecter pour réserver</span>
+					</span>
+				</span>
+			</a>
+		</div>
+	</div>
+{% elseif isFull %}
+	<div class="hakmd9">
+		<div class="cz9z4h">
+			<button class="tzqny6 btn btn-secondary w-100" disabled>
+				<span class="rqgt37">
+					<span class="alj578">
+						<span class="cipnsq">Trajet complet</span>
+					</span>
+				</span>
+			</button>
+		</div>
+	</div>
+{% elseif app.user.id == trip.driver.id %}
+	<div class="hakmd9">
+		<div class="cz9z4h">
+			<button class="tzqny6 btn btn-secondary w-100" disabled>
+				<span class="rqgt37">
+					<span class="alj578">
+						<span class="cipnsq">Vous êtes le conducteur</span>
+					</span>
+				</span>
+			</button>
+		</div>
+	</div>
+{% elseif app.user.credit < trip.pricePerPerson %}
+	<div class="hakmd9">
+		<div class="cz9z4h">
+			<button class="tzqny6 btn btn-secondary w-100" disabled>
+				<span class="rqgt37">
+					<span class="alj578">
+						<span class="cipnsq">Crédits insuffisants</span>
+					</span>
+				</span>
+			</button>
+		</div>
+	</div>
+{% elseif trip.passengers.contains(app.user) %}
+	<div class="hakmd9">
+		<div class="cz9z4h">
+			<button class="tzqny6 btn btn-secondary w-100" disabled>
+				<span class="rqgt37">
+					<span class="alj578">
+						<span class="cipnsq">Vous participez déjà</span>
+					</span>
+				</span>
+			</button>
+		</div>
+	</div>
+{% else %}
+	<div class="hakmd9">
+		<div class="cz9z4h">
+			<button class="tzqny6" id="participate-btn" type="button" {# data-participate-url="{{ path('app_trip_participate', {id: trip.id}) }}" #} data-price="{{ trip.pricePerPerson }}">
+				<span class="rqgt37">
+					<span class="h6emz6">
+						<span class="h6emz6">
+							<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="otdyzd">
+								<g color="accentTxtInverted">
+									<g color="currentColor">
+										<path fill="currentColor" d="M8.5 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0M13 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0M8.5 16a1 1 0 1 1-2 0 1 1 0 0 1 2 0"></path>
+										<path fill="currentColor" fill-rule="evenodd" d="M21 11a.75.75 0 0 1-1.5 0V9.25h-15V17A2.5 2.5 0 0 0 7 19.5h4a.75.75 0 0 1 0 1.5H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4zm-4-6.5H7A2.5 2.5 0 0 0 4.5 7v.75h15V7A2.5 2.5 0 0 0 17 4.5" clip-rule="evenodd"></path>
+										<path fill="currentColor" fill-rule="evenodd" d="M16.5 19.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9" clip-rule="evenodd"></path>
+										<path fill="currentColor" fill-rule="evenodd" d="M16.5 14.25a.75.75 0 0 1 .75.75v1.19l.28.28a.75.75 0 1 1-1.06 1.06l-.5-.5a.75.75 0 0 1-.22-.53V15a.75.75 0 0 1 .75-.75" clip-rule="evenodd"></path>
+									</g>
+								</g>
+							</svg>
+						</span>
+					</span>
+					<span class="alj578">
+						<span class="cipnsq">
+							Demande de réservation ({{ trip.pricePerPerson|credit }})
+						</span>
+					</span>
+				</span>
+			</button>
+		</div>
+	</div>
+{% endif %}
