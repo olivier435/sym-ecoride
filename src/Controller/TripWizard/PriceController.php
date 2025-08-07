@@ -21,7 +21,8 @@ final class PriceController extends AbstractController
     {
         $data = $storage->getData();
         $form = $this->createForm(TripPriceFormType::class, [
-            'pricePerPerson' => $data['pricePerPerson'] ?? 1000, // par défaut : 10 €
+            // 'pricePerPerson' => $data['pricePerPerson'] ?? 1000, // par défaut : 10 €
+            'pricePerPerson' => $data['pricePerPerson'] ?? 2, // par défaut : 2 crédits
         ]);
         $form->handleRequest($request);
 

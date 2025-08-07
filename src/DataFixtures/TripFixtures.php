@@ -73,7 +73,8 @@ class TripFixtures extends Fixture implements FixtureGroupInterface
                     ->setArrivalCity($arrivalCity)
                     ->setStatus($faker->randomElement(Trip::STATUSES))
                     ->setSeatsAvailable($faker->numberBetween(1, 4))
-                    ->setPricePerPerson($faker->numberBetween(500, 4000));
+                    // ->setPricePerPerson($faker->numberBetween(500, 4000));
+                    ->setPricePerPerson($faker->numberBetween(2, 20));
 
                 // Associations cohérentes
                 $trip->setDriver($user);

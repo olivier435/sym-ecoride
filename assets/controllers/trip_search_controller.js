@@ -111,7 +111,7 @@ export default class extends Controller {
                                 </p>
                                 <p>
                                     🚗 <strong>${trip.seatsAvailable}</strong> place${trip.seatsAvailable > 1 ? 's' : ''} restante${trip.seatsAvailable > 1 ? 's' : ''}<br>
-                                    💰 <strong>${trip.pricePerPerson} €</strong> par personne<br>
+                                    💰 <strong>${trip.pricePerPerson} crédits</strong> par personne<br>
                                     ${trip.isEco ? `<span class="text-success fw-bold">🌱 Voyage écologique</span>` : `<span class="text-muted">🚘 Classique</span>`}
                                 </p>
                                 ${trip.isFull

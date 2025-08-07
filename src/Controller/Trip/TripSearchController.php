@@ -83,7 +83,8 @@ final class TripSearchController extends AbstractController
                 $search->sort = null;
             }
             $priceMax = $request->query->get('priceMax');
-            $search->priceMax = $priceMax !== '' && $priceMax !== null ? intval(floatval($priceMax) * 100) : null;
+            // $search->priceMax = $priceMax !== '' && $priceMax !== null ? intval(floatval($priceMax) * 100) : null;
+            $search->priceMax = $priceMax !== '' && $priceMax !== null ? intval($priceMax) : null;
             $search->eco = filter_var($request->query->get('eco'), FILTER_VALIDATE_BOOLEAN);
             $search->smoking = filter_var($request->query->get('smoking'), FILTER_VALIDATE_BOOLEAN);
             $search->pets = filter_var($request->query->get('pets'), FILTER_VALIDATE_BOOLEAN);
@@ -132,7 +133,8 @@ final class TripSearchController extends AbstractController
                     'departureAddress' => $trip->getDepartureAddress() ?? '',
                     'arrivalAddress' => $trip->getArrivalAddress() ?? '',
                     'seatsAvailable' => max(0, $placesLeft),
-                    'pricePerPerson' => number_format($trip->getPricePerPerson() / 100, 2, ',', ' '),
+                    // 'pricePerPerson' => number_format($trip->getPricePerPerson() / 100, 2, ',', ' '),
+                    'pricePerPerson' => $trip->getPricePerPerson(),
                     'isEco' => $trip->getCar()?->getEnergy() === Car::ENERGY_ELECTRIC,
                     'duration' => $duration,
                     'isFull' => $placesLeft <= 0,

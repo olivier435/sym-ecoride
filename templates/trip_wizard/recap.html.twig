@@ -60,7 +60,7 @@
 				</tr>
 				<tr>
 					<th scope="row">Prix par personne</th>
-					<td>{{ data.pricePerPerson | amount }}</td>
+					<td>{{ data.pricePerPerson | credit }}</td>
 					<td class="text-end">
 						<a href="{{ path('app_trip_wizard_price', { fromRecap: 1 }) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
 					</td>
