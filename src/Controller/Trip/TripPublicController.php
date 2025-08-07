@@ -4,6 +4,7 @@ namespace App\Controller\Trip;
 
 use App\Entity\Trip;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -11,7 +12,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 final class TripPublicController extends AbstractController
 {
     #[Route('/detail/{id}-{slug}', name: 'app_trip_detail', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function detail(Trip $trip, string $slug, SluggerInterface $slugger)
+    public function detail(Trip $trip, string $slug, SluggerInterface $slugger, Request $request)
     {
         if (!$trip || !in_array($trip->getStatus(), Trip::STATUSES, true)) {
             throw $this->createNotFoundException('Ce covoiturage n\'existe pas.');
@@ -28,7 +29,8 @@ final class TripPublicController extends AbstractController
         }
 
         $driver = $trip->getDriver();
-        $placesLeft = $trip->getSeatsAvailable() - $trip->getPassengers()->count();
+        $isFull = $trip->isFull();
+        $placesLeft = $trip->getSeatsLeft();
 
         // Récupère les préférences du conducteur
         $travelPreference = $driver->getTravelPreference();
@@ -36,10 +38,23 @@ final class TripPublicController extends AbstractController
         // Prépare la liste d'avis (à implémenter plus tard)
         // $reviews = $reviewRepository->findBy(['driver' => $driver], ['createdAt' => 'DESC']);
 
+        if ($request->isXmlHttpRequest()) {
+            // AJAX : On retourne UNIQUEMENT le partial !
+            return $this->render('trip_public/_detail_partial.html.twig', [
+                'trip' => $trip,
+                'travelPreference' => $travelPreference,
+                'slug' => $slug,
+                'isFull' => $isFull,
+                'placesLeft' => $placesLeft,
+            ]);
+        }
+
         return $this->render('trip_public/detail.html.twig', [
             'trip' => $trip,
             'travelPreference' => $travelPreference,
-            'isFull' => $placesLeft <= 0,
+            'isFull' => $isFull,
+            'placesLeft' => $placesLeft,
+            'slug' => $slug,
             // 'reviews' => $reviews,
         ]);
     }

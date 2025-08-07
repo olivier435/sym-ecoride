@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Controller\Trip;
+
+use App\Entity\Trip;
+use App\Entity\User;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+#[Route('/trip/detail')]
+final class TripReservationController extends AbstractController
+{
+    #[Route('/{id}-{slug}/reservation', name: 'app_trip_reservation_recap', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function recap(Request $request, Trip $trip, string $slug)
+    {
+        // 1. Sécurité côté back
+        /** @var User $user */
+        $user = $this->getUser();
+        $driver = $trip->getDriver();
+        $isFull = $trip->isFull();
+        $placesLeft = $trip->getSeatsLeft();
+        $travelPreference = $driver->getTravelPreference();
+
+        // Si pas de places restantes
+        if ($trip->isFull()) {
+            return $this->json(['error' => 'Trajet complet'], 400);
+        }
+        // Si le passager est déjà inscrit
+        if ($trip->getPassengers()->contains($user)) {
+            return $this->json(['error' => 'Vous participez déjà à ce trajet'], 400);
+        }
+        // Si l'utilisateur est le conducteur
+        if ($trip->getDriver() === $user) {
+            return $this->json(['error' => 'Vous êtes le conducteur du trajet'], 400);
+        }
+        // Si crédits insuffisants
+        if ($user->getCredit() < $trip->getPricePerPerson()) {
+            return $this->json(['error' => 'Vous n\'avez pas assez de crédits'], 400);
+        }
+
+        // 2. Affichage selon AJAX ou HTTP classique
+        if ($request->isXmlHttpRequest()) {
+            // Partial à injecter dynamiquement via Stimulus
+            return $this->render('trip_reservation/_recap_partial.html.twig', [
+                'trip' => $trip,
+                'slug' => $slug,
+                'travelPreference' => $travelPreference,
+                'isFull' => $isFull,
+                'placesLeft' => $placesLeft,
+            ]);
+        }
+
+        // Affichage classique
+        return $this->render('trip_public/detail.html.twig', [
+            'trip' => $trip,
+            'slug' => $slug,
+            'travelPreference' => $travelPreference,
+            'isFull' => $isFull,
+            'placesLeft' => $placesLeft,
+        ]);
+    }
+}

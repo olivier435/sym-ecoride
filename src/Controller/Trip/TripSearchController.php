@@ -115,7 +115,7 @@ final class TripSearchController extends AbstractController
                     $duration = ($interval->h * 60) + $interval->i;
                 }
 
-                $placesLeft = $trip->getSeatsAvailable() - $trip->getPassengers()->count();
+                $isFull = $trip->isFull();
 
                 // Ajout du slug PHP pour la route de détail
                 $slug = $this->slugger->slug($trip->getSlugSource())->lower();
@@ -132,12 +132,12 @@ final class TripSearchController extends AbstractController
                     'arrivalTime' => $trip->getArrivalTime()?->format('H:i'),
                     'departureAddress' => $trip->getDepartureAddress() ?? '',
                     'arrivalAddress' => $trip->getArrivalAddress() ?? '',
-                    'seatsAvailable' => max(0, $placesLeft),
+                    'seatsAvailable' => $trip->getSeatsLeft(),
                     // 'pricePerPerson' => number_format($trip->getPricePerPerson() / 100, 2, ',', ' '),
                     'pricePerPerson' => $trip->getPricePerPerson(),
                     'isEco' => $trip->getCar()?->getEnergy() === Car::ENERGY_ELECTRIC,
                     'duration' => $duration,
-                    'isFull' => $placesLeft <= 0,
+                    'isFull' => $isFull,
                     'slug' => $slug,
                 ];
             }, $trips);

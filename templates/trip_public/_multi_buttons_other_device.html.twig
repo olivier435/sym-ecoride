@@ -50,7 +50,7 @@
 	</div>
 {% else %}
 	<div class="hc0qtf">
-		<button class="tzqny6" id="participate-btn" type="button" {# data-participate-url="{{ path('app_trip_participate', {id: trip.id}) }}" #} data-price="{{ trip.pricePerPerson }}">
+		<button class="tzqny6" id="participate-btn" type="button" data-action="participation#participate" data-participation-url-value="{{ path('app_trip_reservation_recap', {id: trip.id, slug: slug}) }}" data-price="{{ trip.pricePerPerson }}">
 			<span class="rqgt37">
 				<span class="h6emz6">
 					<span class="h6emz6">

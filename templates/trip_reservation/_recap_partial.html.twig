@@ -1,0 +1,111 @@
+<div class="skhvxm">
+	<section class="sodj8n">
+		<h1 class="eblipi">
+			<span class="zyartt">Vérifiez les informations de votre demande de réservation</span>
+		</h1>
+		<div aria-hidden="true" class="f3a07x">
+			<hr class="ueb12c">
+		</div>
+	</section>
+	<div>
+		<div class="dhz2jj">
+			<h2 class="qzvfbm">
+				<span class="hih6mu">{{ trip.departureDate|format_datetime('full', 'none', locale='fr')|capitalize }}</span>
+			</h2>
+			<ul class="uvu0wh mb-0">
+				<li class="qp4juy">
+					<div class="ib3w7j">
+						<div class="t69zbq">
+							<time aria-hidden="false" class="j1ik7o">{{ trip.departureTime|date('H:i') }}</time>
+						</div>
+						<div aria-hidden="true" class="nfc2n5">
+							<div class="f5vbbr"></div>
+							<div class="j5p8xi">
+								<div class="ycqvca" aria-hidden="true"></div>
+							</div>
+							<div class="t8389k"></div>
+						</div>
+						<div class="qdyvqy">
+							<span class="ibjfdq">{{ trip.departureCity.name }}</span>
+						</div>
+					</div>
+				</li>
+				<li class="qp4juy">
+					<div class="ib3w7j">
+						<div class="t69zbq">
+							<time aria-hidden="false" class="j1ik7o">{{ trip.arrivalTime|date('H:i') }}</time>
+						</div>
+						<div aria-hidden="true" class="nfc2n5">
+							<div class="sizsz2"></div>
+							<div class="j5p8xi">
+								<div class="ycqvca" aria-hidden="true"></div>
+							</div>
+							<div class="xeaqyv"></div>
+						</div>
+						<div class="qdyvqy">
+							<span class="ibjfdq">{{ trip.arrivalCity.name }}</span>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div>
+		<div class="dhz2jj">
+			<div aria-hidden="true" class="f3a07x">
+				<hr class="ueb12c">
+			</div>
+			<h2 class="hfos1d">
+				<span class="hih6mu">Récapitulatif du prix</span>
+			</h2>
+		</div>
+	</div>
+	<div>
+		<div class="dhz2jj">
+			<a href="#" class="ddag0j">
+				<span class="mhltaj">
+					<span class="jc93yg">
+						<span class="yhdv69">
+							<span class="zeirs7">Prix total</span>
+							<div class="d-flex-flex-row">
+								<span class="fymw0i">Pour 1 passager</span>
+								<span class="fymw0i">-
+									{{ trip.seatsAvailable }}
+									place{{ trip.seatsAvailable > 1 ? 's' : '' }}
+									restante{{ trip.seatsAvailable > 1 ? 's' : '' }}
+								</span>
+							</div>
+						</span>
+						<span class="ocdzaa">
+							<span class="mmwket">{{ trip.pricePerPerson|credit }}</span>
+						</span>
+					</span>
+					<span class="g8cwm9">
+						<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="nn9gyr">
+							<g color="neutralTxtModerate">
+								<g color="currentColor">
+									<path fill="currentColor" fill-rule="evenodd" d="M8.293 6.707a1 1 0 0 1 1.414-1.414l6 6a1 1 0 0 1 0 1.414l-6 6a1 1 0 0 1-1.414-1.414L13.586 12z" clip-rule="evenodd"></path>
+								</g>
+							</g>
+						</svg>
+					</span>
+				</span>
+			</a>
+		</div>
+	</div>
+	<div>
+		<div class="dhz2jj">
+			<div aria-hidden="true" class="f3a07x">
+				<hr class="ueb12c">
+			</div>
+		</div>
+	</div>
+	<div class="svik0o rnnc81">
+		<button type="button" class="btn btn-link" data-action="participation#showDetail">
+			← Retour
+		</button>
+		<button type="button" class="btn btn-primary" id="confirm-reservation-btn">
+			Confirmer la réservation
+		</button>
+	</div>
+</div>

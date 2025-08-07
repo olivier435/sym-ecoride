@@ -8,6 +8,7 @@ import TripDeleteController from './controllers/trip_delete_controller.js';
 import TripSearchController from './controllers/trip_search_controller.js';
 import TravelPreferenceController from './controllers/travel_preference_controller.js';
 import AjaxFormController from './controllers/ajax_form_controller.js';
+import ParticipationController from './controllers/participation_controller.js';
 
 const app = startStimulusApp();
 // register any custom, 3rd party controllers here
@@ -20,3 +21,4 @@ app.register('trip-delete', TripDeleteController);
 app.register('trip-search', TripSearchController);
 app.register('ajax-form', AjaxFormController);
 app.register('travel-preference', TravelPreferenceController);
+app.register('participation', ParticipationController);

@@ -316,4 +316,14 @@ class Trip
             $this->getDepartureDate()?->format('d-m-Y') ?? ''
         );
     }
+
+    public function isFull(): bool
+    {
+        return $this->getPassengers()->count() >= $this->getSeatsAvailable();
+    }
+
+    public function getSeatsLeft(): int
+    {
+        return max(0, $this->getSeatsAvailable() - $this->getPassengers()->count());
+    }
 }
