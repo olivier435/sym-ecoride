@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class RegistrationController extends AbstractController
 {
     #[Route('/inscription', name: 'app_registration')]
-    public function index(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $em, AvatarService $avatarService): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $em, AvatarService $avatarService): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -34,6 +34,8 @@ final class RegistrationController extends AbstractController
             // Transformer le prénom et le nom
             $user->setFirstname(ucfirst($firstname))
                 ->setLastname(mb_strtoupper($lastname));
+            
+            $user->setCredit(20);
 
             $user->setAvatar($avatarService->createAndAssignAvatar($user));
 

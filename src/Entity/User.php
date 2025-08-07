@@ -122,6 +122,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: TravelPreference::class, cascade: ['persist', 'remove'])]
     private ?TravelPreference $travelPreference = null;
 
+    #[Assert\GreaterThanOrEqual(
+        value: 0,
+        message: "Le crédit ne peut pas être négatif."
+    )]
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private ?int $credit = 0;
+
     public function __construct()
     {
         $this->cars = new ArrayCollection();
@@ -458,6 +465,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         }
 
         $this->travelPreference = $travelPreference;
+
+        return $this;
+    }
+
+    public function getCredit(): ?int
+    {
+        return $this->credit;
+    }
+
+    public function setCredit(int $credit): static
+    {
+        $this->credit = $credit;
 
         return $this;
     }

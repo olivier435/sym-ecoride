@@ -46,6 +46,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
             ->setPseudo('admin')
             // ->setPhone($faker->phoneNumber())
             ->setPhone($adminPhoneNumberObject)
+            ->setCredit(100)
             ->setEmail("admin@gmail.com")
             ->setPassword($hash);
 
@@ -80,6 +81,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
                 ->setPseudo($faker->unique()->userName() . $u)
                 // ->setPhone($faker->phoneNumber())
                 ->setPhone($phoneNumberObject)
+                ->setCredit(20)
                 ->setPassword($hash);
 
             $manager->persist($user);
