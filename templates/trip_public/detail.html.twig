@@ -8,7 +8,12 @@
 {% endblock %}
 
 {% block body %}
-	<div data-controller="participation" data-participation-target="container" data-participation-detail-url-value="{{ path('app_trip_detail', {id: trip.id, slug: slug}) }}">
+	<div 
+	data-controller="participation" 
+	data-participation-target="container" 
+	data-participation-detail-url-value="{{ path('app_trip_detail', {id: trip.id, slug: slug}) }}" 
+	data-participation-trip-id-value="{{ trip.id }}" 
+	data-participation-slug-value="{{ slug }}">
 		{% include 'trip_public/_detail_partial.html.twig' %}
 	</div>
 {% endblock %}

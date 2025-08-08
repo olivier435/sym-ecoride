@@ -4,7 +4,9 @@ export default class extends Controller {
     static targets = ["container"];
     static values = {
         url: String, // tu peux ne pas l'utiliser, on lit l'URL sur le bouton
-        detailUrl: String // optionnel, pour le bouton retour
+        detailUrl: String, // optionnel, pour le bouton retour
+        slug: String,
+        tripId: Number,
     }
 
     // Méthode appelée par data-action="participation#participate"
@@ -52,5 +54,13 @@ export default class extends Controller {
         } catch {
             this.containerTarget.innerHTML = `<div class="alert alert-danger">Erreur lors du chargement.</div>`;
         }
+    }
+
+    async showSecondConfirmation(event) {
+        const tripId = this.tripIdValue;
+        const slug = this.slugValue;
+        event.preventDefault();
+        const url = `/trip/detail/${tripId}-${slug}/reservation/confirm`;
+        this.loadHtml(url);
     }
 }

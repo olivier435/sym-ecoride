@@ -79,4 +79,33 @@ final class TripReservationController extends AbstractController
             'priceDriver' => $priceDriver,
         ]);
     }
+
+    #[Route('/{id}-{slug}/reservation/confirm', name: 'app_trip_reservation_confirm', methods: ['GET'])]
+    public function confirm(Request $request, Trip $trip, string $slug): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        // Si pas de places restantes
+        if ($trip->isFull()) {
+            return $this->json(['error' => 'Trajet complet'], 400);
+        }
+        // Si le passager est déjà inscrit
+        if ($trip->getPassengers()->contains($user)) {
+            return $this->json(['error' => 'Vous participez déjà à ce trajet'], 400);
+        }
+        // Si l'utilisateur est le conducteur
+        if ($trip->getDriver() === $user) {
+            return $this->json(['error' => 'Vous êtes le conducteur du trajet'], 400);
+        }
+        // Si crédits insuffisants
+        if ($user->getCredit() < $trip->getPricePerPerson()) {
+            return $this->json(['error' => 'Vous n\'avez pas assez de crédits'], 400);
+        }
+
+        return $this->render('trip_reservation/_second_confirmation.html.twig', [
+            'trip' => $trip,
+            'slug' => $slug,
+        ]);
+    }
 }

@@ -1,0 +1,15 @@
+<div class="tetx-center p-4">
+	<h2>Confirmation finale</h2>
+	<p>Vous allez utiliser
+		<b>{{ trip.pricePerPerson|credit }}</b>
+		pour réserver ce trajet</p>
+	<p>Cette action est définitive et vos crédits seront débités immédiatement si le conducteur n'annule pas le trajet</p>
+	<div class="d-flex justify-content-between mt-4">
+		<button type="button" class="btn btn-link" data-action="participation#showDetail">
+			Annuler
+		</button>
+		<button type="button" class="btn btn-success" id="final-reservation-btn" data-action="participation#finalReservation">
+			Oui, je confirme ma réservation
+		</button>
+	</div>
+</div>
