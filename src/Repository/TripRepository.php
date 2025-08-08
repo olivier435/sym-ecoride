@@ -89,6 +89,15 @@ class TripRepository extends ServiceEntityRepository
             ->setParameter('date', $search->date)
             ->groupBy('t.id');
 
+        // Filtre sur l'heure si aujourd'hui
+        $today = (new \DateTimeImmutable('now'))->format('Y-m-d');
+        $searchDate = $search->date instanceof \DateTimeInterface ? $search->date->format('Y-m-d') : null;
+        if ($searchDate === $today) {
+            $now = (new \DateTimeImmutable())->format('H:i:s');
+            $qb->andWhere('t.departureTime > :now')
+                ->setParameter('now', $now);
+        }
+
         // Véritable nombre de places restantes = seatsAvailable - COUNT(p)
         // $qb->having('t.seatsAvailable > COUNT(p.id)');
 

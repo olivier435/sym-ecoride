@@ -25,6 +25,15 @@ export default class extends Controller {
         if (this.hasDepartureCityTarget) this.departureCityTarget.addEventListener("change", () => this.formTarget.requestSubmit())
         if (this.hasArrivalCityTarget) this.arrivalCityTarget.addEventListener("change", () => this.formTarget.requestSubmit())
         if (this.hasDateTarget) this.dateTarget.addEventListener("change", () => this.formTarget.requestSubmit())
+        
+        if (this.hasPriceMaxTarget) {
+        this.priceMaxTarget.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                this.formTarget.requestSubmit();
+                }
+            });
+        }
 
         // Optionnel : déclenche une première recherche si des valeurs sont déjà remplies
         // this.formTarget.requestSubmit();

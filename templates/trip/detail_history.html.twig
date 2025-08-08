@@ -1,0 +1,185 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Détail du trajet
+{% endblock %}
+
+{% block body %}
+	<div class="skhvxm">
+		<div class="mxeb9b">
+			<div>
+				<div class="xpshe4">
+					<h1 class="eblipi b9m0qa">
+						<span class="zyartt">Plan de route</span>
+					</h1>
+					<div class="bThDHv">
+						<span class="tn5h6o">
+							<span class="gm57rc">{{ trip.status|trip_status_badge }}</span>
+						</span>
+					</div>
+					<div class="upb47v">
+						<hr class="wntyvr">
+					</div>
+					<h2 class="zzm2xi">
+						<span class="mq2cgb">{{ trip.departureDate|format_datetime('full', 'none', locale: 'fr') }}</span>
+					</h2>
+					<div class="gxzbqj">
+						<div class="tb47ia">
+							<div class="x6ga3t">
+								<div class="ip47ld">
+									<span class="ud3coz">{{ trip.departureTime|date('H:i') }}</span>
+								</div>
+								<div class="f25tyc">
+									<div class="x2kdrg"></div>
+									<hr class="dkaodm">
+								</div>
+								<div class="p5eemy">
+									<span class="ixmjy9">
+										<span class="jsx0vn">
+											<span class="p3roln">
+												<span class="ezk5rw">{{ trip.departureCity.name }}</span>
+												<span class="y6s1ul">{{ trip.departureAddress|withoutCity }}</span>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+							<div class="x6ga3t">
+								<div class="ip47ld">
+									<span class="ud3coz">{{ trip.arrivalTime|date('H:i') }}</span>
+								</div>
+								<div class="f25tyc">
+									<hr class="bnkanz">
+									<div class="d0opxx"></div>
+								</div>
+								<div class="p5eemy">
+									<span class="ixmjy9">
+										<span class="jsx0vn">
+											<span class="p3roln">
+												<span class="ezk5rw">{{ trip.arrivalCity.name }}</span>
+												<span class="y6s1ul">{{ trip.arrivalAddress|withoutCity }}</span>
+											</span>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="upb47v">
+						<hr class="wntyvr">
+					</div>
+					{% if trip.passengers|length > 0 %}
+						<h2 class="zzm2xi">
+							<span class="jy0s9x">Passagers</span>
+						</h2>
+						<ul class="uvu0wh v44whj">
+							{% for passenger in trip.passengers %}
+								<li>
+									<div class="xrh3jz">
+										<span class="h3yyln">
+											<span class="yfbpn5">
+												<span class="yj26uc">
+													<img class="nuyqab" src="{{ vich_uploader_asset(passenger.avatar, 'imageFile') }}" alt="Photo de profil">
+												</span>
+											</span>
+											<span class="igawxh">
+												<span class="lkmsa3 d-flex flex-row">
+													{% if passenger.pseudo is not empty %}
+														<span class="fw-bold">{{ passenger.pseudo }}
+															-</span>
+													{% endif %}
+													<span>{{ passenger.firstname }}
+														{{ passenger.lastname }}
+													</span>
+												</span>
+											</span>
+										</span>
+									</div>
+								</li>
+							{% endfor %}
+						</ul>
+					{% else %}
+						<div class="bThDHv">
+							<span class="b5vw6w">
+								<span class="ioaidm">
+									<span class="ecqdj8">Aucun passager pour ce trajet</span>
+								</span>
+							</span>
+						</div>
+					{% endif %}
+					<div class="upb47v">
+						<hr class="wntyvr">
+					</div>
+					{% if role == 'driver' %}
+						<a type="button" class="z1tfth" href="{{ path('app_trip_edit', {id: trip.id}) }}" data-discover="true">
+							<span class="tn5h6o">
+								<span class="qsc79s">
+									<span class="y7ksbj">Modifier votre annonce</span>
+								</span>
+							</span>
+							<span class="ous5fx">
+								<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="nn9gyr">
+									<g color="neutralTxtModerate">
+										<g color="currentColor">
+											<path fill="currentColor" fill-rule="evenodd" d="M8.293 6.707a1 1 0 0 1 1.414-1.414l6 6a1 1 0 0 1 0 1.414l-6 6a1 1 0 0 1-1.414-1.414L13.586 12z" clip-rule="evenodd"></path>
+										</g>
+									</g>
+								</svg>
+							</span>
+						</a>
+					{% elseif role == 'passenger' %}
+						<h2 class="zzm2xi">
+							<span class="jy0s9x">Conducteur</span>
+						</h2>
+						<a
+							class="y5p8i7" href="#">
+							<!-- LIEN VERS AVIS -->
+							<span class="n44lzi">
+								<span class="yfbpn5">
+									<span class="yj26uc">
+										<img class="nuyqab" src="{{ vich_uploader_asset(trip.driver.avatar, 'imageFile') }}" alt="Photo de profil">
+									</span>
+								</span>
+								<span class="igawxh">
+									<span class="lkmsa3 d-flex flex-row">
+										{% if trip.driver.pseudo is not empty %}
+											<span class="fw-bold">{{ trip.driver.pseudo }}
+												-</span>
+										{% endif %}
+										<span>
+											{{ trip.driver.firstname }}
+											{{ trip.driver.lastname }}
+										</span>
+									</span>
+									<span class="qfcicu">
+										<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="o6nbh9">
+											<g color="neutralTxtModerate">
+												<g color="currentColor">
+													<path fill="currentColor" fill-rule="evenodd" d="M12 3a.75.75 0 0 1 .673.418l2.374 4.812 5.31.772a.75.75 0 0 1 .416 1.28l-3.842 3.745.907 5.289a.75.75 0 0 1-1.088.79L12 17.61l-4.75 2.497a.75.75 0 0 1-1.088-.79l.907-5.29-3.842-3.745a.75.75 0 0 1 .415-1.28l5.31-.77 2.376-4.813A.75.75 0 0 1 12 3" clip-rule="evenodd"></path>
+												</g>
+											</g>
+										</svg>
+										<span class="qdhgn8">
+											<span>4,8/5 -  46 avis</span>
+										</span>
+									</span>
+								</span>
+								<span class="lvzl0u">
+									<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="nn9gyr">
+										<g color="neutralTxtModerate">
+											<g color="currentColor">
+												<path fill="currentColor" fill-rule="evenodd" d="M8.293 6.707a1 1 0 0 1 1.414-1.414l6 6a1 1 0 0 1 0 1.414l-6 6a1 1 0 0 1-1.414-1.414L13.586 12z" clip-rule="evenodd"></path>
+											</g>
+										</g>
+									</svg>
+								</span>
+							</span>
+						</a>
+					{% endif %}
+					<div class="upb47v">
+						<hr class="wntyvr">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -53,7 +53,9 @@ final class TripEditDriverController extends AbstractController
             $cityManager->purgeOrphanCities();
 
             $this->addFlash('success', 'Le trajet a bien été mis à jour.');
-            return $this->redirectToRoute('app_trip_driver_list');
+            return $this->redirectToRoute('app_trip_driver_detail', [
+                'id' => $trip->getId(),
+            ]);
         }
 
         return $this->render('trip/edit.html.twig', [

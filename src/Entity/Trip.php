@@ -16,11 +16,13 @@ class Trip
     public const STATUS_UPCOMING = 'à venir';
     public const STATUS_ONGOING = 'en cours';
     public const STATUS_COMPLETED = 'effectué';
+    public const STATUS_CANCELLED = 'annulé';
 
     public const STATUSES = [
         self::STATUS_UPCOMING,
         self::STATUS_ONGOING,
         self::STATUS_COMPLETED,
+        self::STATUS_CANCELLED,
     ];
 
     #[ORM\Id]
@@ -325,5 +327,10 @@ class Trip
     public function getSeatsLeft(): int
     {
         return max(0, $this->getSeatsAvailable() - $this->getPassengers()->count());
+    }
+
+    public function isCancellable(): bool
+    {
+        return $this->getStatus() === self::STATUS_CANCELLED;
     }
 }
