@@ -1,0 +1,71 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    Détails du prix
+{% endblock %}
+
+{% block body %}
+    <div class="skhvxm">
+        <div class="flex-grow-1">
+            <div class="dhz2jj">
+                <h1 class="u3p91c">
+                    <span class="wqmea2">Détails du prix</span>
+                </h1>
+                <ul class="a0rq4d">
+                    <li>
+                        <div class="n596dv">
+                            <span class="wxivkh">
+                                <span class="xpl36e">
+                                    <span class="n8dtbk">Montant payé au conducteur</span>
+                                </span>
+                                <span class="l4pdty w-80">
+                                    <span class="o39dla">{{ priceDriver }}
+                                        crédits
+                                    </span>
+                                </span>
+                            </span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="n596dv">
+                            <span class="wxivkh">
+                                <span class="xpl36e">
+                                    <span class="n8dtbk">Frais de service : pour nous aider à maintenir la fiabilité et le bon fonctionnement de notre plateforme, tout en continuant à bâtir une communauté de confiance</span>
+                                </span>
+                                <span class="l4pdty w-80">
+                                    <span class="o39dla">{{ fee }}
+                                        crédits
+                                    </span>
+                                </span>
+                            </span>
+                        </div>
+                    </li>
+                </ul>
+                <div aria-hidden="true" class="rwqjqt">
+                    <hr class="wntyvr">
+                </div>
+                <div class="n596dv">
+                    <span class="wxivkh">
+                        <span class="xpl36e">
+                            <span class="n8dtbk">Prix total</span>
+                            <span class="rxs445">Pour 1 passager</span>
+                        </span>
+                        <span class="l4pdty w-80">
+                            <span class="o39dla">{{ priceTotal }}
+                                crédits
+                            </span>
+                        </span>
+                    </span>
+                </div>
+                <div aria-hidden="true" class="f3a07x">
+                    <hr class="ueb12c">
+                </div>
+                <div class="svik0o">
+                    <a href="{{ path('app_trip_reservation_recap', {id: trip.id, slug: slug}) }}" class="btn btn-link">
+                        ← Retour à la réservation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

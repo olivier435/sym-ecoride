@@ -8,13 +8,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/trip/detail')]
+#[IsGranted('ROLE_USER')]
 final class TripReservationController extends AbstractController
 {
     #[Route('/{id}-{slug}/reservation', name: 'app_trip_reservation_recap', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
-    public function recap(Request $request, Trip $trip, string $slug)
+    public function recap(Request $request, Trip $trip, string $slug): Response
     {
         // 1. Sécurité côté back
         /** @var User $user */
@@ -60,6 +61,22 @@ final class TripReservationController extends AbstractController
             'travelPreference' => $travelPreference,
             'isFull' => $isFull,
             'placesLeft' => $placesLeft,
+        ]);
+    }
+
+    #[Route('/{id}-{slug}/reservation/prix', name: 'app_trip_reservation_price', methods: ['GET'])]
+    public function priceDetail(Trip $trip, string $slug): Response
+    {
+        $priceTotal = $trip->getPricePerPerson();
+        $fee = 2;
+        $priceDriver = $priceTotal - $fee;
+
+        return $this->render('trip_reservation/price_detail.html.twig', [
+            'trip' => $trip,
+            'slug' => $slug,
+            'priceTotal' => $priceTotal,
+            'fee' => $fee,
+            'priceDriver' => $priceDriver,
         ]);
     }
 }
