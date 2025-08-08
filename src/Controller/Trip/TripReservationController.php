@@ -4,64 +4,39 @@ namespace App\Controller\Trip;
 
 use App\Entity\Trip;
 use App\Entity\User;
+use App\Service\TripReservationValidator;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/trip/detail')]
 #[IsGranted('ROLE_USER')]
 final class TripReservationController extends AbstractController
 {
+    use TripContextTrait;
+
     #[Route('/{id}-{slug}/reservation', name: 'app_trip_reservation_recap', methods: ['GET'])]
-    public function recap(Request $request, Trip $trip, string $slug): Response
+    public function recap(Request $request, Trip $trip, string $slug, TripReservationValidator $validator): Response
     {
         // 1. Sécurité côté back
         /** @var User $user */
         $user = $this->getUser();
-        $driver = $trip->getDriver();
-        $isFull = $trip->isFull();
-        $placesLeft = $trip->getSeatsLeft();
-        $travelPreference = $driver->getTravelPreference();
 
-        // Si pas de places restantes
-        if ($trip->isFull()) {
-            return $this->json(['error' => 'Trajet complet'], 400);
-        }
-        // Si le passager est déjà inscrit
-        if ($trip->getPassengers()->contains($user)) {
-            return $this->json(['error' => 'Vous participez déjà à ce trajet'], 400);
-        }
-        // Si l'utilisateur est le conducteur
-        if ($trip->getDriver() === $user) {
-            return $this->json(['error' => 'Vous êtes le conducteur du trajet'], 400);
-        }
-        // Si crédits insuffisants
-        if ($user->getCredit() < $trip->getPricePerPerson()) {
-            return $this->json(['error' => 'Vous n\'avez pas assez de crédits'], 400);
+        // Utilisation du service de validation
+        [$error, $code] = $validator->validate($trip, $user);
+        if ($error) {
+            return $this->json(['error' => $error], $code);
         }
 
-        // 2. Affichage selon AJAX ou HTTP classique
         if ($request->isXmlHttpRequest()) {
-            // Partial à injecter dynamiquement via Stimulus
-            return $this->render('trip_reservation/_recap_partial.html.twig', [
-                'trip' => $trip,
-                'slug' => $slug,
-                'travelPreference' => $travelPreference,
-                'isFull' => $isFull,
-                'placesLeft' => $placesLeft,
-            ]);
+            return $this->render('trip_reservation/_recap_partial.html.twig', $this->getTripContext($trip, $slug));
         }
 
-        // Affichage classique
-        return $this->render('trip_public/detail.html.twig', [
-            'trip' => $trip,
-            'slug' => $slug,
-            'travelPreference' => $travelPreference,
-            'isFull' => $isFull,
-            'placesLeft' => $placesLeft,
-        ]);
+        return $this->render('trip_public/detail.html.twig', $this->getTripContext($trip, $slug));
     }
 
     #[Route('/{id}-{slug}/reservation/prix', name: 'app_trip_reservation_price', methods: ['GET'])]
@@ -81,31 +56,42 @@ final class TripReservationController extends AbstractController
     }
 
     #[Route('/{id}-{slug}/reservation/confirm', name: 'app_trip_reservation_confirm', methods: ['GET'])]
-    public function confirm(Request $request, Trip $trip, string $slug): Response
+    public function confirm(Trip $trip, string $slug, TripReservationValidator $validator): Response
     {
         /** @var User $user */
         $user = $this->getUser();
-
-        // Si pas de places restantes
-        if ($trip->isFull()) {
-            return $this->json(['error' => 'Trajet complet'], 400);
-        }
-        // Si le passager est déjà inscrit
-        if ($trip->getPassengers()->contains($user)) {
-            return $this->json(['error' => 'Vous participez déjà à ce trajet'], 400);
-        }
-        // Si l'utilisateur est le conducteur
-        if ($trip->getDriver() === $user) {
-            return $this->json(['error' => 'Vous êtes le conducteur du trajet'], 400);
-        }
-        // Si crédits insuffisants
-        if ($user->getCredit() < $trip->getPricePerPerson()) {
-            return $this->json(['error' => 'Vous n\'avez pas assez de crédits'], 400);
+        // Utilisation du service de validation
+        [$error, $code] = $validator->validate($trip, $user);
+        if ($error) {
+            return $this->json(['error' => $error], $code);
         }
 
         return $this->render('trip_reservation/_second_confirmation.html.twig', [
             'trip' => $trip,
             'slug' => $slug,
         ]);
+    }
+
+    #[Route('/{id}-{slug}/reservation/book', name: 'app_trip_reservation_book', methods: ['POST'])]
+    public function book(Trip $trip, EntityManagerInterface $em, TripReservationValidator $validator): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        // Utilisation du service de validation
+        [$error, $code] = $validator->validate($trip, $user);
+        if ($error) {
+            return $this->json(['error' => $error], $code);
+        }
+
+        $user->setCredit($user->getCredit() - $trip->getPricePerPerson());
+
+        $trip->addPassenger($user);
+        $em->persist($user);
+        $em->persist($trip);
+        $em->flush();
+
+        $this->addFlash('success', 'Votre réservation a bien été enregistrée ! Vous serez débité uniquement si le trajet n\'est pas annulé.');
+
+        return $this->json(['success' => true]);
     }
 }

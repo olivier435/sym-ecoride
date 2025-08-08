@@ -1,15 +1,39 @@
-<div class="tetx-center p-4">
-	<h2>Confirmation finale</h2>
-	<p>Vous allez utiliser
-		<b>{{ trip.pricePerPerson|credit }}</b>
-		pour réserver ce trajet</p>
-	<p>Cette action est définitive et vos crédits seront débités immédiatement si le conducteur n'annule pas le trajet</p>
-	<div class="d-flex justify-content-between mt-4">
+<div class="xpshe4">
+	<h1 class="eblipi b9m0qa">
+		<span class="zyartt">Confirmation finale</span>
+	</h1>
+	<div aria-hidden="true" class="f3a07x">
+		<hr class="ueb12c">
+	</div>
+	<div>
+		<div class="dhz2jj">
+			<p class="n8b3tj">Vous allez utiliser
+				<span class="bold">{{ trip.pricePerPerson|credit }}</span>
+				pour réserver ce trajet
+			</p>
+			<p class="n8b3tj">Cette action est définitive et vos crédits seront débités immédiatement si le conducteur n'annule pas le trajet</p>
+		</div>
+	</div>
+	<div>
+		<div class="dhz2jj">
+			<div aria-hidden="true" class="f3a07x">
+				<hr class="ueb12c">
+			</div>
+		</div>
+	</div>
+	<div class="svik0o rnnc81">
 		<button type="button" class="btn btn-link" data-action="participation#showDetail">
-			Annuler
+			← Retour
 		</button>
 		<button type="button" class="btn btn-success" id="final-reservation-btn" data-action="participation#finalReservation">
-			Oui, je confirme ma réservation
+			<span class="a338f7">
+				<span>
+					<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="rkrmbf" role="img" aria-hidden="true">
+						<g color="hsla(0, 0%, 100%, 1)">
+							<path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M7 10V7C7 4.23858 9.23858 2 12 2C14.7614 2 17 4.23858 17 7V10H18C19.1046 10 20 10.8954 20 12V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V12C4 10.8954 4.89543 10 6 10H7ZM8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V10H8V7ZM6 11C5.44772 11 5 11.4477 5 12V20C5 20.5523 5.44772 21 6 21H18C18.5523 21 19 20.5523 19 20V12C19 11.4477 18.5523 11 18 11H6Z M14 16C14 17.1046 13.1046 18 12 18C10.8954 18 10 17.1046 10 16C10 14.8954 10.8954 14 12 14C13.1046 14 14 14.8954 14 16Z"></path>
+						</g>
+					</svg>Confirmer la réservation</span>
+			</span>
 		</button>
 	</div>
 </div>
