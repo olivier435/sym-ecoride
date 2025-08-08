@@ -1,0 +1,34 @@
+{# Email envoyé au passager si le conducteur annule le trajet #}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Votre covoiturage a été annulé</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #f7f7f9; margin: 0; padding: 30px 0; }
+      .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 8px; }
+      .btn { background: #3498db; color: #fff; padding: 12px 24px; border-radius: 5px; text-decoration: none; display: inline-block; margin-top: 24px;}
+      .footer { color: #888; font-size: 12px; margin-top: 32px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Bonjour {{ passenger.firstname }},</h2>
+      <p>
+        Nous sommes désolés de vous informer que le covoiturage prévu avec <strong>{{ driver.getFullName() }}</strong> du
+        <strong>{{ trip.departureCity.name }}</strong> à <strong>{{ trip.arrivalCity.name }}</strong>
+        le <strong>{{ trip.departureDate|date('d/m/Y') }}</strong> à <strong>{{ trip.departureTime|date('H:i') }}</strong> a été annulé par le conducteur.
+      </p>
+      <p>
+        <strong>Bonne nouvelle :</strong> vos crédits viennent d'être recrédités automatiquement sur votre compte.
+      </p>
+      <p>
+        Nous vous invitons à rechercher un nouveau trajet sur notre plateforme si besoin.
+      </p>
+      <a href="{{ url('app_trip_passenger_list') }}" class="btn">Voir mes trajets</a>
+      <div class="footer">
+        <p>Merci de votre confiance.<br>À bientôt sur notre plateforme.</p>
+      </div>
+    </div>
+  </body>
+</html>

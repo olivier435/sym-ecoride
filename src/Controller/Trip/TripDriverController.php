@@ -37,9 +37,12 @@ final class TripDriverController extends AbstractController
             throw $this->createAccessDeniedException("Ce trajet ne vous appartient pas.");
         }
 
+        $isCancellable = $trip->isCancellable();
+
         return $this->render('trip/detail_history.html.twig', [
             'trip' => $trip,
-            'role' => 'driver'
+            'role' => 'driver',
+            'isCancellable' => $isCancellable,
         ]);
     }
 }

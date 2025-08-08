@@ -36,9 +36,12 @@ final class TripPassengerController extends AbstractController
             throw $this->createAccessDeniedException("Vous ne participez pas à ce trajet.");
         }
 
+        $isCancellable = $trip->isCancellable();
+
         return $this->render('trip/detail_history.html.twig', [
             'trip' => $trip,
-            'role' => 'passenger'
+            'role' => 'passenger',
+            'isCancellable' => $isCancellable,
         ]);
     }
 }

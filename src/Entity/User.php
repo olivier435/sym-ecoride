@@ -480,4 +480,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
         return $this;
     }
+
+    public function getFullName(): string
+    {
+        return trim($this->firstname . ' ' . $this->lastname);
+    }
 }

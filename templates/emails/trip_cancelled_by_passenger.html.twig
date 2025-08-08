@@ -1,0 +1,32 @@
+{# Email envoyé au conducteur si un passager annule #}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Un passager a annulé sa réservation</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #f7f7f9; margin: 0; padding: 30px 0; }
+      .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 8px; }
+      .footer { color: #888; font-size: 12px; margin-top: 32px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Bonjour {{ driver.firstname }},</h2>
+      <p>
+        Le passager <strong>{{ passenger.getFullName() }}</strong> vient d'annuler sa participation au covoiturage de
+        <strong>{{ trip.departureCity.name }}</strong> à <strong>{{ trip.arrivalCity.name }}</strong>
+        le <strong>{{ trip.departureDate|date('d/m/Y') }}</strong> à <strong>{{ trip.departureTime|date('H:i') }}</strong>.
+      </p>
+      <p>
+        Sa place est à nouveau disponible pour d'autres voyageurs.
+      </p>
+      <a href="{{ url('app_trip_driver_list') }}" style="background:#3498db;color:#fff;padding:12px 24px;border-radius:5px;text-decoration:none;display:inline-block;margin-top:24px;">
+        Voir mes trajets
+      </a>
+      <div class="footer">
+        <p>Merci de votre confiance.<br>À bientôt sur notre plateforme.</p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -106,10 +106,7 @@
 							</span>
 						</div>
 					{% endif %}
-					<div class="upb47v">
-						<hr class="wntyvr">
-					</div>
-					{% if role == 'driver' %}
+					{% if role == 'driver' and trip.isEditable() %}
 						<a type="button" class="z1tfth" href="{{ path('app_trip_edit', {id: trip.id}) }}" data-discover="true">
 							<span class="tn5h6o">
 								<span class="qsc79s">
@@ -127,6 +124,9 @@
 							</span>
 						</a>
 					{% elseif role == 'passenger' %}
+						<div class="upb47v">
+							<hr class="wntyvr">
+						</div>
 						<h2 class="zzm2xi">
 							<span class="jy0s9x">Conducteur</span>
 						</h2>
@@ -178,6 +178,9 @@
 					<div class="upb47v">
 						<hr class="wntyvr">
 					</div>
+					{% if isCancellable %}
+						{% include "trip/_delete_trip.html.twig" %}
+					{% endif %}
 				</div>
 			</div>
 		</div>

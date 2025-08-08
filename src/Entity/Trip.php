@@ -266,25 +266,6 @@ class Trip
         return sprintf('%s à %s (%s)', $this->departureAddress, $this->arrivalAddress, $this->departureDate?->format('d/m/Y'));
     }
 
-    public function isDeletable(): bool
-    {
-        $now = new \DateTimeImmutable();
-
-        // S'il n'y a aucun passager => toujours supprimable
-        if ($this->getPassengers()->isEmpty()) {
-            return true;
-        }
-
-        // Sinon, on vérifie si le trajet est encore en attente
-        $arrivalDateTime = $this->getArrivalDate()
-            ->setTime(
-                (int) $this->getArrivalTime()->format('H'),
-                (int) $this->getArrivalTime()->format('i')
-            );
-
-        return $arrivalDateTime > $now;
-    }
-
     public function getDepartureCity(): ?City
     {
         return $this->departureCity;
@@ -331,6 +312,15 @@ class Trip
 
     public function isCancellable(): bool
     {
-        return $this->getStatus() === self::STATUS_CANCELLED;
+        return $this->getStatus() === self::STATUS_UPCOMING;
+    }
+
+    public function isEditable(): bool
+    {
+        // Edit si statut upcoming, aucun passager, ET date future OU statut cancelled
+        return (
+            ($this->getStatus() === self::STATUS_UPCOMING && $this->getPassengers()->isEmpty() && $this->getDepartureDate() >= new \DateTimeImmutable('today'))
+            || $this->getStatus() === self::STATUS_CANCELLED
+        );
     }
 }
