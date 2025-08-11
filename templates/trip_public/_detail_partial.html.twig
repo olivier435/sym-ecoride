@@ -95,7 +95,7 @@
 																	</g>
 																</svg>
 															</div>
-															5
+															{{ avgRating ? avgRating|number_format(1, ',', ',') : '0' }}
 														</div>
 													</span>
 												</div>
@@ -184,7 +184,7 @@
 						<div class="xjzyyr">
 							<div class="thfioi">
 								<a
-									class="y5p8i7" href="#">
+									class="y5p8i7" href="{{ path('app_driver_testimonials', {id: trip.driver.id}) }}">
 									<!-- LIEN VERS AVIS -->
 									<span class="n44lzi">
 										<span class="yfbpn5">
@@ -212,7 +212,15 @@
 													</g>
 												</svg>
 												<span class="qdhgn8">
-													<span>4,8/5 -  46 avis</span>
+													<span>
+														{% if totalCount > 0 %}
+															{{ avgRating|number_format(1, ',', ',') }}/5 -
+															{{ totalCount }}
+															avis
+														{% else %}
+															0/5 - aucun avis
+														{% endif %}
+													</span>
 												</span>
 											</span>
 										</span>

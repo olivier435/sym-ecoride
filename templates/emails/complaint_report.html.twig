@@ -1,0 +1,26 @@
+<h2>Nouvelle réclamation reçue</h2>
+<p><strong>Type :</strong> {{ type }}</p>
+<p><strong>Commentaire :</strong> {{ comment }}</p>
+
+<h3>Passager</h3>
+<ul>
+    <li>Pseudo : {{ passenger.pseudo }}</li>
+    <li>Prénom : {{ passenger.prenom }}</li>
+    <li>Nom : {{ passenger.nom }}</li>
+    <li>Email : {{ passenger.email }}</li>
+</ul>
+
+<h3>Conducteur</h3>
+<ul>
+    <li>Pseudo : {{ driver.pseudo }}</li>
+    <li>Prénom : {{ driver.prenom }}</li>
+    <li>Nom : {{ driver.nom }}</li>
+    <li>Email : {{ driver.email }}</li>
+</ul>
+
+<h3>Trajet</h3>
+<ul>
+    <li>Départ : {{ trip.departureAddress }} ({{ trip.departureDate|format_datetime(pattern='dd MMMM yyyy', locale='fr') }})</li>
+    <li>Arrivée : {{ trip.arrivalAddress }} ({{ trip.arrivalDate|format_datetime(pattern='dd MMMM yyyy', locale='fr') }})</li>
+</ul>
+{# <p><a href="{{ absolute_url(path('admin')) }}">Back office</a></p> #}

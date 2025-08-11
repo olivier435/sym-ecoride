@@ -4,6 +4,7 @@ namespace App\Controller\Trip;
 
 use App\Entity\Trip;
 use App\Entity\User;
+use App\Repository\TestimonialRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -33,7 +34,7 @@ final class TripPassengerController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_trip_passenger_detail', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function detail(Trip $trip): Response
+    public function detail(Trip $trip, TestimonialRepository $testimonialRepository): Response
     {
         $user = $this->getUser();
         $tripPassenger = null;
@@ -43,6 +44,11 @@ final class TripPassengerController extends AbstractController
                 break;
             }
         }
+
+        $driver = $trip->getDriver();
+
+        $avgRating = $testimonialRepository->getAvgRatingsForDriver($driver->getId());
+        $totalCount = $testimonialRepository->getTotalCountForDriver($driver->getId());
 
         if (!$tripPassenger) {
             throw $this->createAccessDeniedException("Vous ne participez pas à ce trajet.");
@@ -60,8 +66,8 @@ final class TripPassengerController extends AbstractController
             'role' => 'passenger',
             'isCancellable' => $isCancellable,
             'isCompleted' => $isCompleted,
-            // 'isValidated' => $isValidated,
-            // 'isReported' => $isReported,
+            'avgRating' => $avgRating,
+            'totalCount' => $totalCount,
             'validationStatus' => $validationStatus,
         ]);
     }

@@ -3,6 +3,7 @@
 namespace App\Controller\Trip;
 
 use App\Entity\Trip;
+use App\Repository\TestimonialRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,7 +15,7 @@ final class TripPublicController extends AbstractController
     use TripContextTrait;
 
     #[Route('/detail/{id}-{slug}', name: 'app_trip_detail', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function detail(Trip $trip, string $slug, SluggerInterface $slugger, Request $request)
+    public function detail(Trip $trip, string $slug, SluggerInterface $slugger, Request $request, TestimonialRepository $testimonialRepository)
     {
         if (!$trip || !in_array($trip->getStatus(), Trip::STATUSES, true)) {
             throw $this->createNotFoundException('Ce covoiturage n\'existe pas.');
@@ -30,13 +31,18 @@ final class TripPublicController extends AbstractController
             ]);
         }
 
-        // Prépare la liste d'avis (à implémenter plus tard)
-        // $reviews = $reviewRepository->findBy(['driver' => $driver], ['createdAt' => 'DESC']);
+        $driver = $trip->getDriver();
+        $avgRating = $testimonialRepository->getAvgRatingsForDriver($driver->getId());
+        $totalCount = $testimonialRepository->getTotalCountForDriver($driver->getId());
+
+        $context = $this->getTripContext($trip, $slug);
+        $context['avgRating'] = $avgRating;
+        $context['totalCount'] = $totalCount;
 
         if ($request->isXmlHttpRequest()) {
-            return $this->render('trip_public/_detail_partial.html.twig', $this->getTripContext($trip, $slug));
+            return $this->render('trip_public/_detail_partial.html.twig', $context);
         }
 
-        return $this->render('trip_public/detail.html.twig', $this->getTripContext($trip, $slug));
+        return $this->render('trip_public/detail.html.twig', $context);
     }
 }

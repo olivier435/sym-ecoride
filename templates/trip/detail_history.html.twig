@@ -135,7 +135,7 @@
 						<h2 class="zzm2xi">
 							<span class="jy0s9x">Conducteur</span>
 						</h2>
-						<a class="y5p8i7" href="#">
+						<a class="y5p8i7" href="{{ path('app_driver_testimonials', {id: trip.driver.id}) }}">
 							<span class="n44lzi">
 								<span class="yfbpn5">
 									<span class="yj26uc">
@@ -162,7 +162,15 @@
 											</g>
 										</svg>
 										<span class="qdhgn8">
-											<span>4,8/5 -  46 avis</span>
+											<span>
+												{% if totalCount > 0 %}
+													{{ avgRating|number_format(1, ',', ',') }}/5 -
+													{{ totalCount }}
+													avis
+												{% else %}
+													0/5 - aucun avis
+												{% endif %}
+											</span>
 										</span>
 									</span>
 								</span>
