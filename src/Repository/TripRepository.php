@@ -34,7 +34,7 @@ class TripRepository extends ServiceEntityRepository
             // Exclure orphelins expirés :
             ->andWhere('
             NOT (
-                SIZE(t.passengers) = 0
+                SIZE(t.tripPassengers) = 0
                 AND (
                     t.departureDate < :today
                     OR (t.departureDate = :today AND t.departureTime < :time)
@@ -97,7 +97,7 @@ class TripRepository extends ServiceEntityRepository
             ->join('t.driver', 'driver')
             ->leftJoin('driver.avatar', 'avatar')
             ->leftJoin('driver.travelPreference', 'tp')
-            ->leftJoin('t.passengers', 'p')
+            ->leftJoin('t.tripPassengers', 'tpax')
             ->andWhere('t.departureCity = :departureCity')
             ->andWhere('t.arrivalCity = :arrivalCity')
             ->andWhere('t.departureDate = :date')
@@ -107,16 +107,17 @@ class TripRepository extends ServiceEntityRepository
             ->groupBy('t.id');
 
         // Filtre sur l'heure si aujourd'hui
-        $today = (new \DateTimeImmutable('now'))->format('Y-m-d');
+        $tz = new \DateTimeZone('Europe/Paris');
+        $today = (new \DateTimeImmutable('now', $tz))->format('Y-m-d');
         $searchDate = $search->date instanceof \DateTimeInterface ? $search->date->format('Y-m-d') : null;
         if ($searchDate === $today) {
-            $now = (new \DateTimeImmutable())->format('H:i:s');
+            $now = (new \DateTimeImmutable('now', $tz))->format('H:i:s');
             $qb->andWhere('t.departureTime > :now')
                 ->setParameter('now', $now);
         }
 
-        // Véritable nombre de places restantes = seatsAvailable - COUNT(p)
-        // $qb->having('t.seatsAvailable > COUNT(p.id)');
+        // Filtrer les trajets complets :
+        $qb->having('t.seatsAvailable > COUNT(tpax.id)');
 
         if ($search->priceMax !== null) {
             $qb->andWhere('t.pricePerPerson <= :priceMax')
@@ -128,7 +129,7 @@ class TripRepository extends ServiceEntityRepository
         }
         if ($search->smoking) {
             $qb->andWhere('tp.smoking = :smoking')
-                ->setParameter('smoking', SmokingPreference::ALLOWED->value); // ou adapte selon ton enum
+                ->setParameter('smoking', SmokingPreference::ALLOWED->value);
         }
         if ($search->pets) {
             $qb->andWhere('tp.pets IN (:petsAllowed)')

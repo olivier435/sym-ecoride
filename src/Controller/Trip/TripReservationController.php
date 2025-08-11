@@ -3,6 +3,7 @@
 namespace App\Controller\Trip;
 
 use App\Entity\Trip;
+use App\Entity\TripPassenger;
 use App\Entity\User;
 use App\Service\TripReservationValidator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -83,9 +84,21 @@ final class TripReservationController extends AbstractController
             return $this->json(['error' => $error], $code);
         }
 
+        // Vérifie que le passager n'est pas déjà inscrit
+        foreach ($trip->getTripPassengers() as $tp) {
+            if ($tp->getUser() === $user) {
+                return $this->json(['error' => 'Vous êtes déjà inscrit sur ce trajet.'], 400);
+            }
+        }
+
         $user->setCredit($user->getCredit() - $trip->getPricePerPerson());
 
-        $trip->addPassenger($user);
+        $tripPassenger = new TripPassenger();
+        $tripPassenger->setTrip($trip)
+                    ->setUser($user)
+                    ->setValidationStatus('pending');
+        $em->persist($tripPassenger);
+
         $em->persist($user);
         $em->persist($trip);
         $em->flush();

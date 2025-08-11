@@ -21,7 +21,10 @@ final class TripPassengerController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $trips = $user->getTripsAsPassenger();
+        $trips = [];
+        foreach ($user->getTripPassengers() as $tp) {
+            $trips[] = $tp->getTrip();
+        }
 
         return $this->render('trip/history.html.twig', [
             'trips' => $trips,
@@ -33,15 +36,23 @@ final class TripPassengerController extends AbstractController
     public function detail(Trip $trip): Response
     {
         $user = $this->getUser();
-        // Sécurité : le user doit être passager
-        if (!$trip->getPassengers()->contains($user)) {
+        $tripPassenger = null;
+        foreach ($trip->getTripPassengers() as $tp) {
+            if ($tp->getUser() === $user) {
+                $tripPassenger = $tp;
+                break;
+            }
+        }
+
+        if (!$tripPassenger) {
             throw $this->createAccessDeniedException("Vous ne participez pas à ce trajet.");
         }
 
         $isCancellable = $trip->isCancellable();
         $isCompleted = $trip->isCompleted();
-        $isValidated = $trip->isValidated();
-        $isReported = $trip->isReported();
+        // $isValidated = $trip->isValidated();
+        // $isReported = $trip->isReported();
+        $validationStatus = $tripPassenger->getValidationStatus();
 
 
         return $this->render('trip/detail_history.html.twig', [
@@ -49,8 +60,9 @@ final class TripPassengerController extends AbstractController
             'role' => 'passenger',
             'isCancellable' => $isCancellable,
             'isCompleted' => $isCompleted,
-            'isValidated' => $isValidated,
-            'isReported' => $isReported,
+            // 'isValidated' => $isValidated,
+            // 'isReported' => $isReported,
+            'validationStatus' => $validationStatus,
         ]);
     }
 
@@ -59,7 +71,14 @@ final class TripPassengerController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        if (!$trip->getPassengers()->contains($user)) {
+        $tripPassenger = null;
+        foreach ($trip->getTripPassengers() as $tp) {
+            if ($tp->getUser() === $user) {
+                $tripPassenger = $tp;
+                break;
+            }
+        }
+        if (!$tripPassenger) {
             throw $this->createAccessDeniedException();
         }
         if (!$trip->isCompleted()) {
@@ -71,14 +90,17 @@ final class TripPassengerController extends AbstractController
             return $this->redirectToRoute('app_trip_passenger_detail', ['id' => $trip->getId()]);
         }
 
-        $trip->setStatus(Trip::STATUS_VALIDATED);
-        // Mise à jour des crédits pour le driver
-        $driver = $trip->getDriver();
-        $driver->setCredit($driver->getCredit() + $trip->getPricePerPerson());
-
-        $em->flush();
-
-        $this->addFlash('success', 'Merci pour votre validation !');
+        if ($tripPassenger->getValidationStatus() === 'pending') {
+            $tripPassenger->setValidationStatus('validated');
+            $driver = $trip->getDriver();
+            $driver->setCredit($driver->getCredit() + $trip->getPricePerPerson());
+            $em->persist($tripPassenger);
+            $em->persist($driver);
+            $em->flush();
+            $this->addFlash('success', 'Merci pour votre validation !');
+        } else {
+            $this->addFlash('info', 'Vous avez déjà validé ce trajet.');
+        }
         // Redirection vers un espace ou une page de remerciement/avis plus tard
         return $this->redirectToRoute('app_trip_passenger_list');
     }

@@ -24,6 +24,15 @@ class TripForm extends AbstractType
         /** @var User|null $user */
         $user = $options['user'];
 
+        // Définition des statuts disponibles selon le contexte
+        $statusChoices = [Trip::STATUS_UPCOMING => Trip::STATUS_UPCOMING];
+        if ($options['allow_status_choice'] ?? false) {
+            $statusChoices = [
+                Trip::STATUS_UPCOMING => Trip::STATUS_UPCOMING,
+                Trip::STATUS_CANCELLED => Trip::STATUS_CANCELLED,
+            ];
+        }
+
         $builder
             ->add('departureAddress', TextType::class, [
                 'label' => 'Adresse de départ',
@@ -86,8 +95,8 @@ class TripForm extends AbstractType
             ])
             ->add('status', ChoiceType::class, [
                 'label' => 'Statut du voyage',
-                'choices' => array_combine(Trip::STATUSES, Trip::STATUSES),
-                'data' => Trip::STATUS_UPCOMING
+                'choices' => $statusChoices,
+                'data' => $builder->getData()->getStatus() ?? Trip::STATUS_UPCOMING,
             ])
             ->add('car', EntityType::class, [
                 'label' => 'Véhicule utilisé',
@@ -107,6 +116,7 @@ class TripForm extends AbstractType
         $resolver->setDefaults([
             'data_class' => Trip::class,
             'user' => null, // option personnalisée
+            'allow_status_choice' => false,
         ]);
     }
 }

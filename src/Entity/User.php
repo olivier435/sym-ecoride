@@ -113,12 +113,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\OneToMany(targetEntity: Trip::class, mappedBy: 'driver')]
     private Collection $tripsAsDriver;
 
-    /**
-     * @var Collection<int, Trip>
-     */
-    #[ORM\ManyToMany(targetEntity: Trip::class, mappedBy: 'passengers')]
-    private Collection $tripsAsPassenger;
-
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: TravelPreference::class, cascade: ['persist', 'remove'])]
     private ?TravelPreference $travelPreference = null;
 
@@ -129,11 +123,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\Column(type: 'integer', nullable: false)]
     private ?int $credit = 0;
 
+    /**
+     * @var Collection<int, TripPassenger>
+     */
+    #[ORM\OneToMany(targetEntity: TripPassenger::class, mappedBy: 'user')]
+    private Collection $tripPassengers;
+
     public function __construct()
     {
         $this->cars = new ArrayCollection();
         $this->tripsAsDriver = new ArrayCollection();
-        $this->tripsAsPassenger = new ArrayCollection();
+        $this->tripPassengers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -423,35 +423,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this;
     }
 
-    /**
-     * @return Collection<int, Trip>
-     */
-    public function getTripsAsPassenger(): Collection
-    {
-        return $this->tripsAsPassenger;
-    }
-
-    public function addTripsAsPassenger(Trip $trip): static
-    {
-        if (!$this->tripsAsPassenger->contains($trip)) {
-            $this->tripsAsPassenger->add($trip);
-            if (!$trip->getPassengers()->contains($this)) {
-                $trip->addPassenger($this);
-            }
-        }
-
-        return $this;
-    }
-
-    public function removeTripsAsPassenger(Trip $tripsAsPassenger): static
-    {
-        if ($this->tripsAsPassenger->removeElement($tripsAsPassenger)) {
-            $tripsAsPassenger->removePassenger($this);
-        }
-
-        return $this;
-    }
-
     public function getTravelPreference(): ?TravelPreference
     {
         return $this->travelPreference;
@@ -484,5 +455,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public function getFullName(): string
     {
         return trim($this->firstname . ' ' . $this->lastname);
+    }
+
+    /**
+     * @return Collection<int, TripPassenger>
+     */
+    public function getTripPassengers(): Collection
+    {
+        return $this->tripPassengers;
+    }
+
+    public function addTripPassenger(TripPassenger $tripPassenger): static
+    {
+        if (!$this->tripPassengers->contains($tripPassenger)) {
+            $this->tripPassengers->add($tripPassenger);
+            $tripPassenger->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTripPassenger(TripPassenger $tripPassenger): static
+    {
+        if ($this->tripPassengers->removeElement($tripPassenger)) {
+            // set the owning side to null (unless already changed)
+            if ($tripPassenger->getUser() === $this) {
+                $tripPassenger->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

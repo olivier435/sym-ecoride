@@ -35,6 +35,7 @@ final class TripEditController extends AbstractController
 
         $form = $this->createForm(TripForm::class, $trip, [
             'user' => $this->getUser(),
+            'allow_status_choice' => $trip->getStatus() === Trip::STATUS_CANCELLED,
         ]);
         $form->handleRequest($request);
 

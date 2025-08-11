@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 final class TripCancelController extends AbstractController
 {
     #[Route('/delete/{id}', name: 'app_trip_delete', methods: ['POST'])]
-    public function cancel(Request $request, Trip $trip, EntityManagerInterface $em, CityManager $cityManager, SendMailService $mailer)
+    public function cancel(Request $request, Trip $trip, EntityManagerInterface $em, CityManager $cityManager, SendMailService $mailer): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -34,15 +34,24 @@ final class TripCancelController extends AbstractController
         }
 
         $isDriver = $trip->getDriver() === $user;
-        $isPassenger = $trip->getPassengers()->contains($user);
+        $isPassenger = false;
+        $tripPassengerOfUser = null;
+        foreach ($trip->getTripPassengers() as $tp) {
+            if ($tp->getUser() === $user) {
+                $isPassenger = true;
+                $tripPassengerOfUser = $tp;
+                break;
+            }
+        }
 
         if (!$isDriver && !$isPassenger) {
             return new JsonResponse(['error' => "Vous n'êtes pas concerné par ce trajet."], Response::HTTP_FORBIDDEN);
         }
 
         if ($isDriver) {
-            $passengers = $trip->getPassengers();
-            foreach ($passengers as $passenger) {
+            // Le conducteur annule le trajet : tous les passagers sont remboursés et notifiés
+            foreach ($trip->getTripPassengers() as $tripPassenger) {
+                $passenger = $tripPassenger->getUser();
                 $passenger->setCredit($passenger->getCredit() + $trip->getPricePerPerson());
                 $mailer->sendMail(
                     $user->getFullName(),
@@ -55,13 +64,14 @@ final class TripCancelController extends AbstractController
                         'driver' => $user,
                     ]
                 );
-                $trip->removePassenger($passenger);
+                $trip->removeTripPassenger($tripPassenger);
                 $em->persist($passenger);
             }
             $trip->setStatus(Trip::STATUS_CANCELLED);
             $em->persist($trip);
             $this->addFlash('success', 'Votre trajet a bien été annulé. Tous les passagers ont été remboursés.');
         } else {
+            // Un passager annule sa réservation
             $mailer->sendMail(
                 $user->getFullName(),
                 $trip->getDriver()->getEmail(),
@@ -74,7 +84,9 @@ final class TripCancelController extends AbstractController
                 ]
             );
             $user->setCredit($user->getCredit() + $trip->getPricePerPerson());
-            $trip->removePassenger($user);
+            if ($tripPassengerOfUser) {
+                $trip->removeTripPassenger($tripPassengerOfUser);
+            }
             $em->persist($user);
             $em->persist($trip);
             $this->addFlash('success', 'Votre réservation a bien été annulée. Vous avez été remboursé.');

@@ -59,7 +59,8 @@ final class TripStatusController extends AbstractController
 
         $trip->setStatus(Trip::STATUS_COMPLETED);
 
-        foreach ($trip->getPassengers() as $passenger) {
+        foreach ($trip->getTripPassengers() as $tripPassenger) {
+            $passenger = $tripPassenger->getUser();
             $mailer->sendMail(
                 'Covoiturage',
                 $passenger->getEmail(),

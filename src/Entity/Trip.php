@@ -76,13 +76,6 @@ class Trip
     #[ORM\JoinColumn(nullable: false)]
     private ?User $driver = null;
 
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tripsAsPassenger')]
-    #[ORM\JoinTable(name: 'trip_passengers')]
-    private Collection $passengers;
-
     #[ORM\ManyToOne(inversedBy: 'departureTrips')]
     #[ORM\JoinColumn(nullable: false)]
     private ?City $departureCity = null;
@@ -91,10 +84,16 @@ class Trip
     #[ORM\JoinColumn(nullable: false)]
     private ?City $arrivalCity = null;
 
+    /**
+     * @var Collection<int, TripPassenger>
+     */
+    #[ORM\OneToMany(targetEntity: TripPassenger::class, mappedBy: 'trip', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $tripPassengers;
+
     public function __construct()
     {
-        $this->passengers = new ArrayCollection();
         $this->status = self::STATUS_UPCOMING;
+        $this->tripPassengers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -234,37 +233,6 @@ class Trip
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getPassengers(): Collection
-    {
-        return $this->passengers;
-    }
-
-    public function addPassenger(User $passenger): static
-    {
-        if (!$this->passengers->contains($passenger)) {
-            $this->passengers->add($passenger);
-            if (!$passenger->getTripsAsPassenger()->contains($this)) {
-                $passenger->addTripsAsPassenger($this);
-            }
-        }
-
-        return $this;
-    }
-
-    public function removePassenger(User $passenger): static
-    {
-        if ($this->passengers->removeElement($passenger)) {
-            if ($passenger->getTripsAsPassenger()->contains($this)) {
-                $passenger->removeTripsAsPassenger($this);
-            }
-        }
-
-        return $this;
-    }
-
     public function __toString(): string
     {
         return sprintf('%s à %s (%s)', $this->departureAddress, $this->arrivalAddress, $this->departureDate?->format('d/m/Y'));
@@ -292,6 +260,12 @@ class Trip
         $this->arrivalCity = $arrivalCity;
 
         return $this;
+    }
+
+    // Pour récupérer les Users passagers :
+    public function getPassengers(): Collection
+    {
+        return $this->tripPassengers->map(fn(TripPassenger $tp) => $tp->getUser());
     }
 
     public function getSlugSource(): string
@@ -415,5 +389,35 @@ class Trip
         return $this->status === self::STATUS_UPCOMING
             && $this->getPassengers()->isEmpty()
             && $departureDateTime < $now;
+    }
+
+    /**
+     * @return Collection<int, TripPassenger>
+     */
+    public function getTripPassengers(): Collection
+    {
+        return $this->tripPassengers;
+    }
+
+    public function addTripPassenger(TripPassenger $tripPassenger): static
+    {
+        if (!$this->tripPassengers->contains($tripPassenger)) {
+            $this->tripPassengers->add($tripPassenger);
+            $tripPassenger->setTrip($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTripPassenger(TripPassenger $tripPassenger): static
+    {
+        if ($this->tripPassengers->removeElement($tripPassenger)) {
+            // set the owning side to null (unless already changed)
+            if ($tripPassenger->getTrip() === $this) {
+                $tripPassenger->setTrip(null);
+            }
+        }
+
+        return $this;
     }
 }
