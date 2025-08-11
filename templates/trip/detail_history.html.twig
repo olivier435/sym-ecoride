@@ -197,10 +197,9 @@
 									<button type="submit" class="btn btn-success">Valider</button>
 								</form>
 								<div class="ms-md-3 mt-3 mt-md-0">
-									<form method="post" action="#" style="display:inline;">
-										<input type="hidden" name="_token" value="{{ csrf_token('report' ~ trip.id) }}">
-										<button type="submit" class="btn btn-danger">Signaler ce trajet</button>
-									</form>
+									<a href="{{ path('app_trip_passenger_complaint', { id: trip.id }) }}" class="btn btn-danger">
+										Signaler ce trajet
+									</a>
 								</div>
 							{% elseif tripPassenger and tripPassenger.validationStatus == 'validated' %}
 								<div class="alert alert-success">Trajet validé. Merci pour votre retour !</div>

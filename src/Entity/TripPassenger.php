@@ -24,6 +24,9 @@ class TripPassenger
     #[ORM\Column(type: 'string', length: 20, options: ['default' => 'pending'])]
     private ?string $validationStatus = 'pending'; // 'pending', 'validated', 'reported'
 
+    #[ORM\OneToOne(mappedBy: 'tripPassenger', targetEntity: Complaint::class, cascade: ['persist', 'remove'])]
+    private ?Complaint $complaint = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,6 +65,23 @@ class TripPassenger
     {
         $this->validationStatus = $validationStatus;
 
+        return $this;
+    }
+
+    public function getComplaint(): ?Complaint
+    {
+        return $this->complaint;
+    }
+
+    public function setComplaint(?Complaint $complaint): static
+    {
+        if ($this->complaint && $this->complaint !== $complaint) {
+            $this->complaint->setTripPassenger(null);
+        }
+        $this->complaint = $complaint;
+        if ($complaint && $complaint->getTripPassenger() !== $this) {
+            $complaint->setTripPassenger($this);
+        }
         return $this;
     }
 }

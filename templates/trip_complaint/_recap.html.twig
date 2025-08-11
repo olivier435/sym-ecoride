@@ -1,0 +1,13 @@
+<div class="alert alert-warning">
+    <h3>Réclamation déposée</h3>
+    <strong>Motif :</strong> {{ complaint.type.label() }}<br>
+    <strong>Commentaire :</strong> {{ complaint.comment }}
+    <br>
+    <small>Déposée le {{ complaint.createdAt|date('d/m/Y H:i') }}</small>
+</div>
+
+<div class="mt-4">
+    <a href="{{ path('app_trip_passenger_list') }}" class="btn btn-primary">
+        Retour à la liste de mes trajets
+    </a>
+</div>

@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+{% block title %}Réclamation déposée{% endblock %}
+{% block body %}
+    <div class="tf42e5">
+        <div class="zki23p">
+            {% include 'trip_complaint/_recap.html.twig' with {complaint: complaint, trip: trip} %}
+        </div>
+    </div>
+{% endblock %}

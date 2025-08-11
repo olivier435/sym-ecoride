@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+{% block title %}Déposer une réclamation
+{% endblock %}
+{% block body %}
+	<div class="tf42e5">
+		<div class="zki23p" data-controller="trip-complaint" data-trip-complaint-target="container">
+			{% include 'trip_complaint/_form.html.twig' with {form: form, trip: trip, action: path('app_trip_passenger_complaint', {id: trip.id})} %}
+		</div>
+	</div>
+{% endblock %}

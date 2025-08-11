@@ -1,0 +1,82 @@
+{{ form_start(form, {
+    'attr': {
+        'action': action ?? app.request.uri,
+        'class': 'uttdbc',
+        'data-controller': 'trip-complaint',
+    }
+}) }}
+<div class="uj6zfe">
+	<h1 class="jqy9ue186 jqy9ue19z jqy9ue1ae jqy9ue18v jqy9ue19a jqy9ue19f jqy9uen7 jqy9ue24y jqy9ue16x jqy9ue1mr jqy9ue1tk jqy9ue1p9 jqy9ue1r7 jqy9ue1uy jqy9ue22g jqy9ue1xg jqy9ue1zy jqy9ue1al jqy9ue1my jqy9ue1tm jqy9ue1pb jqy9ue1r9 jqy9ue7">
+		<span class="_2ywtvb0">Signaler un problème</span>
+	</h1>
+</div>
+<ul class="uvu0wh">
+	{% for choice in form.type %}
+		<li>
+			<label class="qvzsc4" style="cursor:pointer;">
+				<span class="hbm2rt">
+					<span class="iby4p2">
+						<span class="ocwi3w">
+							<input type="radio" id="{{ choice.vars.id }}" name="{{ choice.vars.full_name }}" value="{{ choice.vars.value }}" class="bt02zi"/>
+							<span class="wmk1vv">
+								<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w9swoz ejccx3jq ejccx3f ejccx3jq ejccx33m">
+									<g color="accentTxtDefault">
+										<g color="currentColor">
+											<path fill="currentColor" fill-rule="evenodd" d="M4 12a8 8 0 1 1 16 0 8 8 0 0 1-16 0m8-10C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2m5 10a5 5 0 1 1-10 0 5 5 0 0 1 10 0" clip-rule="evenodd"></path>
+										</g>
+									</g>
+								</svg>
+							</span>
+							<span class="hohih3">
+								<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w9swoz ejccx3jq ejccx3f ejccx3jq ejccx33m">
+									<g color="accentTxtDefault">
+										<g color="currentColor">
+											<path fill="currentColor" fill-rule="evenodd" d="M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12" clip-rule="evenodd"></path>
+										</g>
+									</g>
+								</svg>
+							</span>
+						</span>
+						<span class="eaq4i0">
+							<span class="c9t0j3">
+								{{ choice.vars.label|raw }}
+							</span>
+						</span>
+					</span>
+				</span>
+			</label>
+		</li>
+	{% endfor %}
+</ul>
+<div class="svizo8">
+	<div class="lykujm">
+		{{ form_widget(form.comment) }}
+	</div>
+</div>
+<div class="wk27xk">
+	<div class="cwk7ou">
+		<span class="k11rqf">
+			<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="v7bdm7">
+				<g color="currentColor">
+					<g color="currentColor">
+						<path fill="currentColor" fill-rule="evenodd" d="M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17m0 1.5c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10" clip-rule="evenodd"></path>
+						<path fill="currentColor" fill-rule="evenodd" d="M12 10.5a.75.75 0 0 1 .75.75v5a.75.75 0 0 1-1.5 0v-5a.75.75 0 0 1 .75-.75" clip-rule="evenodd"></path>
+						<path fill="currentColor" d="M13 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"></path>
+					</g>
+				</g>
+			</svg>
+		</span>
+		<span class="wbqisg">En continuant, je confirme avoir rempli ce formulaire en toute bonne foi et que toutes les informations qui y figurent sont complètes et exactes.</span>
+	</div>
+</div>
+{{ form_widget(form._token) }}
+
+<div class="va32i1">
+	<button type="submit" class="dewr8o awjoi4">
+		<span class="j8yvlk">
+			<span>Enregistrer</span>
+		</span>
+	</button>
+	<button type="button" class="btn btn-link" data-action="click->trip-complaint#goBack" data-url="{{ path('app_trip_passenger_detail', {id: trip.id}) }}">Annuler</button>
+</div>
+{{ form_end(form, { render_rest: false }) }}
