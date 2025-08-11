@@ -24,13 +24,30 @@ class TripRepository extends ServiceEntityRepository
 
     public function findUpcomingByDriver(User $driver): array
     {
-        return $this->createQueryBuilder('t')
+        $tz = new \DateTimeZone('Europe/Paris');
+        $now = new \DateTimeImmutable('now', $tz);
+        $today = $now->format('Y-m-d');
+        $time = $now->format('H:i:s');
+
+        $qb = $this->createQueryBuilder('t')
             ->andWhere('t.driver = :driver')
+            // Exclure orphelins expirés :
+            ->andWhere('
+            NOT (
+                SIZE(t.passengers) = 0
+                AND (
+                    t.departureDate < :today
+                    OR (t.departureDate = :today AND t.departureTime < :time)
+                )
+            )
+        ')
             ->setParameter('driver', $driver)
+            ->setParameter('today', $today)
+            ->setParameter('time', $time)
             ->orderBy('t.departureDate', 'ASC')
-            ->addOrderBy('t.departureTime', 'ASC')
-            ->getQuery()
-            ->getResult();
+            ->addOrderBy('t.departureTime', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findMatchingTrips(City $departureCity, City $arrivalCity, \DateTimeInterface $date): array
@@ -135,28 +152,46 @@ class TripRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    //    /**
-    //     * @return Trip[] Returns an array of Trip objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('t.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findTripsToAutoStart(\DateTimeImmutable $now): array
+    {
+        $tz = new \DateTimeZone('Europe/Paris');
+        $date = $now->format('Y-m-d');
+        $time = $now->format('H:i:s');
 
-    //    public function findOneBySomeField($value): ?Trip
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        // On ne veut que les trajets "à venir", aujourd'hui, et l'heure est <= maintenant (avec une marge si besoin)
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.status = :status')
+            ->andWhere('t.departureDate = :date')
+            ->andWhere('t.departureTime <= :time')
+            // Optionnel : ne pas basculer trop longtemps après l'heure de départ (ex: max +1h)
+            //->andWhere('t.departureTime >= :minTime')
+            ->setParameter('status', Trip::STATUS_UPCOMING)
+            ->setParameter('date', $date)
+            ->setParameter('time', $time)
+            //->setParameter('minTime', ...)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findTripsToAutoComplete(\DateTimeImmutable $now): array
+    {
+        $tz = new \DateTimeZone('Europe/Paris');
+        $date = $now->format('Y-m-d');
+        $time = $now->format('H:i:s');
+
+        // On veut les trajets "en cours" pour aujourd'hui,
+        // dont l'heure d'arrivée est <= maintenant (ou dans une certaine fenêtre)
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.status = :status')
+            ->andWhere('t.arrivalDate = :date')
+            ->andWhere('t.arrivalTime <= :time')
+            // Optionnel : on ne met à jour que jusqu'à X heures après l'heure d'arrivée prévue
+            //->andWhere('t.arrivalTime >= :minTime')
+            ->setParameter('status', Trip::STATUS_ONGOING)
+            ->setParameter('date', $date)
+            ->setParameter('time', $time)
+            //->setParameter('minTime', ...)
+            ->getQuery()
+            ->getResult();
+    }
 }

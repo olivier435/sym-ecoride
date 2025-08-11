@@ -178,9 +178,37 @@
 					<div class="upb47v">
 						<hr class="wntyvr">
 					</div>
-					{% if isCancellable %}
-						{% include "trip/_delete_trip.html.twig" %}
-					{% endif %}
+					<div class="d-flex flex-column flex-md-row justify-content-center align-items-center my-3">
+						{% if isCancellable %}
+							{% include "trip/_delete_trip.html.twig" %}
+						{% endif %}
+						{% if role == 'driver' and isStartable %}
+							<div class="ms-md-3 mt-3 mt-md-0">
+								{% include "trip/_start_trip.html.twig" %}
+							</div>
+						{% endif %}
+						{% if role == 'driver' and isCompletable %}
+							<div class="ms-md-3 mt-3 mt-md-0">
+								{% include "trip/_complete_trip.html.twig" %}
+							</div>
+						{% endif %}
+						{% if role == 'passenger' and isCompleted %}
+							<form method="post" action="{{ path('app_trip_passenger_validate', { id: trip.id }) }}" style="display:inline;">
+								<input type="hidden" name="_token" value="{{ csrf_token('validate' ~ trip.id) }}">
+								<button type="submit" class="btn btn-success">Valider</button>
+							</form>
+							<div class="ms-md-3 mt-3 mt-md-0">
+								<form method="post" action="#" style="display:inline;">
+									<input type="hidden" name="_token" value="{{ csrf_token('report' ~ trip.id) }}">
+									<button type="submit" class="btn btn-danger">Signaler ce trajet</button>
+								</form>
+							</div>
+						{% elseif role == 'passenger' and isValidated %}
+							<div class="alert alert-success">Trajet validé. Merci pour votre retour !</div>
+						{% elseif role == 'passenger' and isReported %}
+							<div class="alert alert-warning">Vous avez signalé un problème. Notre équipe va vous recontacter.</div>
+						{% endif %}
+					</div>
 				</div>
 			</div>
 		</div>

@@ -17,12 +17,16 @@ class Trip
     public const STATUS_ONGOING = 'en cours';
     public const STATUS_COMPLETED = 'effectué';
     public const STATUS_CANCELLED = 'annulé';
+    public const STATUS_VALIDATED = 'validé';
+    public const STATUS_REPORTED = 'signalé';
 
     public const STATUSES = [
         self::STATUS_UPCOMING,
         self::STATUS_ONGOING,
         self::STATUS_COMPLETED,
         self::STATUS_CANCELLED,
+        self::STATUS_VALIDATED,
+        self::STATUS_REPORTED,
     ];
 
     #[ORM\Id]
@@ -322,5 +326,94 @@ class Trip
             ($this->getStatus() === self::STATUS_UPCOMING && $this->getPassengers()->isEmpty() && $this->getDepartureDate() >= new \DateTimeImmutable('today'))
             || $this->getStatus() === self::STATUS_CANCELLED
         );
+    }
+
+    public function isUpcoming(): bool
+    {
+        return $this->status === self::STATUS_UPCOMING;
+    }
+
+    public function canBeStarted(): bool
+    {
+        if ($this->status !== self::STATUS_UPCOMING) {
+            return false;
+        }
+
+        $tz = new \DateTimeZone('Europe/Paris');
+        $now = new \DateTimeImmutable('now', $tz);
+
+        if (!$this->departureDate || !$this->departureTime) {
+            return false;
+        }
+
+        // Recompose une DateTimeImmutable en Europe/Paris à partir des morceaux
+        $date = $this->departureDate->format('Y-m-d');
+        $time = $this->departureTime->format('H:i:s');
+        $departureDateTime = new \DateTimeImmutable("$date $time", $tz);
+
+        $earliest = $departureDateTime->modify('-10 minutes');
+        $latest = $departureDateTime->modify('+30 minutes');
+
+        if ($now < $earliest || $now > $latest) {
+            return false;
+        }
+        return true;
+    }
+
+    public function canBeCompleted(): bool
+    {
+        if ($this->status !== self::STATUS_ONGOING) {
+            return false;
+        }
+
+        $tz = new \DateTimeZone('Europe/Paris');
+        $now = new \DateTimeImmutable('now', $tz);
+
+        if (!$this->arrivalDate || !$this->arrivalTime) {
+            return false;
+        }
+
+        $date = $this->arrivalDate->format('Y-m-d');
+        $time = $this->arrivalTime->format('H:i:s');
+        $arrivalDateTime = new \DateTimeImmutable("$date $time", $tz);
+
+        // On autorise le passage à "effectué" de 30 minutes avant l'arrivée à 2h après
+        $earliest = $arrivalDateTime->modify('-30 minutes');
+        $latest = $arrivalDateTime->modify('+2 hours');
+
+        if ($now < $earliest || $now > $latest) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->status === self::STATUS_COMPLETED;
+    }
+
+    public function isValidated(): bool
+    {
+        return $this->status === self::STATUS_VALIDATED;
+    }
+
+    public function isReported(): bool
+    {
+        return $this->status === self::STATUS_REPORTED;
+    }
+
+    public function isExpiredWithoutPassenger(): bool
+    {
+        $tz = new \DateTimeZone('Europe/Paris');
+        $now = new \DateTimeImmutable('now', $tz);
+
+        $date = $this->departureDate?->format('Y-m-d');
+        $time = $this->departureTime?->format('H:i:s');
+        $departureDateTime = new \DateTimeImmutable("$date $time", $tz);
+
+        return $this->status === self::STATUS_UPCOMING
+            && $this->getPassengers()->isEmpty()
+            && $departureDateTime < $now;
     }
 }

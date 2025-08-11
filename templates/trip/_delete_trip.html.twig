@@ -1,8 +1,6 @@
-<div class="d-flex justify-content-center align-items-center my-3">
-	<form method="post" action="{{ path('app_trip_delete', { id: trip.id }) }}" data-controller="trip-delete" data-trip-delete-target="form" data-trip-id="{{ trip.id }}" data-action="trip-delete#submit" data-turbo="false">
-		<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ trip.id) }}">
-		<button type="submit" class="btn btn-outline-danger">
-			Annuler le trajet
-		</button>
-	</form>
-</div>
+<form method="post" action="{{ path('app_trip_delete', { id: trip.id }) }}" data-controller="trip-delete" data-trip-delete-target="form" data-trip-id="{{ trip.id }}" data-action="trip-delete#submit" data-turbo="false">
+	<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ trip.id) }}">
+	<button type="submit" class="btn btn-outline-danger">
+		Annuler le trajet
+	</button>
+</form>

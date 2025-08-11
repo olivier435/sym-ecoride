@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Merci de valider votre covoiturage</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #f7f7f9; margin: 0; padding: 30px 0; }
+      .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 8px; }
+      .btn { background: #27ae60; color: #fff; padding: 12px 24px; border-radius: 5px; text-decoration: none; display: inline-block; margin-top: 24px;}
+      .footer { color: #888; font-size: 12px; margin-top: 32px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Bonjour {{ passenger.firstname }},</h2>
+      <p>
+        Votre covoiturage avec <strong>{{ driver.getFullName() }}</strong> du
+        <strong>{{ trip.departureCity.name }}</strong> à <strong>{{ trip.arrivalCity.name }}</strong>
+        le <strong>{{ trip.departureDate|date('d/m/Y') }}</strong> à <strong>{{ trip.departureTime|date('H:i') }}</strong> vient de se terminer.
+      </p>
+      <p>
+        <strong>Merci de valider votre trajet !</strong><br>
+        Connectez-vous à votre espace pour indiquer si tout s'est bien passé ou signaler un éventuel problème.
+      </p>
+      <a href="{{ url('app_trip_passenger_list') }}" class="btn">Valider mon trajet</a>
+      <div class="footer">
+        <p>Merci pour votre confiance.<br>À bientôt sur notre plateforme.</p>
+      </div>
+    </div>
+  </body>
+</html>

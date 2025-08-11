@@ -60,6 +60,29 @@ class TripStatusExtension extends AbstractExtension
             </svg>
             <span>Annulé</span>
             HTML,
+            'validé' => <<<HTML
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="x3fx3u me-1" width="20" height="20">
+                <g color="currentColor">
+                    <g color="currentColor">
+                        <circle cx="12" cy="12" r="10" fill="#2ecc71"/>
+                        <path d="M17 8.5l-5.5 7-2.5-2.5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                </g>
+            </svg>
+            <span>Validé</span>
+            HTML,
+            'signalé' => <<<HTML
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="x3fx3u me-1" width="20" height="20">
+                <g color="currentColor">
+                    <g color="currentColor">
+                        <circle cx="12" cy="12" r="10" fill="#e74c3c"/>
+                        <path d="M12 8v4" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="12" cy="16" r="1" fill="#fff"/>
+                    </g>
+                </g>
+            </svg>
+            <span>Signalé</span>
+            HTML,
             default => '',
         };
     }

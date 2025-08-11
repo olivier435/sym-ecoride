@@ -1,78 +1,86 @@
 {% extends "base.html.twig" %}
 
 {% block title %}
-    Historique des trajets
+	Historique des trajets
 {% endblock %}
 
 {% block body %}
-    <div class="skhvxm">
-        <div class="mxeb9b">
-            <div>
-                <div class="xsnovb">
-                    {% if trips|length > 0 %}
-                        <h1 class="eblipi b9m0qa">
-                            <span class="zyartt">Trajets archivés</span>
-                        </h1>
-                        <div class="tsnbop">
-                            {% for trip in trips %}
-                                <a href="{{ role == 'driver' ? path('app_trip_driver_detail', {id: trip.id}) : path('app_trip_passenger_detail', {id: trip.id}) }}" class="fqpm9p">
-                                    <span class="n3i9yg">
-                                        <span class="gm57rc">
-                                            {{ trip.status|trip_status_badge }}
-                                        </span>
-                                    </span>
-                                    <h2 class="his1ay">{{ trip.departureDate|format_datetime('full', 'none', locale: 'fr') }}</h2>
-                                    <span class="idzcua">
-                                        <span class="eapq5x">
-                                            <div class="tuz74s">
-                                                <div class="kd431k">
-                                                    <div class="z3ew19 rp5p6k">
-                                                        <p class="zvvcw9">
-                                                            {{ trip.departureTime|date('H:i') }}
-                                                        </p>
-                                                        <div class="sg4oet">
-                                                            <div class="ad9y9q">
-                                                                <hr class="rzbszz">
-                                                                <p class="c0nduo">{{ trip.departureTime|duration(trip.arrivalTime) }}</p>
-                                                                <hr class="rzbszz">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="ukp43u">
-                                                        <div class="umbtue">
-                                                            <hr class="x3od9x">
-                                                        </div>
-                                                    </div>
-                                                    <div class="yguum2">
-                                                        <p class="dzgwho augxu8">{{ trip.departureAddress|city }}</p>
-                                                    </div>
-                                                </div>
-                                                <div class="kd431k">
-                                                    <div class="b8q1qi">
-                                                        <p class="zvvcw9">
-                                                            {{ trip.arrivalTime|date('H:i') }}
-                                                        </p>
-                                                    </div>
-                                                    <div class="ukp43u">
-                                                        <div class="jjf7u2">
-                                                            <hr class="x3od9x">
-                                                        </div>
-                                                    </div>
-                                                    <div class="yguum2">
-                                                        <p class="dzgwho">{{ trip.arrivalAddress|city }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </span>
-                                    </span>
-                                </a>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {% include "trip/_no_trips.html.twig" %}
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="skhvxm">
+		<div class="mxeb9b">
+			<div>
+				<div class="xsnovb">
+					{% if trips|length > 0 %}
+						<h1 class="eblipi b9m0qa">
+							<span class="zyartt">Trajets archivés</span>
+						</h1>
+						<div class="tsnbop">
+							{% for trip in trips %}
+								{% set highlight = '' %}
+								{% if role == 'passenger' and trip.isCompleted() %}
+									{% set highlight = 'bg-warning-subtle border border-warning' %}
+								{% elseif role == 'passenger' and trip.isReported() %}
+									{% set highlight = 'bg-danger-subtle border border-danger' %}
+								{% elseif role == 'passenger' and trip.isValidated() %}
+									{% set highlight = 'bg-success-subtle border border-success' %}
+								{% endif %}
+								<a href="{{ role == 'driver' ? path('app_trip_driver_detail', {id: trip.id}) : path('app_trip_passenger_detail', {id: trip.id}) }}" class="fqpm9p {{ highlight }}">
+									<span class="n3i9yg">
+										<span class="gm57rc">
+											{{ trip.status|trip_status_badge }}
+										</span>
+									</span>
+									<h2 class="his1ay">{{ trip.departureDate|format_datetime('full', 'none', locale: 'fr') }}</h2>
+									<span class="idzcua">
+										<span class="eapq5x">
+											<div class="tuz74s">
+												<div class="kd431k">
+													<div class="z3ew19 rp5p6k">
+														<p class="zvvcw9">
+															{{ trip.departureTime|date('H:i') }}
+														</p>
+														<div class="sg4oet">
+															<div class="ad9y9q">
+																<hr class="rzbszz">
+																<p class="c0nduo">{{ trip.departureTime|duration(trip.arrivalTime) }}</p>
+																<hr class="rzbszz">
+															</div>
+														</div>
+													</div>
+													<div class="ukp43u">
+														<div class="umbtue">
+															<hr class="x3od9x">
+														</div>
+													</div>
+													<div class="yguum2">
+														<p class="dzgwho augxu8">{{ trip.departureAddress|city }}</p>
+													</div>
+												</div>
+												<div class="kd431k">
+													<div class="b8q1qi">
+														<p class="zvvcw9">
+															{{ trip.arrivalTime|date('H:i') }}
+														</p>
+													</div>
+													<div class="ukp43u">
+														<div class="jjf7u2">
+															<hr class="x3od9x">
+														</div>
+													</div>
+													<div class="yguum2">
+														<p class="dzgwho">{{ trip.arrivalAddress|city }}</p>
+													</div>
+												</div>
+											</div>
+										</span>
+									</span>
+								</a>
+							{% endfor %}
+						</div>
+					{% else %}
+						{% include "trip/_no_trips.html.twig" %}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

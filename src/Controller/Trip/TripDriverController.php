@@ -38,11 +38,15 @@ final class TripDriverController extends AbstractController
         }
 
         $isCancellable = $trip->isCancellable();
+        $isStartable = $trip->canBeStarted();
+        $isCompletable = $trip->canBeCompleted();
 
         return $this->render('trip/detail_history.html.twig', [
             'trip' => $trip,
             'role' => 'driver',
             'isCancellable' => $isCancellable,
+            'isStartable' => $isStartable,
+            'isCompletable' => $isCompletable,
         ]);
     }
 }
