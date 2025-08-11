@@ -97,11 +97,11 @@ final class TripPassengerController extends AbstractController
             $em->persist($tripPassenger);
             $em->persist($driver);
             $em->flush();
-            $this->addFlash('success', 'Merci pour votre validation !');
+            $this->addFlash('success', 'Merci pour votre validation ! Pour finaliser, merci de laisser un avis');
         } else {
             $this->addFlash('info', 'Vous avez déjà validé ce trajet.');
         }
-        // Redirection vers un espace ou une page de remerciement/avis plus tard
-        return $this->redirectToRoute('app_trip_passenger_list');
+        return $this->redirectToRoute('app_trip_passenger_testimonial_new', ['id' => $trip->getId()]);
+        // return $this->redirectToRoute('app_trip_passenger_list');
     }
 }

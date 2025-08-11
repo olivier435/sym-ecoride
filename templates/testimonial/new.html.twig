@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Merci de laisser un avis
+{% endblock %}
+
+{% block body %}
+	<div class="container pt-5">
+		<div class="row mb-3">
+			<div class="comment-information-box mt-3" id="comment">
+				<section>
+					<div class="d-flex justify-content-between align-items-center">
+						<div class="mr-12">
+							<div class="host-title">
+								Merci de laisser un avis
+							</div>
+						</div>
+					</div>
+					<div class="mt-32">
+						<div class="host-link d-flex flex-column" data-controller="testimonial">
+							{{ form_start(form) }}
+							<div class="c5r6yyi">
+								<div id="description-input-textarea-character-count" class="c1k9zihq">
+									<span class="c48a4lr" aria-hidden="true">
+										<b class="description-count" data-testimonial-target="countSpan"></b>&nbsp;caractères restants</span>
+								</div>
+							</div>
+							{{ form_widget(form.content, { attr: {'data-testimonial-target': 'textarea'} }) }}
+							<div class="star-rating mb-3 mt-3" style="cursor: pointer;" data-testimonial-target="starRating">
+								<span>Note sur 5 :</span>
+								{% for i in 1..5 %}
+									<i class="far fa-star" data-rating="{{ i }}"></i>
+								{% endfor %}
+							</div>
+                            {{ form_widget(form.rating, { attr: {'data-testimonial-target': 'ratingInput'} }) }}
+							<button type="submit" class="dl673h" data-turbo="false">Laisser un témoignage</button>
+							{{ form_end(form) }}
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+	</div>
+	{% include "shared/_footer_second.html.twig" %}
+{% endblock %}

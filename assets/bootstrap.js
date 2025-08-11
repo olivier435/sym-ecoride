@@ -10,6 +10,7 @@ import TravelPreferenceController from './controllers/travel_preference_controll
 import AjaxFormController from './controllers/ajax_form_controller.js';
 import ParticipationController from './controllers/participation_controller.js';
 import TripComplaintController from './controllers/trip-complaint_controller.js';
+import TestimonialController from './controllers/testimonial_controller.js';
 
 const app = startStimulusApp();
 // register any custom, 3rd party controllers here
@@ -24,3 +25,4 @@ app.register('ajax-form', AjaxFormController);
 app.register('travel-preference', TravelPreferenceController);
 app.register('participation', ParticipationController);
 app.register('trip-complaint', TripComplaintController);
+app.register('testimonial', TestimonialController);

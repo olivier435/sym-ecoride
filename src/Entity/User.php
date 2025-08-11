@@ -129,11 +129,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\OneToMany(targetEntity: TripPassenger::class, mappedBy: 'user')]
     private Collection $tripPassengers;
 
+    /**
+     * @var Collection<int, Testimonial>
+     */
+    #[ORM\OneToMany(targetEntity: Testimonial::class, mappedBy: 'author')]
+    private Collection $testimonials;
+
     public function __construct()
     {
         $this->cars = new ArrayCollection();
         $this->tripsAsDriver = new ArrayCollection();
         $this->tripPassengers = new ArrayCollection();
+        $this->testimonials = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -481,6 +488,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
             // set the owning side to null (unless already changed)
             if ($tripPassenger->getUser() === $this) {
                 $tripPassenger->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Testimonial>
+     */
+    public function getTestimonials(): Collection
+    {
+        return $this->testimonials;
+    }
+
+    public function addTestimonial(Testimonial $testimonial): static
+    {
+        if (!$this->testimonials->contains($testimonial)) {
+            $this->testimonials->add($testimonial);
+            $testimonial->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTestimonial(Testimonial $testimonial): static
+    {
+        if ($this->testimonials->removeElement($testimonial)) {
+            // set the owning side to null (unless already changed)
+            if ($testimonial->getAuthor() === $this) {
+                $testimonial->setAuthor(null);
             }
         }
 

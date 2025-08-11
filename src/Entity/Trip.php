@@ -90,10 +90,17 @@ class Trip
     #[ORM\OneToMany(targetEntity: TripPassenger::class, mappedBy: 'trip', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $tripPassengers;
 
+    /**
+     * @var Collection<int, Testimonial>
+     */
+    #[ORM\OneToMany(targetEntity: Testimonial::class, mappedBy: 'trip')]
+    private Collection $testimonials;
+
     public function __construct()
     {
         $this->status = self::STATUS_UPCOMING;
         $this->tripPassengers = new ArrayCollection();
+        $this->testimonials = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -415,6 +422,36 @@ class Trip
             // set the owning side to null (unless already changed)
             if ($tripPassenger->getTrip() === $this) {
                 $tripPassenger->setTrip(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Testimonial>
+     */
+    public function getTestimonials(): Collection
+    {
+        return $this->testimonials;
+    }
+
+    public function addTestimonial(Testimonial $testimonial): static
+    {
+        if (!$this->testimonials->contains($testimonial)) {
+            $this->testimonials->add($testimonial);
+            $testimonial->setTrip($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTestimonial(Testimonial $testimonial): static
+    {
+        if ($this->testimonials->removeElement($testimonial)) {
+            // set the owning side to null (unless already changed)
+            if ($testimonial->getTrip() === $this) {
+                $testimonial->setTrip(null);
             }
         }
 
