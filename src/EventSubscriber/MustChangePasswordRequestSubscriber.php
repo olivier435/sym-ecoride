@@ -26,17 +26,22 @@ class MustChangePasswordRequestSubscriber implements EventSubscriberInterface
             return;
         }
         $request = $event->getRequest();
-        // Ne traite que les routes nécessitant un utilisateur connecté (hors login/reset/logout…)
+
+        // On ne traite que les requêtes qui ont une _route (i.e. une route Symfony)
         $currentRoute = $request->attributes->get('_route');
+        if (!$currentRoute || $request->getRequestFormat() !== 'html') {
+            // Pas une vraie page Symfony (probablement un asset, etc.)
+            return;
+        }
+
+        // Liste blanche : les routes à ne PAS bloquer
         if (in_array($currentRoute, [
             'app_login',
-            'app_forgot_pw',
-            'app_reset_pw',
             '2fa_login',
             '2fa_login_check',
             'app_logout',
             'app_force_pw_change',
-            'app_home'
+            'app_home',
         ])) {
             return;
         }

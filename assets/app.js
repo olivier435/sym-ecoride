@@ -51,6 +51,10 @@ const backToTop = () => {
 
 const bootstrapDropdownPatch = () => {
     document.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]').forEach(dd => {
+        // Pour éviter de dupliquer les event listeners, on commence par les retirer
+        dd.replaceWith(dd.cloneNode(true));
+    });
+    document.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]').forEach(dd => {
         dd.addEventListener('click', function(e) {
             e.preventDefault();
             const Dropdown = window.bootstrap.Dropdown;
