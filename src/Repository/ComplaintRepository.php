@@ -16,6 +16,16 @@ class ComplaintRepository extends ServiceEntityRepository
         parent::__construct($registry, Complaint::class);
     }
 
+    public function findOpen()
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.ticketClosed = false')
+            ->andWhere('c.ticketResolved = false')
+            ->orderBy('c.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Complaint[] Returns an array of Complaint objects
     //     */

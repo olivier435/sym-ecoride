@@ -16,6 +16,16 @@ class TripPassengerRepository extends ServiceEntityRepository
         parent::__construct($registry, TripPassenger::class);
     }
 
+    public function countValidated(): int
+    {
+        return (int) $this->createQueryBuilder('tp')
+            ->select('COUNT(tp.id)')
+            ->where('tp.validationStatus = :status')
+            ->setParameter('status', 'validated')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     //    /**
     //     * @return TripPassenger[] Returns an array of TripPassenger objects
     //     */

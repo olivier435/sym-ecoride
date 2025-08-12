@@ -29,6 +29,7 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
+                default_target_path: app_login_success
                 enable_csrf: true
             logout:
                 path: app_logout
@@ -45,6 +46,8 @@ security:
             # configure the form authentication as the entry point for unauthenticated users
             entry_point: form_login
 
+            user_checker: App\Security\UserChecker
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -55,7 +58,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/2fa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

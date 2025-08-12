@@ -84,4 +84,13 @@ class TripPassenger
         }
         return $this;
     }
+
+    public function __toString(): string
+    {
+        // Exemple : pseudo du passager + id du trajet pour que ce soit lisible
+        $user = $this->getUser();
+        $trip = $this->getTrip();
+        return ($user ? $user->getFullName() : 'Passager')
+            . ' - Trajet n°' . ($trip ? $trip->getId() : 'N/A');
+    }
 }

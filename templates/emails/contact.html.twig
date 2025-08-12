@@ -5,4 +5,4 @@
 <p>Email du demandeur : {{ contact.email }}</p>
 <p>Numéro du demandeur : {{ contact.phone|phone_number_format('NATIONAL') }}</p>
 <p>Contenu de la demande : {{ contact.content }}</p>
-{# <p><a href="{{ absolute_url(path('admin')) }}">Back office</a></p> #}
+<p><a href="{{ absolute_url(path('admin')) }}">Back office</a></p>

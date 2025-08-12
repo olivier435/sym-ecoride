@@ -135,6 +135,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\OneToMany(targetEntity: Testimonial::class, mappedBy: 'author')]
     private Collection $testimonials;
 
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isSuspended = false;
+
     public function __construct()
     {
         $this->cars = new ArrayCollection();
@@ -520,6 +523,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
                 $testimonial->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isSuspended(): ?bool
+    {
+        return $this->isSuspended;
+    }
+
+    public function setIsSuspended(bool $isSuspended): static
+    {
+        $this->isSuspended = $isSuspended;
 
         return $this;
     }

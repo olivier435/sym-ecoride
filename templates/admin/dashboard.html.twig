@@ -1,0 +1,82 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content %}
+	<div class="container mt-4">
+		<h1>Bienvenue sur l'espace administration</h1>
+		<p>
+			Bonjour
+			{{ app.user.firstname }}
+			{{ app.user.lastname }}<br>
+			{% if 'ROLE_ADMIN' in app.user.roles %}
+				<strong>Vous êtes connecté en tant qu'administrateur.</strong>
+			{% elseif 'ROLE_EMPLOYE' in app.user.roles %}
+				<strong>Vous êtes connecté en tant qu'employé.</strong>
+			{% endif %}
+		</p>
+
+		{% if 'ROLE_ADMIN' in app.user.roles %}
+			<div class="row">
+				<div class="col-md-6">
+					<h3>Statistiques & Graphiques</h3>
+					{# Ici, insère tes composants graphiques ou tes totaux #}
+					{# <div id="trips-by-day-chart"></div>
+					<div id="credit-by-day-chart"></div>
+					#}
+					<div>
+						<strong>Total des crédits gagnés :</strong>
+						{{ totalCredits|default(0) }}
+					</div>
+				</div>
+				<div class="col-md-6">
+					<h3>Gestion des comptes</h3>
+					<ul>
+						<li><ahref="{{path('admin_user_index')}}">Gérer les utilisateurs</a></li>
+						<li><ahref="{{path('admin_user_index')}}">Suspendre un compte</a></li>
+					</ul>
+				</div>
+			</div>
+		{% elseif 'ROLE_EMPLOYE' in app.user.roles %}
+			<div>
+				<h3>À traiter</h3>
+				<ul>
+					<li>
+						<a href="{{ path('admin_testimonial_index') }}">Valider ou refuser les avis</a>
+					</li>
+				</ul>
+				<h3>Covoiturages signalés</h3>
+				{% if openComplaints is not empty %}
+					<table class="table">
+						<thead>
+							<tr>
+								<th>N°</th>
+								<th>Passager</th>
+								<th>Conducteur</th>
+								<th>Date</th>
+								<th>Type</th>
+								<th>Voir</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for complaint in openComplaints %}
+								<tr>
+									<td>{{ complaint.tripPassenger.trip.id }}</td>
+									<td>{{ complaint.tripPassenger.user.fullName }}</td>
+									<td>{{ complaint.tripPassenger.trip.driver.fullName }}</td>
+									<td>{{ complaint.createdAt|date('d/m/Y') }}</td>
+									<td>{{ complaint.type.label() }}</td>
+									<td>
+										<a href="{{ path('admin_complaint_edit', {entityId: complaint.id}) }}" class="btn btn-sm btn-primary">
+											Gérer
+										</a>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				{% else %}
+					<p>Aucune réclamation en attente.</p>
+				{% endif %}
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

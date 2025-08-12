@@ -23,4 +23,4 @@
     <li>Départ : {{ trip.departureAddress }} ({{ trip.departureDate|format_datetime(pattern='dd MMMM yyyy', locale='fr') }})</li>
     <li>Arrivée : {{ trip.arrivalAddress }} ({{ trip.arrivalDate|format_datetime(pattern='dd MMMM yyyy', locale='fr') }})</li>
 </ul>
-{# <p><a href="{{ absolute_url(path('admin')) }}">Back office</a></p> #}
+<p><a href="{{ absolute_url(path('admin')) }}">Back office</a></p>

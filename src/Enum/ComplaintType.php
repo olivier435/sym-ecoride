@@ -8,7 +8,7 @@ enum ComplaintType: string
     case IMPOSSIBLE_TO_CANCEL = 'impossible_to_cancel';  // Impossible d'annuler
     case PROBLEM_ON_TRIP = 'problem_on_trip';            // Problème survenu
 
-        public function label(): string
+    public function label(): string
     {
         return match ($this) {
             self::TRIP_NOT_PERFORMED => "Vous n'avez pas effectué le trajet que vous aviez prévu avec un⋅e conducteur⋅rice, et celui-ci ou celle-ci n'a pas annulé le trajet depuis son Profil",

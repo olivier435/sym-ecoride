@@ -13,6 +13,7 @@
         "doctrine/doctrine-bundle": "^2.15",
         "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/orm": "^3.5",
+        "easycorp/easyadmin-bundle": "*",
         "fakerphp/faker": "^1.24",
         "liip/imagine-bundle": "^2.13",
         "odolbeau/phone-number-bundle": "^4.2",

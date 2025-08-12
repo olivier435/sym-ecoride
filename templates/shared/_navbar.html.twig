@@ -13,9 +13,6 @@
 					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="#">Pricing</a>
-				</li>
-				<li class="nav-item">
 					<a href="{{ path('app_contact') }}" class="nav-link">
 						📣 Contact
 					</a>
@@ -23,7 +20,12 @@
 			</ul>
 			<ul class="navbar-nav">
 				{% if app.user %}
-					<li class="nav-item d-flex align-items-center me-3">
+					{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_EMPLOYE') %}
+						<li class="nav-item">
+							<a href="{{ path('admin') }}" class="nav-link">Administration</a>
+						</li>
+					{% endif %}
+					<li class="nav-item d-flex align-items-center me-3 mb-2 mb-md-0">
 						<span class="badge bg-primary px-3 py-2">
 							{{ app.user.credit|credit(true) }}
 						</span>
