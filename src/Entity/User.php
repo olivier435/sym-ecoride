@@ -138,6 +138,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\Column(type: 'boolean')]
     private ?bool $isSuspended = false;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private ?bool $mustChangePassword = false;
+
     public function __construct()
     {
         $this->cars = new ArrayCollection();
@@ -543,5 +546,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     {
         $avatar = $this->getAvatar();
         return '/images/avatars/' . $avatar->getImageName();
+    }
+
+    public function isMustChangePassword(): ?bool
+    {
+        return $this->mustChangePassword;
+    }
+
+    public function setMustChangePassword(bool $mustChangePassword): static
+    {
+        $this->mustChangePassword = $mustChangePassword;
+
+        return $this;
     }
 }

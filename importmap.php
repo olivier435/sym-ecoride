@@ -42,17 +42,17 @@ return [
         'version' => '7.3.0',
     ],
     'bootstrap' => [
-        'version' => '5.3.7',
+        'version' => '5.3.6',
     ],
     '@popperjs/core' => [
         'version' => '2.11.8',
     ],
     'bootstrap/dist/css/bootstrap.min.css' => [
-        'version' => '5.3.7',
+        'version' => '5.3.6',
         'type' => 'css',
     ],
     '@fortawesome/fontawesome-free/css/all.css' => [
-        'version' => '7.0.0',
+        'version' => '6.7.2',
         'type' => 'css',
     ],
     'bootstrap-icons/font/bootstrap-icons.min.css' => [
@@ -72,14 +72,6 @@ return [
         'version' => '2.4.3',
         'type' => 'css',
     ],
-    'tom-select/dist/css/tom-select.default.css' => [
-        'version' => '2.4.3',
-        'type' => 'css',
-    ],
-    'tom-select/dist/css/tom-select.bootstrap4.css' => [
-        'version' => '2.4.3',
-        'type' => 'css',
-    ],
     'tom-select/dist/css/tom-select.bootstrap5.css' => [
         'version' => '2.4.3',
         'type' => 'css',
@@ -88,9 +80,21 @@ return [
         'version' => '4.5.0',
     ],
     '@symfony/ux-chartjs' => [
-        'version' => '2.29.1',
+        'version' => '2.27.0',
     ],
     '@kurkle/color' => [
         'version' => '0.3.4',
+    ],
+    'admin_pseudo' => [
+        'path' => './assets/js/admin_pseudo_autogen.js',
+        'entrypoint' => true,
+    ],
+    'password_utils' => [
+        'path' => './assets/js/modules/passwordUtils.js',
+        'entrypoint' => true,
+    ],
+    'admin_password_generator' => [
+        'path' => './assets/js/admin_password_generator.js',
+        'entrypoint' => true,
     ],
 ];

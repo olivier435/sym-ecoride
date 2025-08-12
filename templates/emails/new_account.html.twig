@@ -1,0 +1,14 @@
+<h2>Bienvenue {{ user.firstname }} !</h2>
+
+<p>Votre compte vient d'être créé.</p>
+
+<p>
+    Votre identifiant : <strong>{{ user.email }}</strong><br>
+    {% if password %}
+        Mot de passe temporaire : <strong>{{ password }}</strong><br>
+    {% endif %}
+</p>
+<p>
+    Merci de vous connecter et de modifier votre mot de passe lors de votre première connexion.<br>
+    <a href="{{ url('app_login') }}">Se connecter</a>
+</p>

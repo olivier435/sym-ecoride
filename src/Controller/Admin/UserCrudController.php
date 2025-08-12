@@ -4,26 +4,36 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Form\AvatarForm;
+use App\Service\PseudoGeneratorService;
+use App\Service\SendMailService;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Misd\PhoneNumberBundle\Templating\Helper\PhoneNumberHelper;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserCrudController extends AbstractCrudController
 {
-    public function __construct(protected PhoneNumberHelper $phoneNumberHelper) {}
+    public function __construct(protected PhoneNumberHelper $phoneNumberHelper, protected SendMailService $sendMailService, protected PseudoGeneratorService $pseudoGeneratorService, protected UserPasswordHasherInterface $passwordHasher) {}
 
     public static function getEntityFqcn(): string
     {
@@ -46,8 +56,15 @@ class UserCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $actions = parent::configureActions($actions);
-        $actions->disable(Action::NEW);
+        // $actions->disable(Action::NEW);
         return $actions;
+    }
+
+    public function configureAssets(Assets $assets): Assets
+    {
+        return $assets->addAssetMapperEntry('admin_pseudo')
+            ->addAssetMapperEntry('admin_password_generator')
+            ->addCssFile('vendor/bootstrap-icons/font/bootstrap-icons.min.css');
     }
 
     public function configureFields(string $pageName): iterable
@@ -55,6 +72,9 @@ class UserCrudController extends AbstractCrudController
         return [
             IdField::new('id')->onlyOnIndex(),
             FormField::addFieldset('Détails de l\'utilisateur'),
+            TextField::new('pseudo', 'Pseudo')
+                ->setFormTypeOptions(['attr' => ['readonly' => true, 'id' => 'user_pseudo']])
+                ->onlyWhenCreating(),
             TextField::new('firstname', 'Prénom :')
                 ->setFormTypeOptions(['attr' => ['placeholder' => 'Prénom de l\'utilisateur']])
                 ->setColumns(6),
@@ -63,6 +83,16 @@ class UserCrudController extends AbstractCrudController
                 ->setColumns(6),
             EmailField::new('email', 'Email :')
                 ->setFormTypeOptions(['attr' => ['placeholder' => 'Email de l\'utilisateur']]),
+            FormField::addFieldset('Mot de passe (uniquement à la création)')->onlyWhenCreating(),
+            TextField::new('plainPassword', 'Mot de passe')
+                ->setFormType(PasswordType::class)
+                ->setFormTypeOptions([
+                    'mapped' => false, // CLÉ !
+                    'required' => $pageName === Crud::PAGE_NEW,
+                    'attr' => ['autocomplete' => 'new-password'],
+                ])
+                ->onlyWhenCreating(),
+            FormField::addFieldset('Adresse de l\'utilisateur'),
             TextField::new('adress', 'Adresse :')
                 ->setFormTypeOptions(['attr' => ['placeholder' => 'Adresse de l\'utilisateur']])
                 ->setColumns(6)
@@ -91,6 +121,7 @@ class UserCrudController extends AbstractCrudController
                     return $formattedValue;
                 })
                 ->onlyOnIndex(),
+            FormField::addFieldset('Avatar de l\'utilisateur'),
             ImageField::new('avatar.imageName', 'Avatar')
                 ->setBasePath('images/avatars')
                 ->setUploadDir('public/images/avatars')
@@ -135,8 +166,18 @@ class UserCrudController extends AbstractCrudController
         ];
     }
 
+    private ?string $plainPasswordForMail = null;
+
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
+        if (!$entityInstance->getPseudo()) {
+            $pseudo = $this->pseudoGeneratorService->generate(
+                $entityInstance->getFirstname(),
+                $entityInstance->getLastname()
+            );
+            $entityInstance->setPseudo($pseudo);
+        }
+
         $roles = $entityInstance->getRoles();
         if (!in_array('ROLE_USER', $roles, true)) {
             $roles[] = 'ROLE_USER';
@@ -144,8 +185,26 @@ class UserCrudController extends AbstractCrudController
         }
         $entityInstance->setFirstname(ucfirst($entityInstance->getFirstname()))
             ->setLastname(strtoupper($entityInstance->getLastname()));
+        $entityInstance->setMustChangePassword(true);
+
+        // On n'envoie le mail que si on a un mot de passe à transmettre
+        if ($this->plainPasswordForMail) {
+            $this->sendMailService->sendMail(
+                'Application EcoRide',
+                $entityInstance->getEmail(), // <<<<<<
+                'Message à nos employés : votre compte a été créé !',
+                'new_account',
+                [
+                    'user' => $entityInstance,
+                    'password' => $this->plainPasswordForMail,
+                ]
+            );
+            $this->plainPasswordForMail = null; // Toujours sécuriser
+        }
+
         parent::persistEntity($entityManager, $entityInstance);
     }
+
 
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
@@ -157,5 +216,28 @@ class UserCrudController extends AbstractCrudController
         $entityInstance->setFirstname(ucfirst($entityInstance->getFirstname()))
             ->setLastname(strtoupper($entityInstance->getLastname()));
         parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $formBuilder = parent::createNewFormBuilder($entityDto, $formOptions, $context);
+        return $this->addPasswordEventListener($formBuilder);
+    }
+
+    private function addPasswordEventListener(FormBuilderInterface $formBuilder): FormBuilderInterface
+    {
+        $formBuilder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+            $entity = $event->getData();
+
+            $plainPassword = $form->get('plainPassword')->getData();
+            if ($plainPassword) {
+                $this->plainPasswordForMail = $plainPassword; // <-- on le garde pour l'email !
+                $hash = $this->passwordHasher->hashPassword($entity, $plainPassword);
+                $entity->setPassword($hash);
+            }
+        });
+
+        return $formBuilder;
     }
 }

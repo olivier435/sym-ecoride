@@ -2,17 +2,19 @@
 
 namespace App\Controller;
 
-use App\Form\ResetPasswordFormType;
-use App\Form\ResetPasswordRequestFormType;
+use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Form\ResetPasswordFormType;
 use App\Service\PasswordResetService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Form\ResetPasswordRequestFormType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class SecurityController extends AbstractController
 {
@@ -102,6 +104,12 @@ class SecurityController extends AbstractController
     public function loginSuccess(): Response
     {
         $session = $this->requestStack->getSession();
+        $user = $this->getUser();
+
+        if ($session->get('force_password_change') && $user instanceof User && $user->isMustChangePassword()) {
+            $session->remove('force_password_change');
+            return $this->redirectToRoute('app_force_pw_change');
+        }
 
         // Récupérer l'URL de redirection stockée
         $targetPath = $session->get('_security.main.target_path', $this->generateUrl('app_home'));
@@ -110,5 +118,33 @@ class SecurityController extends AbstractController
         $session->remove('_security.main.target_path');
 
         return $this->redirect($targetPath);
+    }
+
+    #[Route('/account/force-password-change', name: 'app_force_pw_change')]
+    public function forcePasswordChange(Request $request, UserPasswordHasherInterface $hasher, EntityManagerInterface $em): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user || !$user->isMustChangePassword()) {
+            return $this->redirectToRoute('app_home');
+        }
+
+        $form = $this->createForm(ResetPasswordFormType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $hashed = $hasher->hashPassword($user, $form->get('plainPassword')->getData());
+            $user->setPassword($hashed);
+            $user->setMustChangePassword(false);
+            $em->flush();
+
+            $this->addFlash('success', 'Votre mot de passe a bien été changé.');
+            return $this->redirectToRoute('app_home');
+        }
+
+        return $this->render('security/force_password_change.html.twig', [
+            'form' => $form,
+        ]);
     }
 }
