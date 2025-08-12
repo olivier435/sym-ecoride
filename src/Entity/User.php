@@ -538,4 +538,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
         return $this;
     }
+
+    public function getAvatarUrl(): ?string
+    {
+        $avatar = $this->getAvatar();
+        return '/images/avatars/' . $avatar->getImageName();
+    }
 }

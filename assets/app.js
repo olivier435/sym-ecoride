@@ -49,9 +49,21 @@ const backToTop = () => {
     }
 }
 
+const bootstrapDropdownPatch = () => {
+    document.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]').forEach(dd => {
+        dd.addEventListener('click', function(e) {
+            e.preventDefault();
+            const Dropdown = window.bootstrap.Dropdown;
+            const instance = Dropdown.getOrCreateInstance(dd);
+            instance.toggle();
+        });
+    });
+};
+
 const initPage = () => {
     closeAlertMessage();
     backToTop();
+    bootstrapDropdownPatch();
 }
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
 document.addEventListener('load', initPage);

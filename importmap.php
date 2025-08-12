@@ -84,4 +84,13 @@ return [
         'version' => '2.4.3',
         'type' => 'css',
     ],
+    'chart.js' => [
+        'version' => '4.5.0',
+    ],
+    '@symfony/ux-chartjs' => [
+        'version' => '2.29.1',
+    ],
+    '@kurkle/color' => [
+        'version' => '0.3.4',
+    ],
 ];

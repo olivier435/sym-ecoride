@@ -148,11 +148,13 @@ class ComplaintCrudController extends AbstractCrudController
         // Ticket clôturé (aucun paiement au driver)
         if ($complaint->isTicketClosed()) {
             $tripPassenger->setValidationStatus('validated');
+            $tripPassenger->setValidationAt(new \DateTimeImmutable());
         }
 
         // Ticket résolu (paiement driver)
         if ($complaint->isTicketResolved()) {
             $tripPassenger->setValidationStatus('validated');
+            $tripPassenger->setValidationAt(new \DateTimeImmutable());
 
             $trip = $tripPassenger->getTrip();
             $driver = $trip?->getDriver();

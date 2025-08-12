@@ -51,6 +51,7 @@ final class TripComplaintController extends AbstractController
             $complaint->setTripPassenger($tripPassenger);
             $tripPassenger->setComplaint($complaint);
             $tripPassenger->setValidationStatus('reported');
+            $tripPassenger->setValidationAt(new \DateTimeImmutable());
             $em->persist($complaint);
             $em->persist($tripPassenger);
             $em->flush();

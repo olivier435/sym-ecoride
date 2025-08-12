@@ -1,6 +1,6 @@
-{% extends '@EasyAdmin/page/content.html.twig' %}
+{% extends '@!EasyAdmin/layout.html.twig' %}
 
-{% block content %}
+{% block main %}
 	<div class="container mt-4">
 		<h1>Bienvenue sur l'espace administration</h1>
 		<p>
@@ -16,22 +16,28 @@
 
 		{% if 'ROLE_ADMIN' in app.user.roles %}
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-12">
 					<h3>Statistiques & Graphiques</h3>
-					{# Ici, insère tes composants graphiques ou tes totaux #}
-					{# <div id="trips-by-day-chart"></div>
-					<div id="credit-by-day-chart"></div>
-					#}
-					<div>
+					<div class="row">
+						<div class="col-md-6 mb-4">
+							<h4>Covoiturages effectués par jour</h4>
+							{{ render_chart(chartTrips) }}
+						</div>
+						<div class="col-md-6 mb-4">
+							<h4>Crédits gagnés par la plateforme</h4>
+							{{ render_chart(chartCredits) }}
+						</div>
+					</div>
+					<div class="mb-3">
 						<strong>Total des crédits gagnés :</strong>
 						{{ totalCredits|default(0) }}
 					</div>
 				</div>
-				<div class="col-md-6">
+				<div class="col-md-12">
 					<h3>Gestion des comptes</h3>
 					<ul>
-						<li><ahref="{{path('admin_user_index')}}">Gérer les utilisateurs</a></li>
-						<li><ahref="{{path('admin_user_index')}}">Suspendre un compte</a></li>
+						<li><a href="{{path('admin_user_index')}}" class="text-decoration-none">Gérer les utilisateurs</a></li>
+						<li><a href="{{path('admin_user_index')}}" class="text-decoration-none">Suspendre un compte</a></li>
 					</ul>
 				</div>
 			</div>
@@ -40,7 +46,7 @@
 				<h3>À traiter</h3>
 				<ul>
 					<li>
-						<a href="{{ path('admin_testimonial_index') }}">Valider ou refuser les avis</a>
+						<a href="{{ path('admin_testimonial_index') }}" class="text-decoration-none">Valider ou refuser les avis</a>
 					</li>
 				</ul>
 				<h3>Covoiturages signalés</h3>
@@ -79,4 +85,8 @@
 			</div>
 		{% endif %}
 	</div>
+{% endblock %}
+
+{% block importmap %}
+    {{ importmap('app') }}
 {% endblock %}

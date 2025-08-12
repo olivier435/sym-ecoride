@@ -98,6 +98,7 @@ final class TripPassengerController extends AbstractController
 
         if ($tripPassenger->getValidationStatus() === 'pending') {
             $tripPassenger->setValidationStatus('validated');
+            $tripPassenger->setValidationAt(new \DateTimeImmutable());
             $driver = $trip->getDriver();
             $driver->setCredit($driver->getCredit() + $trip->getPricePerPerson() - 2);
             $em->persist($tripPassenger);

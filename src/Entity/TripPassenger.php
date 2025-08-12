@@ -27,6 +27,9 @@ class TripPassenger
     #[ORM\OneToOne(mappedBy: 'tripPassenger', targetEntity: Complaint::class, cascade: ['persist', 'remove'])]
     private ?Complaint $complaint = null;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $validationAt = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,5 +95,17 @@ class TripPassenger
         $trip = $this->getTrip();
         return ($user ? $user->getFullName() : 'Passager')
             . ' - Trajet n°' . ($trip ? $trip->getId() : 'N/A');
+    }
+
+    public function getValidationAt(): ?\DateTimeImmutable
+    {
+        return $this->validationAt;
+    }
+
+    public function setValidationAt(\DateTimeImmutable $validationAt): static
+    {
+        $this->validationAt = $validationAt;
+
+        return $this;
     }
 }
