@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Trip;
 use App\Entity\TripPassenger;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -66,6 +67,24 @@ class TripPassengerRepository extends ServiceEntityRepository
             $data[$formatted] = (int) $row['credits'];
         }
         return $data;
+    }
+
+    public function findPendingToAutoValidate(\DateTimeImmutable $now): array
+    {
+        $qb = $this->createQueryBuilder('tp')
+            ->join('tp.trip', 't')
+            ->leftJoin('tp.complaint', 'c')
+            ->where('tp.validationStatus = :pending')
+            ->andWhere('c.id IS NULL')
+            ->andWhere('t.status = :completed')
+            ->andWhere('t.arrivalDate IS NOT NULL')
+            ->andWhere('t.arrivalTime IS NOT NULL')
+            ->andWhere("DATE_ADD(CONCAT(t.arrivalDate, ' ', t.arrivalTime), 1, 'HOUR') <= :now")
+            ->setParameter('pending', 'pending')
+            ->setParameter('completed', Trip::STATUS_COMPLETED)
+            ->setParameter('now', $now->format('Y-m-d H:i:s'));
+
+        return $qb->getQuery()->getResult();
     }
 
     //    /**
