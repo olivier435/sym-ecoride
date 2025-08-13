@@ -122,7 +122,7 @@ Pour un déploiement sur Hostinger, consultez la documentation "Déploiement" da
 - [Charte graphique et maquettes (PDF)](doc/charte-graphique-ecoride.pdf)
 - [Documentation technique (PDF)](doc/documentation_technique_ecoride.pdf)
 - [Gestion de projet (PDF)](doc/ecoride_gestion_projet.pdf)
-- Bonnes pratiques GIT
+- [Bonnes pratiques GIT (PDF)](doc/bonnes_pratiques_git_ecoride.pdf)
 - Utilisation de MONGODB
 - Déploiement
 

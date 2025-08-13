@@ -97,4 +97,12 @@ return [
         'path' => './assets/js/admin_password_generator.js',
         'entrypoint' => true,
     ],
+    'tom-select/dist/css/tom-select.default.css' => [
+        'version' => '2.4.3',
+        'type' => 'css',
+    ],
+    'tom-select/dist/css/tom-select.bootstrap4.css' => [
+        'version' => '2.4.3',
+        'type' => 'css',
+    ],
 ];
