@@ -89,7 +89,7 @@ class TripRepository extends ServiceEntityRepository
         return $result['departureDate'] ?? null;
     }
 
-    public function findFilteredTrips(SearchData $search): array
+    public function findFilteredTrips(SearchData $search, TestimonialRepository $testimonialRepository): array
     {
         $qb = $this->createQueryBuilder('t')
             ->addSelect('car', 'driver', 'avatar')
@@ -104,19 +104,18 @@ class TripRepository extends ServiceEntityRepository
             ->setParameter('departureCity', $search->departureCity)
             ->setParameter('arrivalCity', $search->arrivalCity)
             ->setParameter('date', $search->date)
-            ->groupBy('t.id');
+            ->groupBy('t.id, driver.id');
 
-        // Filtre sur l'heure si aujourd'hui
         $tz = new \DateTimeZone('Europe/Paris');
         $today = (new \DateTimeImmutable('now', $tz))->format('Y-m-d');
         $searchDate = $search->date instanceof \DateTimeInterface ? $search->date->format('Y-m-d') : null;
+
         if ($searchDate === $today) {
             $now = (new \DateTimeImmutable('now', $tz))->format('H:i:s');
             $qb->andWhere('t.departureTime > :now')
                 ->setParameter('now', $now);
         }
 
-        // Filtrer les trajets complets :
         $qb->having('t.seatsAvailable > COUNT(tpax.id)');
 
         if ($search->priceMax !== null) {
@@ -139,7 +138,6 @@ class TripRepository extends ServiceEntityRepository
                 ]);
         }
 
-        // Tri
         if ($search->sort === 'price') {
             $qb->orderBy('t.pricePerPerson', 'ASC');
         } elseif ($search->sort === 'duration') {
@@ -150,7 +148,23 @@ class TripRepository extends ServiceEntityRepository
             $qb->orderBy('t.departureTime', 'ASC');
         }
 
-        return $qb->getQuery()->getResult();
+        $trips = $qb->getQuery()->getResult();
+
+        // Calcul de la note moyenne des conducteurs
+        $drivers = array_map(fn($trip) => $trip->getDriver(), $trips);
+        $driverIds = array_map(fn($driver) => $driver->getId(), $drivers);
+        $avgRatings = $testimonialRepository->getAvgRatingsForDriversByIds($driverIds);
+
+        foreach ($drivers as $driver) {
+            $driver->avgRating = $avgRatings[$driver->getId()] ?? 0;
+        }
+
+        // Filtrage Super Driver
+        if ($search->superDriver) {
+            $trips = array_filter($trips, fn($trip) => ($trip->getDriver()->avgRating ?? 0) >= 4.7);
+        }
+
+        return $trips;
     }
 
     public function findTripsToAutoStart(\DateTimeImmutable $now): array

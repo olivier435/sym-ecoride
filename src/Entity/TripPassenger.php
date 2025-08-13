@@ -6,6 +6,7 @@ use App\Repository\TripPassengerRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TripPassengerRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class TripPassenger
 {
     #[ORM\Id]
@@ -29,6 +30,14 @@ class TripPassenger
 
     #[ORM\Column]
     private ?\DateTimeImmutable $validationAt = null;
+
+    #[ORM\PrePersist]
+    public function setDefaultValidationAt(): void
+    {
+        if ($this->validationAt === null) {
+            $this->validationAt = new \DateTimeImmutable();
+        }
+    }
 
     public function getId(): ?int
     {

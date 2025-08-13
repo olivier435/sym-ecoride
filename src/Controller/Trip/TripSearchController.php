@@ -8,6 +8,7 @@ use App\Form\TripSearchType;
 use App\Repository\TripRepository;
 use App\Entity\City;
 use App\Repository\CityRepository;
+use App\Repository\TestimonialRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,7 +68,8 @@ final class TripSearchController extends AbstractController
     }
 
     #[Route('/ajax', name: 'app_trip_search_ajax', methods: ['GET'])]
-    public function searchAjax(Request $request, TripRepository $tripRepository, CityRepository $cityRepository): JsonResponse
+    public function searchAjax(Request $request, TripRepository $tripRepository, CityRepository $cityRepository,
+    TestimonialRepository $testimonialRepository): JsonResponse
     {
         try {
             $search = new SearchData();
@@ -88,6 +90,7 @@ final class TripSearchController extends AbstractController
             $search->eco = filter_var($request->query->get('eco'), FILTER_VALIDATE_BOOLEAN);
             $search->smoking = filter_var($request->query->get('smoking'), FILTER_VALIDATE_BOOLEAN);
             $search->pets = filter_var($request->query->get('pets'), FILTER_VALIDATE_BOOLEAN);
+            $search->superDriver = filter_var($request->query->get('superDriver'), FILTER_VALIDATE_BOOLEAN);
 
             // Validation
             if (!$search->departureCity || !$search->arrivalCity || !$search->date) {
@@ -98,7 +101,7 @@ final class TripSearchController extends AbstractController
                 ]);
             }
 
-            $trips = $tripRepository->findFilteredTrips($search);
+            $trips = $tripRepository->findFilteredTrips($search, $testimonialRepository);
 
             $tripsArray = array_map(function ($trip) {
                 $driver = $trip->getDriver();
@@ -125,6 +128,7 @@ final class TripSearchController extends AbstractController
                     'driver' => [
                         'pseudo' => $driver?->getPseudo() ?? '',
                         'avatar' => $avatarPath,
+                        'avgRating' => $driver->avgRating ?? 0,
                     ],
                     'departureDate' => $trip->getDepartureDate()?->format('d/m/Y'),
                     'departureTime' => $trip->getDepartureTime()?->format('H:i'),
@@ -155,7 +159,7 @@ final class TripSearchController extends AbstractController
         }
 
         return $this->json([
-            'trips' => $tripsArray,
+            'trips' => array_values($tripsArray),
             'nextAvailableDate' => $nextAvailableDate,
             'isSubmitted' => true,
         ]);

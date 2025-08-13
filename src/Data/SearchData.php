@@ -14,4 +14,5 @@ class SearchData
     public bool $eco = false;
     public bool $smoking = false;
     public bool $pets = false;
+    public bool $superDriver = false;
 }

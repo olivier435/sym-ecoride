@@ -70,6 +70,35 @@ class TestimonialRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * Retourne un tableau [userId => moyenne]
+     * @param int[] $driverIds
+     * @return float[]
+     */
+    public function getAvgRatingsForDriversByIds(array $driverIds): array
+    {
+        if (empty($driverIds)) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('t')
+            ->select('IDENTITY(tr.driver) as driverId, COALESCE(AVG(t.rating), 0) as avgRating')
+            ->join('t.trip', 'tr')
+            ->where('t.isApproved = true')
+            ->andWhere('tr.driver IN (:drivers)')
+            ->groupBy('tr.driver')
+            ->setParameter('drivers', $driverIds);
+
+        $results = $qb->getQuery()->getArrayResult();
+
+        $ratings = [];
+        foreach ($results as $result) {
+            $ratings[$result['driverId']] = round((float) $result['avgRating'], 1);
+        }
+
+        return $ratings;
+    }
+
     //    /**
     //     * @return Testimonial[] Returns an array of Testimonial objects
     //     */

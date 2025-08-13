@@ -5,46 +5,46 @@
 
 {% block body %}
 	{# <div class="ygs0yx">
-								<h1 class="ywaehf">
-									<span class="pztveq">Trouvez votre covoiturage</span>
-								</h1>
-								<div class="a909r8">
-									<div data-controller="trip-search" class="vs3pdd">
-										{{ form_start(form, {
-						                attr: {
-						                    'data-trip-search-target': 'form'
-						                }
-						            }) }}
-										<div class="row g-3 align-items-center justify-content-center">
-											<div class="col-md-3">
-												{{ form_widget(form.departureCity, { 'attr': {
-						                            'data-trip-search-target': 'departureCity',
-						                            'id': 'trip_search_departureCity', 
-						                            'autocomplete': 'off'
-						                            }
-						                        }) }}
+									<h1 class="ywaehf">
+										<span class="pztveq">Trouvez votre covoiturage</span>
+									</h1>
+									<div class="a909r8">
+										<div data-controller="trip-search" class="vs3pdd">
+											{{ form_start(form, {
+							                attr: {
+							                    'data-trip-search-target': 'form'
+							                }
+							            }) }}
+											<div class="row g-3 align-items-center justify-content-center">
+												<div class="col-md-3">
+													{{ form_widget(form.departureCity, { 'attr': {
+							                            'data-trip-search-target': 'departureCity',
+							                            'id': 'trip_search_departureCity', 
+							                            'autocomplete': 'off'
+							                            }
+							                        }) }}
+												</div>
+												<div class="col-md-3">
+													{{ form_widget(form.arrivalCity, { 'attr': {
+							                            'data-trip-search-target': 'arrivalCity',
+							                            'id': 'trip_search_arrivalCity',
+							                            'autocomplete': 'off'
+							                            }
+							                        }) }}
+												</div>
+												<div class="col-md-3">
+													{{ form_widget(form.date, {'attr': {'data-trip-search-target': 'date'}}) }}
+												</div>
+												<div class="col-md-1 d-grid">
+													{{ form_widget(form.search) }}
+												</div>
 											</div>
-											<div class="col-md-3">
-												{{ form_widget(form.arrivalCity, { 'attr': {
-						                            'data-trip-search-target': 'arrivalCity',
-						                            'id': 'trip_search_arrivalCity',
-						                            'autocomplete': 'off'
-						                            }
-						                        }) }}
-											</div>
-											<div class="col-md-3">
-												{{ form_widget(form.date, {'attr': {'data-trip-search-target': 'date'}}) }}
-											</div>
-											<div class="col-md-1 d-grid">
-												{{ form_widget(form.search) }}
-											</div>
+											{{ form_end(form) }}
+							
+											<div data-trip-search-target="results"></div>
 										</div>
-										{{ form_end(form) }}
-						
-										<div data-trip-search-target="results"></div>
 									</div>
-								</div>
-							</div> #}
+								</div> #}
 	<div class="container my-5" data-controller="trip-search" data-trip-search-detail-url-value="/trip/detail/__ID__-__SLUG__">
 		<div class="ygs0yx">
 			<h1 class="ywaehf">
@@ -85,6 +85,10 @@
 							<!-- Filtres booléens -->
 							<div class="mb-3">
 								<label class="form-label d-block mb-2">Options</label>
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" name="superDriver" id="filter_super_driver" data-trip-search-target="superDriver">
+									<label class="form-check-label" for="filter_super_driver">Super Driver ⭐ (note ≥ 4,7)</label>
+								</div>
 								<div class="form-check form-switch">
 									<input class="form-check-input" type="checkbox" name="eco" id="filter_eco" data-trip-search-target="eco">
 									<label class="form-check-label" for="filter_eco">Trajet écologique (voiture électrique)</label>

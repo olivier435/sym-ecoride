@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
     static targets = [
         "form", "results", "departureCity", "arrivalCity", "date",
-        "filters", "sort", "priceMax", "eco", "smoking", "pets"
+        "filters", "sort", "priceMax", "eco", "smoking", "pets", "superDriver"
     ]
     static values = {
         detailUrl: String // <- récupère le pattern d'URL de détail depuis data-trip-search-detail-url-value
@@ -51,7 +51,8 @@ export default class extends Controller {
             priceMax: this.hasPriceMaxTarget ? this.priceMaxTarget.value : "",
             eco: this.hasEcoTarget ? this.ecoTarget.checked : false,
             smoking: this.hasSmokingTarget ? this.smokingTarget.checked : false,
-            pets: this.hasPetsTarget ? this.petsTarget.checked : false
+            pets: this.hasPetsTarget ? this.petsTarget.checked : false,
+            superDriver: this.hasSuperDriverTarget ? this.superDriverTarget.checked : false,
         })
 
         fetch(`/search/ajax?${params.toString()}`, {
@@ -104,7 +105,11 @@ export default class extends Controller {
                                             <img src="${trip.driver.avatar || '/images/avatars/default.png'}" alt="Photo de profil" class="rounded-circle me-3" width="50" height="50">
                                             <div>
                                                 <h5 class="mb-0">${trip.driver.pseudo}</h5>
-                                                <small class="text-muted">Note : ⭐</small>
+                                                <small class="text-muted">
+                                                    ${trip.driver.avgRating > 0
+                                                        ? `${trip.driver.avgRating.toFixed(1).replace('.', ',')}/5`
+                                                        : `0/5 - aucun avis`}
+                                                </small>
                                             </div>
                                         </div>                                    
                                     </span>

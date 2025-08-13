@@ -57,7 +57,10 @@ const bootstrapDropdownPatch = () => {
     document.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]').forEach(dd => {
         dd.addEventListener('click', function(e) {
             e.preventDefault();
-            const Dropdown = window.bootstrap.Dropdown;
+            const Dropdown = window.bootstrap?.Dropdown;
+            if (!Dropdown) {
+                return;
+            }
             const instance = Dropdown.getOrCreateInstance(dd);
             instance.toggle();
         });
