@@ -98,7 +98,9 @@ export default class extends Controller {
       }
 
       // Succès
-      window.location.reload();
+      // window.location.reload();
+      // Succès → redirection vers l'historique des trajets passager
+      window.location.href = "/mes-trajets/passager/";
     } catch {
       this.containerTarget.innerHTML = `<div class="alert alert-danger">Erreur lors du chargement.</div>`;
       btn.disabled = false;

@@ -118,10 +118,12 @@ Pour un déploiement sur Hostinger, consultez la documentation "Déploiement" da
 
 ## 📝 Documentation
 
-- Manuel d'utilisation
-- Charte graphique et maquettes
-- Documentation technique
-- Gestion de projet
+- [Manuel d'utilisation (PDF)](doc/manuel_utilisation_ecoride_v2.pdf)
+- [Charte graphique et maquettes (PDF)](doc/charte-graphique-ecoride.pdf)
+- [Documentation technique (PDF)](doc/documentation_technique_ecoride.pdf)
+- [Gestion de projet (PDF)](doc/ecoride_gestion_projet.pdf)
+- Bonnes pratiques GIT
+- Utilisation de MONGODB
 - Déploiement
 
 ## Base de données
@@ -131,6 +133,17 @@ La base de données a été modélisée à l'aide de l'outil jMerise, puis tradu
 - des clés primaires et étrangères nommées,
 - des types de données appropriés,
 - et des contraintes assurant l'intégrité référentielle.
+
+### Fichiers fournis :
+- 🧱 `ecoride_structure.sql` : contient la structure complète (DDL), avec toutes les contraintes (`PRIMARY KEY`, `FOREIGN KEY`, `UNIQUE`, `INDEX`).
+- 📦 `ecoride_donnees.sql` : contient un jeu de données cohérent pour simuler l'utilisation de l'application (utilisateurs, trajets, véhicules, préférences, etc.).
+
+### Importation dans MySQL ou PhpMyAdmin :
+
+```bash
+mysql -u root -p ecoride < ecoride_structure.sql
+mysql -u root -p ecoride < ecoride_donnees.sql
+```
 
 ## 🆘 Support
 

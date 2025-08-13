@@ -5,6 +5,7 @@ namespace App\Controller\Trip;
 use App\Entity\Trip;
 use App\Entity\TripPassenger;
 use App\Entity\User;
+use App\Repository\TestimonialRepository;
 use App\Service\TripReservationValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ final class TripReservationController extends AbstractController
     use TripContextTrait;
 
     #[Route('/{id}-{slug}/reservation', name: 'app_trip_reservation_recap', methods: ['GET'])]
-    public function recap(Request $request, Trip $trip, string $slug, TripReservationValidator $validator): Response
+    public function recap(Request $request, Trip $trip, string $slug, TripReservationValidator $validator, TestimonialRepository $testimonialRepository): Response
     {
         // 1. Sécurité côté back
         /** @var User $user */
@@ -33,11 +34,24 @@ final class TripReservationController extends AbstractController
             return $this->json(['error' => $error], $code);
         }
 
+        $ctx = $this->getTripContext($trip, $slug);
+
+        $driverId = (int) $trip->getDriver()->getId();
+        $avgByDriver = $testimonialRepository->getAvgRatingsForDriversByIds([$driverId]); // [id => float]
+        $avgRating   = (float) ($avgByDriver[$driverId] ?? 0.0);
+        $totalCount  = $testimonialRepository->getTotalCountForDriver($driverId);
+
+        // 4) Merge dans le contexte rendu
+        $ctx = array_merge($ctx, [
+            'avgRating'  => $avgRating,
+            'totalCount' => $totalCount,
+        ]);
+
         if ($request->isXmlHttpRequest()) {
-            return $this->render('trip_reservation/_recap_partial.html.twig', $this->getTripContext($trip, $slug));
+            return $this->render('trip_reservation/_recap_partial.html.twig', $ctx);
         }
 
-        return $this->render('trip_public/detail.html.twig', $this->getTripContext($trip, $slug));
+        return $this->render('trip_public/detail.html.twig', $ctx);
     }
 
     #[Route('/{id}-{slug}/reservation/prix', name: 'app_trip_reservation_price', methods: ['GET'])]
@@ -95,8 +109,8 @@ final class TripReservationController extends AbstractController
 
         $tripPassenger = new TripPassenger();
         $tripPassenger->setTrip($trip)
-                    ->setUser($user)
-                    ->setValidationStatus('pending');
+            ->setUser($user)
+            ->setValidationStatus('pending');
         $em->persist($tripPassenger);
 
         $em->persist($user);
