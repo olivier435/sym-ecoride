@@ -92,7 +92,7 @@ INSERT INTO avatar (user_id, image_name, updated_at) VALUES
 (3, '68945eb0e6860.png', '2025-07-13 09:43:30'), 
 (4, '68945eb16f2de.png', '2025-07-08 13:42:13'), 
 (5, '68945eb200e60.png', '2025-07-08 13:42:14'), 
-(6, '68945eb27f028.png', '2025-07-08 13:42:14'), 
+(6, '68945eb27f028.png', '2025-07-08 13:42:14');
 
 -- Insertion véhicule
 INSERT INTO car (energy, color, firstregistration_at, registration, model_id, brand_id, user_id) VALUES
