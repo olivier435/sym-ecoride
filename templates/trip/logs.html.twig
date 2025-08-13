@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des réservations
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<h1 class="mb-4">📜 Historique des réservations</h1>
+
+		<form method="get" class="row g-2 mb-4">
+			<div class="col-auto">
+				<label for="startDate" class="form-label">Du :</label>
+				<input type="date" id="startDate" name="startDate" class="form-control" value="{{ startDate }}">
+			</div>
+			<div class="col-auto">
+				<label for="endDate" class="form-label">Au :</label>
+				<input type="date" id="endDate" name="endDate" class="form-control" value="{{ endDate }}">
+			</div>
+			<div class="col-auto">
+				<label for="driverId" class="form-label">ID conducteur (optionnel) :</label>
+				<input type="number" id="driverId" name="driverId" class="form-control" value="{{ driverId }}">
+			</div>
+			<div class="col-auto align-self-end">
+				<button type="submit" class="btn btn-primary">Filtrer</button>
+			</div>
+			<div class="col-auto align-self-end">
+				<a href="{{ path('app_trip_logs') }}" class="btn btn-secondary">Réinitialiser</a>
+			</div>
+		</form>
+
+		{% if logs is not empty %}
+			<div class="mb-3">
+				<div class="alert alert-info">
+					<strong>Total des crédits réservés :</strong>
+					{{ totalCredits }}<br>
+					<strong>Part plateforme :</strong>
+					{{ platformCredits }}
+					crédits
+				</div>
+			</div>
+		{% endif %}
+
+		{% if logs is not empty %}
+			<table class="table table-bordered table-striped align-middle">
+				<thead class="table-dark">
+					<tr>
+						<th>Date</th>
+						<th>Trajet</th>
+						<th>Conducteur</th>
+						<th>Prix</th>
+						<th>Places réservées</th>
+						<th>Utilisateur</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for log in logs %}
+						<tr>
+							<td>{{ log.createdAt }}</td>
+							<td>
+								<strong>Départ :</strong>
+								{{ log.departure }}<br>
+								<strong>Arrivée :</strong>
+								{{ log.arrival }}
+							</td>
+							<td>{{ log.driverPseudo }}
+								(ID:
+								{{ log.driverId }})</td>
+							<td>{{ log.price }}
+								crédits</td>
+							<td>{{ log.seatsBooked }}</td>
+							<td>{{ log.userEmail }}
+								(ID:
+								{{ log.userId }})</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% else %}
+			<div class="alert alert-warning">Aucune réservation trouvée.</div>
+		{% endif %}
+	</div>
+{% endblock %}

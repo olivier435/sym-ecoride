@@ -6,6 +6,7 @@ use App\Entity\Trip;
 use App\Entity\TripPassenger;
 use App\Entity\User;
 use App\Repository\TestimonialRepository;
+use App\Service\MongoLogService;
 use App\Service\TripReservationValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -88,7 +89,7 @@ final class TripReservationController extends AbstractController
     }
 
     #[Route('/{id}-{slug}/reservation/book', name: 'app_trip_reservation_book', methods: ['POST'])]
-    public function book(Trip $trip, EntityManagerInterface $em, TripReservationValidator $validator): JsonResponse
+    public function book(Trip $trip, EntityManagerInterface $em, TripReservationValidator $validator, MongoLogService $mongoLogService): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -116,6 +117,21 @@ final class TripReservationController extends AbstractController
         $em->persist($user);
         $em->persist($trip);
         $em->flush();
+
+        // ✅ LOG dans MongoDB
+        $mongoLogService->log(
+            'trip.reservation',
+            [
+                'tripId'       => $trip->getId(),
+                'driverId'     => $trip->getDriver()->getId(),
+                'driverPseudo' => $trip->getDriver()->getPseudo(),
+                'price'        => $trip->getPricePerPerson(),
+                'seatsBooked'  => 1, // tu peux mettre la vraie valeur si multi-places
+                'departure'    => $trip->getDepartureAddress(),
+                'arrival'      => $trip->getArrivalAddress(),
+            ],
+            $user
+        );
 
         $this->addFlash('success', 'Votre réservation a bien été enregistrée ! Vous serez débité uniquement si le trajet n\'est pas annulé.');
 

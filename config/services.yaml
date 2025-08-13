@@ -33,3 +33,18 @@ services:
 
     auth_mailer:
         class: App\Service\SendEmail2faService
+
+    MongoDB\Client:
+        arguments:
+            - '%env(MONGODB_URI)%'
+
+    App\Service\MongoLogService:
+        arguments:
+            $client: '@MongoDB\Client'
+            $dbName: '%env(MONGODB_DB)%'
+            $collectionName: '%env(MONGODB_COLLECTION)%'
+
+    App\Command\TestMongoConnectionCommand:
+        arguments:
+            $dbName: '%env(MONGODB_DB)%'
+            $collectionName: '%env(MONGODB_COLLECTION)%'

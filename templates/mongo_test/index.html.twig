@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Test MongoDB{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">📜 Derniers logs MongoDB</h1>
+
+    <div class="mb-3">
+        <a href="{{ path('app_mongo_test_add') }}" class="btn btn-primary">
+            ➕ Ajouter un log de test
+        </a>
+        <a href="{{ path('app_mongo_test_clear') }}" class="btn btn-danger"
+           onclick="return confirm('Voulez-vous vraiment effacer tous les logs ?')">
+            🗑️ Vider les logs
+        </a>
+    </div>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    {% if logs is not empty %}
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Type</th>
+                    <th>Payload</th>
+                    <th>User ID</th>
+                    <th>User Email</th>
+                    <th>Créé le</th>
+                    <th>ID Mongo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        <td>{{ log.type }}</td>
+                        <td>
+                            <pre class="mb-0">{{ log.payload|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+                        </td>
+                        <td>{{ log.userId ?? '-' }}</td>
+                        <td>{{ log.userEmail ?? '-' }}</td>
+                        <td>{{ log.createdAt ?? '-' }}</td>
+                        <td>{{ log._id }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-warning">Aucun log trouvé.</div>
+    {% endif %}
+</div>
+{% endblock %}
