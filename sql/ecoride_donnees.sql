@@ -83,7 +83,7 @@ INSERT INTO user (email, roles, password, firstname, lastname, adress, postal_co
 ('user1@gmail.com', '["ROLE_EMPLOYE"]', '$2y$13$ZupVOqIY25BCJXK8OS8Z6.jgsXe8pDbq9/D3vAtC2z5jIzn6ML2rW', 'Mathilde', 'ROYER', '1 rue de la Reine Jeanne', '04100', 'Manosque', '+33738117953', NULL, NULL, NULL, 'lguilbert1', 20, 0, 0), 
 ('user2@gmail.com', '[]', '$2y$13$EMojeNpEuzU4HlvyfyQf7OWUogzpCVzjpUDnZuIkz9KXVDIoqBIZa', 'Mathilde', 'Garcia', '22 rue Noé', '56000', 'Vannes', '+33744479010', NULL, NULL, NULL, 'bernard.delmas2', 20, 0, 0), 
 ('user3@gmail.com', '[]', '$2y$13$wt3xyTOJnZ5QMgEEdm4AMuS6BSuYlRyTFq654yAM.RcrF7bWOvn.i', 'Aimé', 'David', '13 boulevard de la Corderie', '13007', 'Marseille', '+33769022439', NULL, NULL, NULL, 'frobin3', 20, 0, 0), 
-('user4@gmail.com', '[]', '$2y$13$dSIrQkjO.abQvPS/MQICcObfugLh1Hlrj.a/y69BF2pu7UGE/pgE.', 'Georges', 'Valentin', '15 rue des Bahutiers', '33000', 'Bordeaux', '+33635376707', NULL, NULL, NULL, 'jlegrand4', 20, 0, 0), 
+('user4@gmail.com', '[]', '$2y$13$dSIrQkjO.abQvPS/MQICcObfugLh1Hlrj.a/y69BF2pu7UGE/pgE.', 'Georges', 'Valentin', '15 rue des Bahutiers', '33000', 'Bordeaux', '+33635376707', NULL, NULL, NULL, 'jlegrand4', 20, 0, 0);
 
 -- Insertion avatar
 INSERT INTO avatar (user_id, image_name, updated_at) VALUES
@@ -120,13 +120,15 @@ INSERT INTO trip (departure_date, arrival_date, departure_time, arrival_time, de
 ('2025-08-18', '2025-08-18', '21:00:00', '23:30:00', '85 Rue De Turenne, 75003 PARIS', '1 Rue Gresset, 44000 NANTES', 'à venir', 3, 17, 1, 2, 1, 1), 
 ('2025-08-18', '2025-08-18', '21:00:00', '23:30:00', '24 Boulevard Pablo Picasso, 49000 ANGERS', '7 Place du Général Colineau, 85000 LES SABLES D''OLONNE', 'à venir', 3, 12, 4, 5, 5, 2), 
 ('2025-08-01', '2025-08-01', '18:00:00', '21:30:00', '5 Quai Malaquais, 75006 PARIS', '12 Rue de l''Héronnière, 44000 NANTES', 'effectué', 3, 15, 1, 2, 2, 1), 
-('2025-08-08', '2025-08-08', '10:00:00', '13:30:00', '115 Boulevard Exelmans, 75016 PARIS', '14 Rue des Petites Ecuries, 44000 NANTES', 'à venir', 3, 15, 1, 2, 17, 6), 
-('2025-08-08', '2025-08-08', '14:00:00', '17:30:00', '46 Rue de Turenne, 75003 PARIS', '1 Place Alexis-Ricordeau, 44000 NANTES', 'à venir', 3, 16, 1, 2, 5, 2), 
-('2025-08-08', '2025-08-08', '14:30:00', '18:00:00', '13 Rue Pierre Fontaine, 75009 PARIS', '3 Allee de la Cité, 44200 NANTES', 'à venir', 3, 15, 1, 2, 3, 1), 
-('2025-08-08', '2025-08-08', '18:00:00', '22:00:00', '60 Avenue de Gravelle, 75012 PARIS', '2 Cours Olivier de Clisson, 44000 NANTES', 'à venir', 3, 18, 1, 2, 12, 5);
+('2025-08-20', '2025-08-20', '10:00:00', '13:30:00', '115 Boulevard Exelmans, 75016 PARIS', '14 Rue des Petites Ecuries, 44000 NANTES', 'à venir', 3, 15, 1, 2, 17, 6), 
+('2025-08-20', '2025-08-20', '14:00:00', '17:30:00', '46 Rue de Turenne, 75003 PARIS', '1 Place Alexis-Ricordeau, 44000 NANTES', 'à venir', 3, 16, 1, 2, 5, 2), 
+('2025-08-20', '2025-08-20', '14:30:00', '18:00:00', '13 Rue Pierre Fontaine, 75009 PARIS', '3 Allee de la Cité, 44200 NANTES', 'à venir', 3, 15, 1, 2, 3, 1), 
+('2025-08-20', '2025-08-20', '18:00:00', '22:00:00', '60 Avenue de Gravelle, 75012 PARIS', '2 Cours Olivier de Clisson, 44000 NANTES', 'à venir', 3, 18, 1, 2, 12, 5),
+('2025-08-22', '2025-08-22', '10:00:00', '14:30:00', '60 Avenue de Gravelle, 75012 PARIS', '43 Rue Michel Gachet, 13007 MARSEILLE', 'à venir', 3, 18, 1, 8, 12, 5);
 
 -- Insertion passager
 INSERT INTO trip_passenger (validation_status, validation_at, trip_id, user_id) VALUES
+('reported', '2025-08-01 22:20:16', 4, 3),
 ('validated', '2025-08-01 22:23:06', 4, 2), 
 ('pending', '2025-08-01 10:23:06', 7, 3);
 
@@ -141,4 +143,8 @@ INSERT INTO travel_preference (discussion, music, smoking, pets, user_id) VALUES
 
 -- Insertion avis
 INSERT INTO testimonial (rating, content, is_approved, created_at, trip_id, author_id) VALUES
-(5, 'Super trajet avec conducteur ponctuel !', 1, NOW(), 1, 1);
+(5, 'Super trajet avec conducteur ponctuel !', 1, NOW(), 4, 2);
+
+-- Insertion litiges
+INSERT INTO complaint (type, comment, created_at, ticket_closed, ticket_resolved, trip_passenger_id) VALUES
+('problem_on_trip', 'Test, test, test', '2025-08-01 22:25:16', 0, 0, 1);
