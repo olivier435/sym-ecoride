@@ -124,7 +124,7 @@ Pour un déploiement sur Hostinger, consultez la documentation "Déploiement" da
 - [Gestion de projet (PDF)](doc/ecoride_gestion_projet.pdf)
 - [Bonnes pratiques GIT (PDF)](doc/bonnes_pratiques_git_ecoride.pdf)
 - [Utilisation de MONGODB (PDF)](doc/process_mongo_db_php_8.3.14.pdf)
-- Déploiement
+- [Déploiement (PDF)](doc/deploiement_ecoride.pdf)
 
 ## Base de données
 
